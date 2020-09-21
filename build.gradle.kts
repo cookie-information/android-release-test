@@ -17,7 +17,7 @@ buildscript {
   }
 
   dependencies {
-    classpath(Libraries.AndroidGradlePlugin)
+    classpath(Libraries.Android.GradlePlugin)
     classpath(Libraries.Kotlin.GradlePlugin)
     classpath(Libraries.Detekt.GradlePlugin)
     classpath(Libraries.GradleVersions.GradlePlugin)

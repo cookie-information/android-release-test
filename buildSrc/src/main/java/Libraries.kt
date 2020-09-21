@@ -1,6 +1,14 @@
-@Suppress("ObjectPropertyNaming") // Makes sense here due to libraries coordinates.
+// Makes sense here due to libraries coordinates.
+@file:Suppress("ObjectPropertyNaming")
+
 object Libraries {
-  const val AndroidGradlePlugin = "com.android.tools.build:gradle:4.0.1"
+  object Android {
+    const val GradlePlugin = "com.android.tools.build:gradle:4.0.1"
+
+    const val ApplicationPluginId = "com.android.application"
+
+    const val LibraryPluginId = "com.android.library"
+  }
 
   object Kotlin {
     const val Version = "1.4.10"
@@ -8,6 +16,10 @@ object Libraries {
     const val GradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$Version"
 
     const val StdLibJdk7 = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$Version"
+
+    const val AndroidPluginId = "android"
+
+    const val KaptPluginId = "kapt"
   }
 
   object Kotest {
@@ -38,5 +50,32 @@ object Libraries {
     const val GradlePluginId = "com.github.ben-manes.versions"
 
     const val GradlePlugin = "com.github.ben-manes:gradle-versions-plugin:$Version"
+  }
+
+  object Okhttp {
+    const val Version = "4.9.0"
+
+    const val Core = "com.squareup.okhttp3:okhttp:$Version"
+  }
+
+  object Moshi {
+    const val Version = "1.9.3"
+
+    const val Core = "com.squareup.moshi:moshi:$Version"
+
+    const val CodeGen = "com.squareup.moshi:moshi-kotlin-codegen:$Version"
+  }
+
+  @Suppress("ClassNaming")
+  object AndroidX {
+    const val Version = "1.3.1"
+
+    const val Core = "androidx.core:core-ktx:$Version"
+  }
+
+  object Material {
+    const val Version = "1.2.1"
+
+    const val Core = "com.google.android.material:material:$Version"
   }
 }

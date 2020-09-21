@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-  id("com.android.library")
-  kotlin("android")
+  id(Libraries.Android.LibraryPluginId)
+  kotlin(Libraries.Kotlin.AndroidPluginId)
+  kotlin(Libraries.Kotlin.KaptPluginId)
 }
 
 android {
@@ -20,6 +23,15 @@ android {
   }
 }
 
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    freeCompilerArgs = freeCompilerArgs + "-Xexplicit-api=strict"
+  }
+}
+
 dependencies {
   implementation(Libraries.Kotlin.StdLibJdk7)
+  api(Libraries.Okhttp.Core)
+  implementation(Libraries.Moshi.Core)
+  kapt(Libraries.Moshi.CodeGen)
 }

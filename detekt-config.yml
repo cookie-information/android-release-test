@@ -244,6 +244,7 @@ style:
     active: true
   RedundantVisibilityModifierRule:
     active: true
+    excludes: ['**/library/**']
   SafeCast:
     active: true
   SerialVersionUIDInSerializableClass:
