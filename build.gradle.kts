@@ -66,6 +66,23 @@ allprojects {
         minSdkVersion(Build.MinSdk)
         targetSdkVersion(Build.TargetSdk)
       }
+
+      flavorDimensions("environment")
+
+      productFlavors {
+        register("staging") {
+          buildConfigField("String", "BASE_URL", """"https://cdnapi-staging.azureedge.net/v1/"""")
+        }
+
+        // TODO Add proper url once it will be ready
+        register("production") {
+          buildConfigField("String", "BASE_URL", """"https://cdnapi-staging.azureedge.net/v1/"""")
+        }
+      }
+
+      variantFilter {
+        ignore = name == "productionDebug"
+      }
     }
   }
 }

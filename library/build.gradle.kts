@@ -21,6 +21,10 @@ android {
     // Full linting is run as a part of the CI so it can be skipped for the 'assemble' task.
     isCheckReleaseBuilds = false
   }
+
+  buildFeatures {
+    buildConfig = true
+  }
 }
 
 tasks.withType<KotlinCompile> {

@@ -3,6 +3,12 @@ plugins {
   kotlin(Libraries.Kotlin.AndroidPluginId)
 }
 
+android {
+  buildFeatures {
+    buildConfig = true
+  }
+}
+
 dependencies {
   implementation(Libraries.Kotlin.StdLibJdk7)
   implementation(Libraries.AndroidX.Core)
