@@ -28,8 +28,6 @@ object Libraries {
     const val RunnerJunit5 = "io.kotest:kotest-runner-junit5-jvm:$Version"
 
     const val Assertions = "io.kotest:kotest-assertions-core-jvm:$Version"
-
-    const val Property = "io.kotest:kotest-property-jvm:$Version"
   }
 
   object Detekt {
@@ -56,6 +54,8 @@ object Libraries {
     const val Version = "4.9.0"
 
     const val Core = "com.squareup.okhttp3:okhttp:$Version"
+
+    const val MockWebServer = "com.squareup.okhttp3:mockwebserver:$Version"
   }
 
   object Moshi {
