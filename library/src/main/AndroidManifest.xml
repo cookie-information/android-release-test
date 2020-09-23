@@ -1,1 +1,5 @@
-<manifest package="com.clearcode.mobileconsents" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.clearcode.mobileconsents">
+
+  <uses-permission android:name="android.permission.INTERNET" />
+</manifest>

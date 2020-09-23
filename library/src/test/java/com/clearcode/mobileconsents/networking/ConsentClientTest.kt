@@ -23,7 +23,7 @@ internal class ConsentClientTest : DescribeSpec({
 
     baseUrl = server.url("/api/test")
 
-    consentClient = getConsentClient(baseUrl)
+    consentClient = ConsentClient(baseUrl, baseUrl)
   }
 
   afterTest {
@@ -49,7 +49,9 @@ internal class ConsentClientTest : DescribeSpec({
       consentClient.getConsent(consentId = uuid).enqueue(EmptyCallback)
 
       val request = server.takeRequest()
-      request.requestUrl shouldBe baseUrl.newBuilder().addPathSegment(uuid.toString())
+      request.requestUrl shouldBe baseUrl.newBuilder()
+        .addPathSegment(uuid.toString())
+        .addPathSegment("consent-data.json")
         .build()
     }
 
@@ -70,8 +72,6 @@ internal class ConsentClientTest : DescribeSpec({
     }
   }
 })
-
-private fun getConsentClient(baseUrl: HttpUrl) = ConsentClient(baseUrl)
 
 internal object EmptyCallback : Callback {
   override fun onFailure(call: Call, e: IOException) = Unit

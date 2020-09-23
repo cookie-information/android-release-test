@@ -10,13 +10,20 @@ import java.util.UUID
 import kotlin.LazyThreadSafetyMode.NONE
 
 private const val jsonMediaType = "application/json"
+private const val consentJsonFileName = "consent-data.json"
 
-internal class ConsentClient(private val baseUrl: HttpUrl) {
+internal class ConsentClient(
+  private val getUrl: HttpUrl,
+  private val postUrl: HttpUrl
+) {
 
   private val okHttpClient by lazy(NONE) { OkHttpClient() }
 
   fun getConsent(consentId: UUID): Call {
-    val url = baseUrl.newBuilder().addPathSegment(consentId.toString()).build()
+    val url = getUrl.newBuilder()
+      .addPathSegment(consentId.toString())
+      .addPathSegment(consentJsonFileName)
+      .build()
     val request = Request.Builder().url(url).build()
 
     return okHttpClient.newCall(request)
@@ -25,7 +32,7 @@ internal class ConsentClient(private val baseUrl: HttpUrl) {
   // TODO change consent item to class when domain will be defined
   fun postConsent(consentItem: String): Call {
     val request =
-      Request.Builder().url(baseUrl).post(consentItem.toRequestBody(jsonMediaType.toMediaType())).build()
+      Request.Builder().url(postUrl).post(consentItem.toRequestBody(jsonMediaType.toMediaType())).build()
 
     return okHttpClient.newCall(request)
   }

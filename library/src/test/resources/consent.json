@@ -1,0 +1,51 @@
+{
+  "universalConsentSolutionVersionId": "00000000-0000-0000-0000-000000000000",
+  "universalConsentSolutionId": "843ddd4a-3eae-4286-a17b-0e8d3337e767",
+  "universalConsentItems": [
+    {
+      "universalConsentItemId": "66b12655-02e9-4d8c-a4bf-445f3b444831",
+      "translations": [
+        {
+          "language": "EN",
+          "shortText": "Privacy policy\n\nOur Company is part of the Our Company Group which includes Our Company International and Our Company Direct. This privacy policy will explain how our organization uses the personal data we collect from you when you use our website.",
+          "longText": "What data do we collect?\n\nOur Company collects the following data:\n\n- Personal identification information (Name, email address, phone number, etc.)\n\nHow do we collect your data?\n\nYou directly provide Our Company with most of the data we collect. We collect data and process data when you:\n\n - Register online or place an order for any of our products or services.\n - Voluntarily complete a customer survey or provide feedback on any of our message boards or via email.\n - Use or view our website via your browser’s cookies.\n\nHow will we use your data?\n\nOur Company collects your data so that we can:\n\n - Process your order and manage your account.\n - Email you with special offers on other products and services we think you might like.\n\nIf you agree, Our Company will share your data with our partner companies so that they may offer you their products and services."
+        },
+        {
+          "language": "PL",
+          "shortText": "Polityka prywatności\n\nNasza firma jest częścią grupy Our Company, która obejmuje Our Company International i Our Company Direct. Niniejsza polityka prywatności wyjaśnia, w jaki sposób nasza organizacja wykorzystuje dane osobowe, które zbieramy od Ciebie podczas korzystania z naszej strony internetowej.",
+          "longText": "Jakie dane zbieramy?\n\nNasza firma gromadzi następujące dane:\n\n- Dane osobowe (imię i nazwisko, adres e-mail, numer telefonu itp.)\n\nJak zbieramy Twoje dane?\n\nWiększość danych, które zbieramy, przekazujesz bezpośrednio naszej firmie. Gromadzimy i przetwarzamy dane, gdy:\n\n - Zarejestruj się online lub złóż zamówienie na którykolwiek z naszych produktów lub usług.\n - Dobrowolnie wypełnij ankietę klienta lub przekaż opinię na naszych forach dyskusyjnych lub za pośrednictwem poczty elektronicznej.\n - Korzystaj z naszej witryny lub przeglądaj ją za pomocą plików cookie przeglądarki.\n\nW jaki sposób wykorzystamy Twoje dane?\n\nNasza Firma gromadzi Twoje dane, abyśmy mogli:\n\n - Przetwarzaj zamówienie i zarządzaj kontem.\n - Wysyłanie Ci e-maili ze specjalnymi ofertami dotyczącymi innych produktów i usług, które naszym zdaniem mogą Ci się spodobać.\n\nJeśli wyrazisz zgodę, Nasza Firma udostępni Twoje dane naszym firmom partnerskim, aby mogły oferować Ci swoje produkty i usługi."
+        }
+      ]
+    },
+    {
+      "universalConsentItemId": "b06e5185-d336-438a-9856-e9fc6f84dd11",
+      "translations": [
+        {
+          "language": "EN",
+          "shortText": "I agree to receive marketing information",
+          "longText": ""
+        },
+        {
+          "language": "PL",
+          "shortText": "Zgadzam się na otrzymywanie informacji marketingowych",
+          "longText": ""
+        }
+      ]
+    },
+    {
+      "universalConsentItemId": "45c0d151-c493-4f43-82ff-78aae0504224",
+      "translations": [
+        {
+          "language": "EN",
+          "shortText": "I agree to the privacy policy",
+          "longText": ""
+        },
+        {
+          "language": "PL",
+          "shortText": "Zgadzam się na postanowienia Polityki Prywatności",
+          "longText": ""
+        }
+      ]
+    }
+  ]
+}

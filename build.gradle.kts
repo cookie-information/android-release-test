@@ -1,4 +1,5 @@
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.internal.plugins.BasePlugin
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.gitlab.arturbosch.detekt.Detekt
@@ -47,7 +48,8 @@ allprojects {
     kotlinOptions {
       jvmTarget = "1.8"
       freeCompilerArgs = listOf(
-        "-progressive"
+        "-progressive",
+        "-Xopt-in=kotlin.RequiresOptIn"
       )
     }
   }
@@ -82,6 +84,14 @@ allprojects {
 
       variantFilter {
         ignore = name == "productionDebug"
+      }
+    }
+
+    extensions.findByType<LibraryExtension>()?.apply {
+      tasks.withType<KotlinCompile> {
+        kotlinOptions {
+          freeCompilerArgs = freeCompilerArgs + "-Xexplicit-api=strict"
+        }
       }
     }
   }

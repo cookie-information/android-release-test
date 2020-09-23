@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   id(Libraries.Android.LibraryPluginId)
   kotlin(Libraries.Kotlin.AndroidPluginId)
@@ -24,12 +22,6 @@ android {
 
   buildFeatures {
     buildConfig = true
-  }
-}
-
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    freeCompilerArgs = freeCompilerArgs + "-Xexplicit-api=strict"
   }
 }
 
