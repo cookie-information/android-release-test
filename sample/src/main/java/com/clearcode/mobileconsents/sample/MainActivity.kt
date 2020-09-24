@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.clearcode.mobileconsents.domain.Consent
 import com.clearcode.mobileconsents.networking.CallListener
 import com.clearcode.mobileconsents.sdk.MobileConsentSdk
+import java.io.IOException
 import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
@@ -23,8 +24,8 @@ class MainActivity : AppCompatActivity() {
           Log.e("MainActivity", result.toString())
         }
 
-        override fun onFailure(error: Throwable) {
-          error.printStackTrace()
+        override fun onFailure(error: IOException) {
+          Log.e("MainActivity", error.message, error)
         }
       }
     )

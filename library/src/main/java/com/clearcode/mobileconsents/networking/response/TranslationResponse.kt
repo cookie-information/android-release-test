@@ -1,4 +1,4 @@
-package com.clearcode.mobileconsents.networking.responses
+package com.clearcode.mobileconsents.networking.response
 
 import com.clearcode.mobileconsents.domain.Translation
 import com.squareup.moshi.Json
