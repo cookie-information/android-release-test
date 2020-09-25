@@ -7,16 +7,18 @@ import com.clearcode.mobileconsents.networking.ConsentClient
 import com.clearcode.mobileconsents.networking.response.ConsentResponseJsonAdapter
 import com.clearcode.mobileconsents.networking.response.toDomain
 import com.clearcode.mobileconsents.storage.ConsentStorage
+import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.throwable.shouldHaveMessage
 import okhttp3.HttpUrl
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import java.io.IOException
 import java.util.UUID
-import java.util.concurrent.CountDownLatch
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
-// TODO add coroutine helper for CountDownLatch
 internal class MobileConsentSdkTest : DescribeSpec({
 
   val uuid = UUID.fromString("843ddd4a-3eae-4286-a17b-0e8d3337e767")
@@ -44,72 +46,33 @@ internal class MobileConsentSdkTest : DescribeSpec({
   describe("MobileConsentsSdk") {
     it("gets consent and parse to domain object") {
       server.enqueue(MockResponse().setBody(consentString))
-      val countDownLatch = CountDownLatch(1)
-      var consentResult: Consent? = null
 
-      consentSdk.getConsent(
-        consentId = uuid,
-        listener = onSuccess {
-          consentResult = it
-          countDownLatch.countDown()
-        }
-      )
-
-      countDownLatch.await()
-      consentResult shouldBe consent
+      consentSdk.getConsentSuspending(consentId = uuid) shouldBe consent
     }
+
     it("posts consent and returns result") {
       server.enqueue(MockResponse().setBody(true.toString()))
-      val countDownLatch = CountDownLatch(1)
-      var result = false
 
-      consentSdk.postConsentItem(
-        consentItem = "consent",
-        listener = onSuccess {
-          result = it
-          countDownLatch.countDown()
-        }
-      )
-
-      countDownLatch.await()
-      result shouldBe true
+      consentSdk.postConsentSuspending("consentItem") shouldBe true
     }
+
     it("on fetching exception returns valid exception") {
       server.enqueue(MockResponse().setResponseCode(404).setBody(notFoundBody))
-      val countDownLatch = CountDownLatch(1)
-      var result: Throwable? = null
 
-      consentSdk.getConsent(
-        consentId = uuid,
-        listener = onFailure {
-          result = it
-          countDownLatch.countDown()
-        }
-      )
-
-      countDownLatch.await()
-      result shouldBe IOException(
-        """
-        |Url: ${baseUrl.newBuilder().addPathSegments("$uuid/consent-data.json").build()}
-        |Code: 404
-        """.trimMargin()
-      )
+      shouldThrowExactly<IOException> {
+        consentSdk.getConsentSuspending(uuid)
+      } shouldHaveMessage """
+         |Url: ${baseUrl.newBuilder().addPathSegments("$uuid/consent-data.json").build()}
+         |Code: 404
+         """.trimMargin()
     }
+
     it("on parse exception returns valid exception") {
       server.enqueue(MockResponse().setBody(malformedJson))
-      val countdownLatch = CountDownLatch(1)
-      var result: Throwable? = null
 
-      consentSdk.getConsent(
-        consentId = uuid,
-        listener = onFailure {
-          result = it
-          countdownLatch.countDown()
-        }
-      )
-
-      countdownLatch.await()
-      result shouldBe IOException("Required value 'consentItems' (JSON name 'universalConsentItems') missing at $")
+      shouldThrowExactly<IOException> {
+        consentSdk.getConsentSuspending(uuid)
+      } shouldHaveMessage "Required value 'consentItems' (JSON name 'universalConsentItems') missing at $"
     }
   }
 })
@@ -131,16 +94,36 @@ private val notFoundBody =
 private const val malformedJson =
   """{"malformed": "json"}"""
 
-internal inline fun <T> onSuccess(crossinline onSuccess: (T) -> Unit) = object : CallListener<T> {
-  override fun onSuccess(result: T) = onSuccess(result)
-
-  override fun onFailure(error: IOException) = throw error
-}
-
-internal inline fun <T> onFailure(crossinline onFailure: (Throwable) -> Unit) = object : CallListener<T> {
-  override fun onSuccess(result: T) = throw error("error")
-
-  override fun onFailure(error: IOException) = onFailure(error)
-}
-
 internal fun Class<*>.getResourceAsString(path: String) = getResourceAsStream(path)!!.readBytes().decodeToString()
+
+internal suspend fun MobileConsentSdk.getConsentSuspending(consentId: UUID): Consent =
+  suspendCoroutine { continuation ->
+    getConsent(
+      consentId = consentId,
+      listener = object : CallListener<Consent> {
+        override fun onSuccess(result: Consent) {
+          continuation.resumeWith(Result.success(result))
+        }
+
+        override fun onFailure(error: IOException) {
+          continuation.resumeWithException(error)
+        }
+      }
+    )
+  }
+
+internal suspend fun MobileConsentSdk.postConsentSuspending(consentItem: String): Boolean =
+  suspendCoroutine { continuation ->
+    postConsentItem(
+      consentItem = consentItem,
+      listener = object : CallListener<Boolean> {
+        override fun onSuccess(result: Boolean) {
+          continuation.resumeWith(Result.success(result))
+        }
+
+        override fun onFailure(error: IOException) {
+          continuation.resumeWithException(error)
+        }
+      }
+    )
+  }
