@@ -2,23 +2,24 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:background="?attr/colorSurface"
   android:layout_margin="8dp"
+  android:background="?attr/colorSurface"
   android:elevation="5dp">
 
   <LinearLayout xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
-    android:padding="8dp"
     android:clickable="true"
-    android:orientation="vertical">
+    android:focusable="true"
+    android:orientation="vertical"
+    android:padding="8dp">
 
     <TextView
       android:id="@+id/textConsentIdLabel"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="Consent Item id:"
+      android:text="@string/text_consent_id_label"
       android:textSize="18sp"
       android:textStyle="bold" />
 
@@ -27,13 +28,13 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
-      tools:text="dshadjsajkiudjksajhdjksad" />
+      tools:text="@tools:sample/lorem" />
 
     <TextView
       android:id="@+id/textConsentShortTextLabel"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="Consent Item short text:"
+      android:text="@string/text_consent_short_text_label"
       android:textSize="18sp"
       android:textStyle="bold" />
 
@@ -42,13 +43,13 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
-      tools:text="dshadjsajkiudjksajhdjksad" />
+      tools:text="@tools:sample/lorem" />
 
     <TextView
       android:id="@+id/textConsentLongTextLabel"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="Consent Item long text:"
+      android:text="@string/text_consent_long_text_label"
       android:textSize="18sp"
       android:textStyle="bold" />
 
@@ -57,7 +58,7 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
-      tools:text="dshadjsajkiudjksajhdjksad" />
+      tools:text="@tools:sample/lorem" />
 
   </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

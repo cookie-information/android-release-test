@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     buttonFetch.setOnClickListener {
       val uuid = try {
         UUID.fromString(textUuid.text.toString())
-      } catch (e: Exception) {
+      } catch (e: IllegalArgumentException) {
         Snackbar.make(buttonFetch, e.message.toString(), Snackbar.LENGTH_LONG).show()
         return@setOnClickListener
       }

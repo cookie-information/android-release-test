@@ -4,4 +4,7 @@
   <string name="button_sample_uuid">Use sample ID</string>
   <string name="text_consent_id">Consent Solution UUID</string>
   <string name="sample_uuid">843ddd4a-3eae-4286-a17b-0e8d3337e767</string>
+  <string name="text_consent_id_label">Consent Item id:</string>
+  <string name="text_consent_short_text_label">Consent Item short text:</string>
+  <string name="text_consent_long_text_label">Consent Item long text:</string>
 </resources>

@@ -9,7 +9,7 @@ internal val uuidAdapter = object {
   @FromJson
   fun fromJson(uuid: String) = try {
     UUID.fromString(uuid)
-  } catch (e: Exception) {
+  } catch (e: IllegalArgumentException) {
     throw JsonDataException("Couldn't parse UUID: $uuid", e)
   }
 
