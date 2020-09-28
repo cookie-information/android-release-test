@@ -1,10 +1,24 @@
 <resources>
   <!-- Base application theme. -->
-  <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
+  <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
     <!-- Customize your theme here. -->
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+    <item name="android:textViewStyle">@style/RubikTextViewStyle</item>
+    <item name="materialButtonStyle">@style/RubikButtonStyle</item>
+  </style>
+
+  <style name="BaseTextAppearance" parent="TextAppearance.AppCompat">
+    <item name="fontFamily">@font/rubik</item>
+  </style>
+
+  <style name="RubikTextViewStyle" parent="Widget.AppCompat.TextView">
+    <item name="android:textAppearance">@style/BaseTextAppearance</item>
+  </style>
+
+  <style name="RubikButtonStyle" parent="Widget.MaterialComponents.Button">
+    <item name="android:textAppearance">@style/BaseTextAppearance</item>
   </style>
 
 </resources>

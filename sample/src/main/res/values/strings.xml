@@ -1,3 +1,7 @@
 <resources>
-  <string name="app_name">sample</string>
+  <string name="app_name">Mobile Consents</string>
+  <string name="button_fetch">Fetch Consent Solution</string>
+  <string name="button_sample_uuid">Use sample ID</string>
+  <string name="text_consent_id">Consent Solution UUID</string>
+  <string name="sample_uuid">843ddd4a-3eae-4286-a17b-0e8d3337e767</string>
 </resources>

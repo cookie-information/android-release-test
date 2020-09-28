@@ -1,13 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  android:padding="8dp"
+  tools:context="com.clearcode.mobileconsents.sample.MainActivity">
+
+  <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/layoutUuid"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.clearcode.mobileconsents.sample.MainActivity">
+    android:layout_height="wrap_content"
+    android:hint="@string/text_consent_id">
+
+    <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/textUuid"
+      android:textAppearance="@style/BaseTextAppearance"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" />
+
+  </com.google.android.material.textfield.TextInputLayout>
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/buttonUseSampleId"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/button_sample_uuid" />
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/buttonFetch"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:enabled="false"
+    android:text="@string/button_fetch" />
 
   <TextView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:text="Hello World!"/>
+    android:id="@+id/textError"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textColor="?attr/colorError"
+    android:textSize="17sp"
+    tools:text="Error" />
+
+  <androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/recyclerConsents"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 </LinearLayout>

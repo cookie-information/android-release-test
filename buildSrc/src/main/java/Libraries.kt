@@ -8,6 +8,8 @@ object Libraries {
     const val ApplicationPluginId = "com.android.application"
 
     const val LibraryPluginId = "com.android.library"
+
+    const val CoreKtx = "androidx.core:core-ktx:1.3.1"
   }
 
   object Kotlin {
@@ -18,6 +20,8 @@ object Libraries {
     const val StdLibJdk7 = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$Version"
 
     const val AndroidPluginId = "android"
+
+    const val AndroidExtensionsPluginId = "android.extensions"
 
     const val KaptPluginId = "kapt"
   }
