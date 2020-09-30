@@ -30,6 +30,7 @@ dependencies {
   api(Libraries.Okhttp.Core)
   implementation(Libraries.Moshi.Core)
   kapt(Libraries.Moshi.CodeGen)
+  implementation(Libraries.Coroutines.Core)
 
   testImplementation(Libraries.Okhttp.MockWebServer)
   testImplementation(Libraries.Kotest.Assertions)

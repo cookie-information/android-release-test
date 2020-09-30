@@ -7,10 +7,13 @@ import com.clearcode.mobileconsents.networking.ConsentClient
 import com.clearcode.mobileconsents.networking.response.ConsentResponseJsonAdapter
 import com.clearcode.mobileconsents.networking.response.toDomain
 import com.clearcode.mobileconsents.storage.ConsentStorage
+import com.clearcode.mobileconsents.storage.MoshiFileHandler
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.engine.spec.tempfile
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
+import kotlinx.coroutines.sync.Mutex
 import okhttp3.HttpUrl
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -26,6 +29,7 @@ internal class MobileConsentSdkTest : DescribeSpec({
   lateinit var server: MockWebServer
   lateinit var baseUrl: HttpUrl
   lateinit var consentClient: ConsentClient
+  lateinit var storage: ConsentStorage
   lateinit var consentSdk: MobileConsentSdk
   lateinit var consent: Consent
 
@@ -35,8 +39,9 @@ internal class MobileConsentSdkTest : DescribeSpec({
 
     baseUrl = server.url("/api/test")
     consentClient = ConsentClient(baseUrl, baseUrl)
+    storage = ConsentStorage(Mutex(), tempfile(suffix = ".txt"), MoshiFileHandler(moshi))
     consent = ConsentResponseJsonAdapter(moshi).fromJson(consentString)!!.toDomain()
-    consentSdk = MobileConsentSdk(consentClient, ConsentStorage(), moshi)
+    consentSdk = MobileConsentSdk(consentClient, storage, moshi)
   }
 
   afterTest {

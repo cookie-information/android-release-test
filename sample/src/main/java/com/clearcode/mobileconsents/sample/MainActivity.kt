@@ -20,7 +20,7 @@ import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
 
-  private val sdk = MobileConsentSdk.Builder().postUrl(BuildConfig.BASE_URL).build()
+  lateinit var sdk: MobileConsentSdk
 
   private val consentItemAdapter = ConsentItemAdapter()
 
@@ -30,6 +30,11 @@ class MainActivity : AppCompatActivity() {
 
     setupForm()
     setupAdapter()
+
+    sdk = MobileConsentSdk.Builder()
+      .androidContext(this.applicationContext)
+      .postUrl(BuildConfig.BASE_URL)
+      .build()
   }
 
   private fun setupForm() {

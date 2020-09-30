@@ -26,6 +26,12 @@ object Libraries {
     const val KaptPluginId = "kapt"
   }
 
+  object Coroutines {
+    const val Version = "1.3.9"
+
+    const val Core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Version"
+  }
+
   object Kotest {
     const val Version = "4.2.3"
 

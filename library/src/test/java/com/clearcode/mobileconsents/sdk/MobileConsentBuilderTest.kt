@@ -1,10 +1,8 @@
 package com.clearcode.mobileconsents.sdk
 
-import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.throwable.shouldHaveMessage
-import java.lang.IllegalStateException
 
 internal class MobileConsentBuilderTest : DescribeSpec({
 
@@ -13,9 +11,9 @@ internal class MobileConsentBuilderTest : DescribeSpec({
 
   describe("MobileConsentBuilder") {
     it("throws error when post url is not defined") {
-      shouldThrowExactly<IllegalStateException> {
+      shouldThrowExactly<IllegalArgumentException> {
         MobileConsentSdk.Builder().build()
-      } shouldHaveMessage "Use postUrl() method to specify url for posting consents"
+      } shouldHaveMessage "Use postUrl() method to specify url for posting consents."
     }
 
     it("throws error when post url is not valid") {
@@ -24,10 +22,10 @@ internal class MobileConsentBuilderTest : DescribeSpec({
       } shouldHaveMessage "$invalidUrl is not a valid url"
     }
 
-    it("returns sdk object when all parameters are valid") {
-      shouldNotThrowAny {
+    it("throws error when internal file is not defined") {
+      shouldThrowExactly<IllegalArgumentException> {
         MobileConsentSdk.Builder().postUrl(validUrl).build()
-      }
+      } shouldHaveMessage "Use androidContext() method to specify Context."
     }
   }
 })

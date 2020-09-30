@@ -1,5 +1,6 @@
 package com.clearcode.mobileconsents.sdk
 
+import android.content.Context
 import com.clearcode.mobileconsents.BuildConfig
 import com.clearcode.mobileconsents.adapter.extension.parseResponseBody
 import com.clearcode.mobileconsents.adapter.moshi
@@ -11,14 +12,19 @@ import com.clearcode.mobileconsents.networking.extension.bodyOrThrow
 import com.clearcode.mobileconsents.networking.response.ConsentResponseJsonAdapter
 import com.clearcode.mobileconsents.networking.response.toDomain
 import com.clearcode.mobileconsents.storage.ConsentStorage
+import com.clearcode.mobileconsents.storage.MoshiFileHandler
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.sync.Mutex
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Response
+import java.io.File
 import java.io.IOException
 import java.util.UUID
+
+private const val storageFileName = "storage.txt"
 
 public class MobileConsentSdk internal constructor(
   private val consentClient: ConsentClient,
@@ -79,8 +85,8 @@ public class MobileConsentSdk internal constructor(
   }
 
   public class Builder {
-
     private var postUrl: HttpUrl? = null
+    private var storageFile: File? = null
 
     public fun postUrl(url: HttpUrl): Builder = apply {
       postUrl = url
@@ -94,17 +100,26 @@ public class MobileConsentSdk internal constructor(
       }
     }
 
+    public fun androidContext(context: Context): Builder = apply {
+      storageFile = File(context.filesDir, storageFileName)
+    }
+
     public fun build(): MobileConsentSdk {
-      val basePostUrl = postUrl ?: error("Use postUrl() method to specify url for posting consents")
+      val basePostUrl = requireNotNull(postUrl) { "Use postUrl() method to specify url for posting consents." }
+      val internalFile = requireNotNull(storageFile) { "Use androidContext() method to specify Context." }
 
       val consentClient = ConsentClient(
         getUrl = BuildConfig.BASE_URL.toHttpUrl(),
         postUrl = basePostUrl
       )
 
-      val consentStorage = ConsentStorage()
+      val consentStorage = ConsentStorage(Mutex, internalFile, MoshiFileHandler(moshi))
 
       return MobileConsentSdk(consentClient, consentStorage, moshi)
+    }
+
+    private companion object {
+      private val Mutex = Mutex()
     }
   }
 }
