@@ -5,6 +5,7 @@ import io.kotest.matchers.shouldBe
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.mockwebserver.MockWebServer
 import java.io.IOException
@@ -13,6 +14,7 @@ import java.util.UUID
 internal class ConsentClientTest : DescribeSpec({
 
   val uuid = UUID.fromString("312d021c-e3e5-4af2-a031-76de65d2c72c")
+  val okHttpClient = OkHttpClient()
   lateinit var server: MockWebServer
   lateinit var baseUrl: HttpUrl
   lateinit var consentClient: ConsentClient
@@ -23,7 +25,7 @@ internal class ConsentClientTest : DescribeSpec({
 
     baseUrl = server.url("/api/test")
 
-    consentClient = ConsentClient(baseUrl, baseUrl)
+    consentClient = ConsentClient(baseUrl, baseUrl, okHttpClient)
   }
 
   afterTest {

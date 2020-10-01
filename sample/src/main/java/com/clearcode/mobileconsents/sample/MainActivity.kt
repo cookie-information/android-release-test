@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_main.layoutUuid
 import kotlinx.android.synthetic.main.activity_main.recyclerConsents
 import kotlinx.android.synthetic.main.activity_main.textError
 import kotlinx.android.synthetic.main.activity_main.textUuid
+import okhttp3.OkHttpClient
 import java.io.IOException
 import java.util.UUID
 
@@ -32,8 +33,9 @@ class MainActivity : AppCompatActivity() {
     setupAdapter()
 
     sdk = MobileConsentSdk.Builder()
-      .androidContext(this.applicationContext)
-      .postUrl(BuildConfig.BASE_URL)
+      .applicationContext(this.applicationContext)
+      .partnerUrl(BuildConfig.BASE_URL)
+      .callFactory(OkHttpClient())
       .build()
   }
 

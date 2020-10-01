@@ -1,6 +1,7 @@
 package com.clearcode.mobileconsents.sdk
 
 import com.clearcode.mobileconsents.adapter.moshi
+import com.clearcode.mobileconsents.domain.ApplicationProperties
 import com.clearcode.mobileconsents.domain.Consent
 import com.clearcode.mobileconsents.networking.CallListener
 import com.clearcode.mobileconsents.networking.ConsentClient
@@ -15,6 +16,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import kotlinx.coroutines.sync.Mutex
 import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import java.io.IOException
@@ -26,6 +28,11 @@ internal class MobileConsentSdkTest : DescribeSpec({
 
   val uuid = UUID.fromString("843ddd4a-3eae-4286-a17b-0e8d3337e767")
   val consentString = javaClass.getResourceAsString("/consent.json")
+  val applicationProperties = ApplicationProperties(
+    osVersion = "4.4.4",
+    packageName = "com.example",
+    appName = "Sample"
+  )
   lateinit var server: MockWebServer
   lateinit var baseUrl: HttpUrl
   lateinit var consentClient: ConsentClient
@@ -38,10 +45,10 @@ internal class MobileConsentSdkTest : DescribeSpec({
     server.start()
 
     baseUrl = server.url("/api/test")
-    consentClient = ConsentClient(baseUrl, baseUrl)
+    consentClient = ConsentClient(baseUrl, baseUrl, OkHttpClient())
     storage = ConsentStorage(Mutex(), tempfile(suffix = ".txt"), MoshiFileHandler(moshi))
     consent = ConsentResponseJsonAdapter(moshi).fromJson(consentString)!!.toDomain()
-    consentSdk = MobileConsentSdk(consentClient, storage, moshi)
+    consentSdk = MobileConsentSdk(consentClient, storage, applicationProperties, moshi)
   }
 
   afterTest {

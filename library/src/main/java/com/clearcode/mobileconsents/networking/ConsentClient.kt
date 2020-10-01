@@ -3,21 +3,18 @@ package com.clearcode.mobileconsents.networking
 import okhttp3.Call
 import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.UUID
-import kotlin.LazyThreadSafetyMode.NONE
 
 private const val jsonMediaType = "application/json"
 private const val consentJsonFileName = "consent-data.json"
 
 internal class ConsentClient(
   private val getUrl: HttpUrl,
-  private val postUrl: HttpUrl
+  private val postUrl: HttpUrl,
+  private val callFactory: Call.Factory
 ) {
-
-  private val okHttpClient by lazy(NONE) { OkHttpClient() }
 
   fun getConsent(consentId: UUID): Call {
     val url = getUrl.newBuilder()
@@ -26,7 +23,7 @@ internal class ConsentClient(
       .build()
     val request = Request.Builder().url(url).build()
 
-    return okHttpClient.newCall(request)
+    return callFactory.newCall(request)
   }
 
   // TODO change consent item to class when domain will be defined
@@ -34,6 +31,6 @@ internal class ConsentClient(
     val request =
       Request.Builder().url(postUrl).post(consentItem.toRequestBody(jsonMediaType.toMediaType())).build()
 
-    return okHttpClient.newCall(request)
+    return callFactory.newCall(request)
   }
 }
