@@ -1,6 +1,6 @@
 package com.clearcode.mobileconsents.networking.response
 
-import com.clearcode.mobileconsents.domain.Translation
+import com.clearcode.mobileconsents.Translation
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

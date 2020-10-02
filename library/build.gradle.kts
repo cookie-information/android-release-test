@@ -26,7 +26,7 @@ android {
 }
 
 dependencies {
-  implementation(Libraries.Kotlin.StdLibJdk7)
+  api(Libraries.Kotlin.StdLibJdk7)
   api(Libraries.Okhttp.Core)
   implementation(Libraries.Moshi.Core)
   kapt(Libraries.Moshi.CodeGen)

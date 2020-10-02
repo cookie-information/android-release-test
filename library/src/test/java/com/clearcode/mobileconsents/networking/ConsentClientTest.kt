@@ -1,5 +1,9 @@
 package com.clearcode.mobileconsents.networking
 
+import com.clearcode.mobileconsents.Consent
+import com.clearcode.mobileconsents.ProcessingPurpose
+import com.clearcode.mobileconsents.adapter.moshi
+import com.clearcode.mobileconsents.sdk.getResourceAsString
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import okhttp3.Call
@@ -13,8 +17,10 @@ import java.util.UUID
 
 internal class ConsentClientTest : DescribeSpec({
 
-  val uuid = UUID.fromString("312d021c-e3e5-4af2-a031-76de65d2c72c")
+  val uuid = UUID.fromString("095ed226-1ed9-4bbf-95a9-2df1e5118d2d")
+  val timestamp = "2020-07-29T09:00:00.000Z"
   val okHttpClient = OkHttpClient()
+  val consentRequest = javaClass.getResourceAsString("/consent.json")
   lateinit var server: MockWebServer
   lateinit var baseUrl: HttpUrl
   lateinit var consentClient: ConsentClient
@@ -25,7 +31,7 @@ internal class ConsentClientTest : DescribeSpec({
 
     baseUrl = server.url("/api/test")
 
-    consentClient = ConsentClient(baseUrl, baseUrl, okHttpClient)
+    consentClient = ConsentClient(baseUrl, baseUrl, okHttpClient, moshi)
   }
 
   afterTest {
@@ -35,9 +41,8 @@ internal class ConsentClientTest : DescribeSpec({
   describe("ConsentClient") {
 
     it("on invoked cancellation cancels the request") {
-      val itemPayload = "{name: \"name\"}"
 
-      val consentCall = consentClient.postConsent(itemPayload)
+      val consentCall = consentClient.postConsent(dummyConsent, uuid, timestamp)
 
       consentCall.enqueue(EmptyCallback)
       consentCall.cancel()
@@ -58,19 +63,19 @@ internal class ConsentClientTest : DescribeSpec({
     }
 
     it("creates valid url for posting consents") {
-      consentClient.postConsent("{name: \"name\"}").enqueue(EmptyCallback)
+      consentClient.postConsent(dummyConsent, uuid, timestamp).enqueue(EmptyCallback)
 
       val request = server.takeRequest()
-      request.requestUrl shouldBe baseUrl
+      request.requestUrl shouldBe baseUrl.newBuilder()
+        .addPathSegment("consents")
+        .build()
     }
 
     it("sends consent payload to server") {
-      val itemPayload = "{name: \"name\"}"
-
-      consentClient.postConsent(itemPayload).enqueue(EmptyCallback)
+      consentClient.postConsent(dummyConsent, uuid, timestamp).enqueue(EmptyCallback)
 
       val request = server.takeRequest()
-      request.body.readUtf8() shouldBe itemPayload
+      request.body.readUtf8() shouldBe consentRequest
     }
   }
 })
@@ -80,3 +85,16 @@ internal object EmptyCallback : Callback {
 
   override fun onResponse(call: Call, response: Response) = Unit
 }
+
+private val dummyConsent = Consent(
+  consentSolutionId = UUID.fromString("843ddd4a-3eae-4286-a17b-0e8d3337e767"),
+  consentSolutionVersionId = UUID.fromString("00000000-0000-4000-8000-000000000000"),
+  processingPurposes = listOf(
+    ProcessingPurpose(
+      consentItemId = UUID.fromString("51473b60-94da-401e-90b3-8f42d8b233d6"),
+      consentGiven = true,
+      language = "PL"
+    )
+  ),
+  customData = mapOf("email" to "test@test.com")
+)

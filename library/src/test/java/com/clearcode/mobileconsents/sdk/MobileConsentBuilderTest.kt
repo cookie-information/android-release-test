@@ -1,5 +1,6 @@
 package com.clearcode.mobileconsents.sdk
 
+import com.clearcode.mobileconsents.MobileConsentSdk
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.throwable.shouldHaveMessage

@@ -1,5 +1,6 @@
 package com.clearcode.mobileconsents.storage
 
+import com.clearcode.mobileconsents.ProcessingPurpose
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -26,14 +27,14 @@ internal class ConsentStorage(
     createStorageFile(file)
   }
 
-  suspend fun storeConsentChoice(consentId: UUID, choice: Boolean) =
-    writeValue(consentId.toString(), choice.toString())
+  suspend fun storeConsentChoices(purposes: List<ProcessingPurpose>) =
+    writeValues(purposes.associate { it.consentItemId.toString() to it.consentGiven.toString() })
 
   suspend fun getUserId(): UUID {
     val userId = readValue(userIdKey)
     return if (userId == null) {
       val newUserId = UUID.randomUUID()
-      writeValue(userIdKey, newUserId.toString())
+      writeValues(mapOf(userIdKey to newUserId.toString()))
       newUserId
     } else {
       UUID.fromString(userId)
@@ -51,16 +52,14 @@ internal class ConsentStorage(
       .filterKeys { it != userIdKey }
       .entries.associate { UUID.fromString(it.key) to it.value.toBoolean() }
 
-  private suspend fun writeValue(key: String, value: String) = withContext(dispatcher) {
+  private suspend fun writeValues(values: Map<String, String>) = withContext(dispatcher) {
     mutex.withLock {
       val scratchFile = File(file.path + scratchFileSuffix)
-
       try {
-        val oldData = readAll().toMutableMap()
-        oldData[key] = value
+        val data = readAll() + values
 
         scratchFile.sink().use { sink ->
-          fileHandler.writeTo(sink, oldData)
+          fileHandler.writeTo(sink, data)
         }
 
         if (!scratchFile.renameTo(file)) {

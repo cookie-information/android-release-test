@@ -7,4 +7,6 @@
   <string name="text_consent_id_label">Consent Item id:</string>
   <string name="text_consent_short_text_label">Consent Item short text:</string>
   <string name="text_consent_long_text_label">Consent Item long text:</string>
+  <string name="sample_partner_url">https://consents-gathering-app-staging.app.cookieinformation.com</string>
+  <string name="button_send_consent">Send</string>
 </resources>

@@ -12,6 +12,7 @@ internal fun Response.bodyOrThrow(): ResponseBody =
       """
       |Url: ${request.url}
       |Code: $code
+      |Message: ${body?.string()}
       """.trimMargin()
     throw IOException(message)
   }

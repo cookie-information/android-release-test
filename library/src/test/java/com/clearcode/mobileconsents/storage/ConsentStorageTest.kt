@@ -1,5 +1,6 @@
 package com.clearcode.mobileconsents.storage
 
+import com.clearcode.mobileconsents.ProcessingPurpose
 import com.clearcode.mobileconsents.adapter.moshi
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.engine.spec.tempfile
@@ -15,6 +16,16 @@ private val secondConsentId = UUID.fromString("6cf69ae8-f6ee-48f3-9876-18cb0f6a1
 
 internal class ConsentStorageTest : DescribeSpec({
 
+  val firstProcessingPurpose = ProcessingPurpose(
+    consentItemId = firstConsentId,
+    consentGiven = true,
+    language = "EN"
+  )
+  val secondProcessingPurpose = ProcessingPurpose(
+    consentItemId = secondConsentId,
+    consentGiven = false,
+    language = "EN"
+  )
   val file = tempfile(suffix = ".txt")
   val consentStorage = ConsentStorage(
     mutex = Mutex(),
@@ -29,9 +40,7 @@ internal class ConsentStorageTest : DescribeSpec({
 
   describe("Consent Storage") {
     it("stores all consent choices") {
-      consentStorage.storeConsentChoice(firstConsentId, true)
-      consentStorage.storeConsentChoice(secondConsentId, false)
-
+      consentStorage.storeConsentChoices(listOf(firstProcessingPurpose, secondProcessingPurpose))
       val choices = consentStorage.getAllConsentChoices()
 
       choices[firstConsentId] shouldBe true
@@ -40,7 +49,7 @@ internal class ConsentStorageTest : DescribeSpec({
     }
 
     it("returns consent choice") {
-      consentStorage.storeConsentChoice(firstConsentId, true)
+      consentStorage.storeConsentChoices(listOf(firstProcessingPurpose))
 
       val choice = consentStorage.getConsentChoice(firstConsentId)
 
@@ -48,8 +57,8 @@ internal class ConsentStorageTest : DescribeSpec({
     }
 
     it("overwrites consent choice") {
-      consentStorage.storeConsentChoice(firstConsentId, true)
-      consentStorage.storeConsentChoice(firstConsentId, false)
+      consentStorage.storeConsentChoices(listOf(firstProcessingPurpose))
+      consentStorage.storeConsentChoices(listOf(firstProcessingPurpose.copy(consentGiven = false)))
 
       val choice = consentStorage.getConsentChoice(firstConsentId)
 
@@ -57,7 +66,7 @@ internal class ConsentStorageTest : DescribeSpec({
     }
 
     it("filters out user id when getting all consent choices") {
-      consentStorage.storeConsentChoice(firstConsentId, true)
+      consentStorage.storeConsentChoices(listOf(firstProcessingPurpose))
       consentStorage.getUserId()
 
       val choices = consentStorage.getAllConsentChoices()

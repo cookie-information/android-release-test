@@ -1,11 +1,13 @@
 package com.clearcode.mobileconsents.sdk
 
+import com.clearcode.mobileconsents.ApplicationProperties
+import com.clearcode.mobileconsents.Consent
+import com.clearcode.mobileconsents.ConsentSolution
+import com.clearcode.mobileconsents.MobileConsentSdk
 import com.clearcode.mobileconsents.adapter.moshi
-import com.clearcode.mobileconsents.domain.ApplicationProperties
-import com.clearcode.mobileconsents.domain.Consent
 import com.clearcode.mobileconsents.networking.CallListener
 import com.clearcode.mobileconsents.networking.ConsentClient
-import com.clearcode.mobileconsents.networking.response.ConsentResponseJsonAdapter
+import com.clearcode.mobileconsents.networking.response.ConsentSolutionResponseJsonAdapter
 import com.clearcode.mobileconsents.networking.response.toDomain
 import com.clearcode.mobileconsents.storage.ConsentStorage
 import com.clearcode.mobileconsents.storage.MoshiFileHandler
@@ -14,6 +16,7 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.engine.spec.tempfile
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -27,28 +30,34 @@ import kotlin.coroutines.suspendCoroutine
 internal class MobileConsentSdkTest : DescribeSpec({
 
   val uuid = UUID.fromString("843ddd4a-3eae-4286-a17b-0e8d3337e767")
-  val consentString = javaClass.getResourceAsString("/consent.json")
+  val consentString = javaClass.getResourceAsString("/consent_solution.json")
   val applicationProperties = ApplicationProperties(
     osVersion = "4.4.4",
     packageName = "com.example",
     appName = "Sample"
+  )
+  val consent = Consent(
+    consentSolutionId = uuid,
+    consentSolutionVersionId = uuid,
+    processingPurposes = emptyList(),
+    customData = emptyMap()
   )
   lateinit var server: MockWebServer
   lateinit var baseUrl: HttpUrl
   lateinit var consentClient: ConsentClient
   lateinit var storage: ConsentStorage
   lateinit var consentSdk: MobileConsentSdk
-  lateinit var consent: Consent
+  lateinit var consentSolution: ConsentSolution
 
   beforeTest {
     server = MockWebServer()
     server.start()
 
     baseUrl = server.url("/api/test")
-    consentClient = ConsentClient(baseUrl, baseUrl, OkHttpClient())
+    consentClient = ConsentClient(baseUrl, baseUrl, OkHttpClient(), moshi)
     storage = ConsentStorage(Mutex(), tempfile(suffix = ".txt"), MoshiFileHandler(moshi))
-    consent = ConsentResponseJsonAdapter(moshi).fromJson(consentString)!!.toDomain()
-    consentSdk = MobileConsentSdk(consentClient, storage, applicationProperties, moshi)
+    consentSolution = ConsentSolutionResponseJsonAdapter(moshi).fromJson(consentString)!!.toDomain()
+    consentSdk = MobileConsentSdk(consentClient, storage, applicationProperties, Dispatchers.Unconfined)
   }
 
   afterTest {
@@ -59,13 +68,13 @@ internal class MobileConsentSdkTest : DescribeSpec({
     it("gets consent and parse to domain object") {
       server.enqueue(MockResponse().setBody(consentString))
 
-      consentSdk.getConsentSuspending(consentId = uuid) shouldBe consent
+      consentSdk.getConsentSuspending(consentId = uuid) shouldBe consentSolution
     }
 
     it("posts consent and returns result") {
       server.enqueue(MockResponse().setBody(true.toString()))
 
-      consentSdk.postConsentSuspending("consentItem") shouldBe true
+      consentSdk.postConsentSuspending(consent) shouldBe Unit
     }
 
     it("on fetching exception returns valid exception") {
@@ -76,6 +85,7 @@ internal class MobileConsentSdkTest : DescribeSpec({
       } shouldHaveMessage """
          |Url: ${baseUrl.newBuilder().addPathSegments("$uuid/consent-data.json").build()}
          |Code: 404
+         |Message: $notFoundBody
          """.trimMargin()
     }
 
@@ -108,12 +118,12 @@ private const val malformedJson =
 
 internal fun Class<*>.getResourceAsString(path: String) = getResourceAsStream(path)!!.readBytes().decodeToString()
 
-internal suspend fun MobileConsentSdk.getConsentSuspending(consentId: UUID): Consent =
+internal suspend fun MobileConsentSdk.getConsentSuspending(consentId: UUID): ConsentSolution =
   suspendCoroutine { continuation ->
     getConsent(
       consentId = consentId,
-      listener = object : CallListener<Consent> {
-        override fun onSuccess(result: Consent) {
+      listener = object : CallListener<ConsentSolution> {
+        override fun onSuccess(result: ConsentSolution) {
           continuation.resumeWith(Result.success(result))
         }
 
@@ -124,12 +134,12 @@ internal suspend fun MobileConsentSdk.getConsentSuspending(consentId: UUID): Con
     )
   }
 
-internal suspend fun MobileConsentSdk.postConsentSuspending(consentItem: String): Boolean =
-  suspendCoroutine { continuation ->
+internal suspend fun MobileConsentSdk.postConsentSuspending(consent: Consent) =
+  suspendCoroutine<Unit> { continuation ->
     postConsentItem(
-      consentItem = consentItem,
-      listener = object : CallListener<Boolean> {
-        override fun onSuccess(result: Boolean) {
+      consent = consent,
+      listener = object : CallListener<Unit> {
+        override fun onSuccess(result: Unit) {
           continuation.resumeWith(Result.success(result))
         }
 

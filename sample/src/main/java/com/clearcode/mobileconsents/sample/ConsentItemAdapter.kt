@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.clearcode.mobileconsents.domain.ConsentItem
+import com.clearcode.mobileconsents.ConsentItem
 import kotlinx.android.synthetic.main.item_consent.view.textConsentId
 import kotlinx.android.synthetic.main.item_consent.view.textConsentLongText
 import kotlinx.android.synthetic.main.item_consent.view.textConsentShortText

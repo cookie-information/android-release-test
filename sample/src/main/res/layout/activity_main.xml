@@ -36,6 +36,12 @@
     android:enabled="false"
     android:text="@string/button_fetch" />
 
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/buttonSend"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/button_send_consent" />
+
   <TextView
     android:id="@+id/textError"
     android:layout_width="match_parent"

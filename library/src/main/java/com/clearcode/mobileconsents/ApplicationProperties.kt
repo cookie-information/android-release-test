@@ -1,4 +1,4 @@
-package com.clearcode.mobileconsents.domain
+package com.clearcode.mobileconsents
 
 public data class ApplicationProperties(
   val osVersion: String,
