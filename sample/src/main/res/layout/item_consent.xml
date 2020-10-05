@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:layout_margin="8dp"
   android:background="?attr/colorSurface"
   android:elevation="5dp">
 
-  <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+  <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
@@ -21,13 +23,24 @@
       android:layout_height="wrap_content"
       android:text="@string/text_consent_id_label"
       android:textSize="18sp"
-      android:textStyle="bold" />
+      android:textStyle="bold"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+      android:id="@+id/switchConsent"
+      android:layout_width="wrap_content"
+      android:layout_height="16dp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
       android:id="@+id/textConsentId"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/textConsentIdLabel"
       tools:text="@tools:sample/lorem" />
 
     <TextView
@@ -36,13 +49,17 @@
       android:layout_height="wrap_content"
       android:text="@string/text_consent_short_text_label"
       android:textSize="18sp"
-      android:textStyle="bold" />
+      android:textStyle="bold"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/textConsentId" />
 
     <TextView
       android:id="@+id/textConsentShortText"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/textConsentShortTextLabel"
       tools:text="@tools:sample/lorem" />
 
     <TextView
@@ -51,14 +68,18 @@
       android:layout_height="wrap_content"
       android:text="@string/text_consent_long_text_label"
       android:textSize="18sp"
-      android:textStyle="bold" />
+      android:textStyle="bold"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/textConsentShortText" />
 
     <TextView
       android:id="@+id/textConsentLongText"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/textConsentLongTextLabel"
       tools:text="@tools:sample/lorem" />
 
-  </LinearLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

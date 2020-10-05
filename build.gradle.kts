@@ -67,6 +67,8 @@ allprojects {
       defaultConfig {
         minSdkVersion(Build.MinSdk)
         targetSdkVersion(Build.TargetSdk)
+        versionCode = Build.VersionCode
+        versionName = "0.0.1"
       }
 
       flavorDimensions("environment")

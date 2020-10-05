@@ -3,4 +3,5 @@ object Build {
   const val MinSdk = 21
   const val CompileSdk = 30
   const val TargetSdk = CompileSdk
+  const val VersionCode = 1
 }

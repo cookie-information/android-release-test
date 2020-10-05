@@ -35,7 +35,6 @@ public class MobileConsentSdk internal constructor(
   dispatcher: CoroutineDispatcher
 ) {
 
-  @JvmSynthetic
   private val scope = CoroutineScope(dispatcher + SupervisorJob())
 
   public fun getConsent(consentId: UUID, listener: CallListener<ConsentSolution>): Subscription {

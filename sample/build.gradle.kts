@@ -5,7 +5,6 @@ plugins {
 }
 
 android {
-
   buildFeatures {
     buildConfig = true
   }
@@ -15,7 +14,8 @@ dependencies {
   implementation(Libraries.Kotlin.StdLibJdk7)
   implementation(Libraries.AndroidX.Core)
   implementation(Libraries.Android.CoreKtx)
-  implementation(Libraries.Material.Core)
+  implementation(Libraries.Design.Material)
+  implementation(Libraries.Design.ConstraintLayout)
 
   implementation(project(":library"))
 }

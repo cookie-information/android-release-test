@@ -83,9 +83,9 @@ object Libraries {
     const val Core = "androidx.core:core-ktx:$Version"
   }
 
-  object Material {
-    const val Version = "1.2.1"
+  object Design {
+    const val Material = "com.google.android.material:material:1.2.1"
 
-    const val Core = "com.google.android.material:material:$Version"
+    const val ConstraintLayout = "androidx.constraintlayout:constraintlayout:2.0.1"
   }
 }

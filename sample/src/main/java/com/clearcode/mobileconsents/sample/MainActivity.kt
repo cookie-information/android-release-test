@@ -1,5 +1,6 @@
 package com.clearcode.mobileconsents.sample
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -13,27 +14,30 @@ import com.clearcode.mobileconsents.networking.CallListener
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.buttonFetch
 import kotlinx.android.synthetic.main.activity_main.buttonSend
+import kotlinx.android.synthetic.main.activity_main.buttonStorage
 import kotlinx.android.synthetic.main.activity_main.buttonUseSampleId
 import kotlinx.android.synthetic.main.activity_main.layoutUuid
 import kotlinx.android.synthetic.main.activity_main.recyclerConsents
 import kotlinx.android.synthetic.main.activity_main.textError
+import kotlinx.android.synthetic.main.activity_main.textLanguage
 import kotlinx.android.synthetic.main.activity_main.textUuid
 import okhttp3.OkHttpClient
 import java.io.IOException
 import java.util.UUID
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
-  lateinit var sdk: MobileConsentSdk
+  private lateinit var sdk: MobileConsentSdk
 
-  private val consentItemAdapter = ConsentItemAdapter()
+  private val consentItemAdapter = ConsentItemAdapter { uuid, choice -> consentItemChoices[uuid] = choice }
+  private var consentSolution: ConsentSolution? = null
+  private val consentItemChoices: MutableMap<UUID, Boolean> = mutableMapOf()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
 
-    setupTexts()
-    setupButtons()
+    setupForm()
+    setupActionButtons()
     setupAdapter()
 
     sdk = MobileConsentSdk.Builder()
@@ -43,30 +47,34 @@ class MainActivity : AppCompatActivity() {
       .build()
   }
 
-  private fun setupTexts() {
+  private fun setupForm() {
     textUuid.addTextChangedListener { text: CharSequence? ->
       val valid = !text.isNullOrBlank()
       layoutUuid.error = if (valid) null else "UUID cannot be empty"
       buttonFetch.isEnabled = valid
     }
-  }
-
-  private fun setupButtons() {
     buttonUseSampleId.setOnClickListener {
       textUuid.setText(getString(R.string.sample_uuid))
     }
-
     buttonFetch.setOnClickListener {
       val uuid = try {
         UUID.fromString(textUuid.text.toString())
       } catch (e: IllegalArgumentException) {
-        Snackbar.make(buttonFetch, e.message.toString(), Snackbar.LENGTH_LONG).show()
+        Snackbar.make(buttonFetch, e.message.toString(), Snackbar.LENGTH_SHORT).show()
         return@setOnClickListener
       }
       fetchConsentSolution(uuid)
     }
+  }
+
+  private fun setupActionButtons() {
     buttonSend.setOnClickListener {
-      sendConsent(dummyConsent)
+      consentSolution?.let { solution ->
+        sendConsent(createConsent(solution))
+      }
+    }
+    buttonStorage.setOnClickListener {
+      startActivity(Intent(this, StorageActivity::class.java))
     }
   }
 
@@ -74,14 +82,15 @@ class MainActivity : AppCompatActivity() {
     recyclerConsents.adapter = consentItemAdapter
   }
 
-  private fun fetchConsentSolution(consentId: UUID) =
+  private fun fetchConsentSolution(consentId: UUID) {
+    setupData(null)
     sdk.getConsent(
       consentId = consentId,
       listener = object : CallListener<ConsentSolution> {
         override fun onSuccess(result: ConsentSolution) {
           postOnMainThread {
-            consentItemAdapter.submitList(result.consentItems)
             textError?.text = ""
+            setupData(result)
           }
         }
 
@@ -93,14 +102,16 @@ class MainActivity : AppCompatActivity() {
         }
       }
     )
+  }
 
   private fun sendConsent(consent: Consent) {
-    val subscription = sdk.postConsentItem(
+    setupData(null)
+    sdk.postConsentItem(
       consent = consent,
       listener = object : CallListener<Unit> {
         override fun onSuccess(result: Unit) {
           postOnMainThread {
-            Snackbar.make(buttonFetch, "Consents sent successfully", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(buttonFetch, "Consents sent successfully", Snackbar.LENGTH_SHORT).show()
           }
         }
 
@@ -111,23 +122,31 @@ class MainActivity : AppCompatActivity() {
         }
       }
     )
-    subscription.cancel()
   }
-}
 
-// TODO [CLEAR-49] remove after providing real implementation of sending in app
-val dummyConsent = Consent(
-  consentSolutionId = UUID.fromString("843ddd4a-3eae-4286-a17b-0e8d3337e767"),
-  consentSolutionVersionId = UUID.fromString("00000000-0000-4000-8000-000000000000"),
-  processingPurposes = listOf(
-    ProcessingPurpose(
-      consentItemId = UUID.fromString("66b12655-02e9-4d8c-a4bf-445f3b444831"),
-      consentGiven = true,
-      language = "EN"
-    )
-  ),
-  customData = mapOf("email" to "example@gmail.com")
-)
+  private fun setupData(fetchedConsent: ConsentSolution?) {
+    consentSolution = fetchedConsent
+    consentItemChoices.clear()
+    fetchedConsent?.consentItems?.forEach {
+      consentItemChoices[it.consentItemId] = false
+    }
+    buttonSend.isEnabled = fetchedConsent != null
+    consentItemAdapter.submitList(fetchedConsent?.consentItems, textLanguage.text.toString())
+  }
+
+  private fun createConsent(consentSolution: ConsentSolution) = Consent(
+    consentSolutionId = consentSolution.consentSolutionId,
+    consentSolutionVersionId = consentSolution.consentSolutionVersionId,
+    processingPurposes = consentItemChoices.map { (id, choice) ->
+      ProcessingPurpose(
+        consentItemId = id,
+        consentGiven = choice,
+        language = "EN"
+      )
+    },
+    customData = emptyMap()
+  )
+}
 
 private inline fun postOnMainThread(crossinline block: () -> Unit) = Handler(Looper.getMainLooper()).post {
   block()
