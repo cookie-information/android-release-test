@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.clearcode.mobileconsents.Consent
 import com.clearcode.mobileconsents.ConsentSolution
 import com.clearcode.mobileconsents.MobileConsentSdk
@@ -40,10 +41,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     setupActionButtons()
     setupAdapter()
 
-    sdk = MobileConsentSdk.Builder()
-      .applicationContext(this.applicationContext)
+    sdk = MobileConsentSdk.Builder(this.applicationContext)
       .partnerUrl(getString(R.string.sample_partner_url))
-      .callFactory(OkHttpClient())
+      .callFactory(OkHttpClient.Builder().addInterceptor(ChuckerInterceptor(this)).build())
       .build()
   }
 

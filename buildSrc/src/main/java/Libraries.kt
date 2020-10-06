@@ -88,4 +88,16 @@ object Libraries {
 
     const val ConstraintLayout = "androidx.constraintlayout:constraintlayout:2.0.1"
   }
+
+  object Chucker {
+    const val Core = "com.github.chuckerteam.chucker:library:3.3.0"
+  }
+
+  object Dokka {
+    const val Version = "1.4.0-rc"
+
+    const val PluginId = "org.jetbrains.dokka"
+
+    const val KotlinAsJava = "org.jetbrains.dokka:kotlin-as-java-plugin:$Version"
+  }
 }

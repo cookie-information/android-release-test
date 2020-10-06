@@ -2,6 +2,7 @@ plugins {
   id(Libraries.Android.LibraryPluginId)
   kotlin(Libraries.Kotlin.AndroidPluginId)
   kotlin(Libraries.Kotlin.KaptPluginId)
+  id(Libraries.Dokka.PluginId) version Libraries.Dokka.Version
 }
 
 android {
@@ -35,4 +36,15 @@ dependencies {
   testImplementation(Libraries.Okhttp.MockWebServer)
   testImplementation(Libraries.Kotest.Assertions)
   testImplementation(Libraries.Kotest.RunnerJunit5)
+
+  dokkaHtmlPlugin(Libraries.Dokka.KotlinAsJava)
+}
+
+tasks.dokkaHtml.configure {
+  dokkaSourceSets {
+    configureEach {
+      skipEmptyPackages = true
+      noAndroidSdkLink = false
+    }
+  }
 }

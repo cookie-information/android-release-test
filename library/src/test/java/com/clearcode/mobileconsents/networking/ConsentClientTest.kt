@@ -1,5 +1,6 @@
 package com.clearcode.mobileconsents.networking
 
+import com.clearcode.mobileconsents.ApplicationProperties
 import com.clearcode.mobileconsents.Consent
 import com.clearcode.mobileconsents.ProcessingPurpose
 import com.clearcode.mobileconsents.adapter.moshi
@@ -21,6 +22,7 @@ internal class ConsentClientTest : DescribeSpec({
   val timestamp = "2020-07-29T09:00:00.000Z"
   val okHttpClient = OkHttpClient()
   val consentRequest = javaClass.getResourceAsString("/consent.json")
+  val applicationProperties = ApplicationProperties("Android 4.4.4", "com.example", "Example")
   lateinit var server: MockWebServer
   lateinit var baseUrl: HttpUrl
   lateinit var consentClient: ConsentClient
@@ -42,7 +44,7 @@ internal class ConsentClientTest : DescribeSpec({
 
     it("on invoked cancellation cancels the request") {
 
-      val consentCall = consentClient.postConsent(dummyConsent, uuid, timestamp)
+      val consentCall = consentClient.postConsent(dummyConsent, uuid, applicationProperties, timestamp)
 
       consentCall.enqueue(EmptyCallback)
       consentCall.cancel()
@@ -63,7 +65,7 @@ internal class ConsentClientTest : DescribeSpec({
     }
 
     it("creates valid url for posting consents") {
-      consentClient.postConsent(dummyConsent, uuid, timestamp).enqueue(EmptyCallback)
+      consentClient.postConsent(dummyConsent, uuid, applicationProperties, timestamp).enqueue(EmptyCallback)
 
       val request = server.takeRequest()
       request.requestUrl shouldBe baseUrl.newBuilder()
@@ -72,7 +74,7 @@ internal class ConsentClientTest : DescribeSpec({
     }
 
     it("sends consent payload to server") {
-      consentClient.postConsent(dummyConsent, uuid, timestamp).enqueue(EmptyCallback)
+      consentClient.postConsent(dummyConsent, uuid, applicationProperties, timestamp).enqueue(EmptyCallback)
 
       val request = server.takeRequest()
       request.body.readUtf8() shouldBe consentRequest

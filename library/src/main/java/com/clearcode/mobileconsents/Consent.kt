@@ -4,6 +4,13 @@ import com.clearcode.mobileconsents.networking.request.ConsentRequest
 import com.clearcode.mobileconsents.networking.request.CustomDataRequest
 import java.util.UUID
 
+/**
+ * Consent sent to partner's server after user interaction.
+ * @param consentSolutionId UUID of consent solution.
+ * @param consentSolutionVersionId UUID of consent solution version.
+ * @param processingPurposes list of all consents given (or denied) by user.
+ * @param customData custom data provided by developer, can be any map of Strings, e.g. {"email":"example@example.com"}
+ */
 public data class Consent(
   val consentSolutionId: UUID,
   val consentSolutionVersionId: UUID,
@@ -11,11 +18,16 @@ public data class Consent(
   val customData: Map<String, String>,
 )
 
-internal fun Consent.toRequest(userId: UUID, timestamp: String) = ConsentRequest(
-  userId,
-  consentSolutionId,
-  consentSolutionVersionId,
-  timestamp,
-  processingPurposes.map(ProcessingPurpose::toRequest),
-  customData.map { CustomDataRequest(it.key, it.value) }
+internal fun Consent.toRequest(
+  userId: UUID,
+  timestamp: String,
+  applicationProperties: ApplicationProperties
+) = ConsentRequest(
+  userId = userId,
+  consentSolutionId = consentSolutionId,
+  consentSolutionVersionId = consentSolutionVersionId,
+  timestamp = timestamp,
+  processingPurposes = processingPurposes.map(ProcessingPurpose::toRequest),
+  customData = customData.map { CustomDataRequest(it.key, it.value) },
+  applicationProperties = applicationProperties.toRequest()
 )

@@ -4,6 +4,7 @@ import com.clearcode.mobileconsents.ApplicationProperties
 import com.clearcode.mobileconsents.Consent
 import com.clearcode.mobileconsents.ConsentSolution
 import com.clearcode.mobileconsents.MobileConsentSdk
+import com.clearcode.mobileconsents.ProcessingPurpose
 import com.clearcode.mobileconsents.adapter.moshi
 import com.clearcode.mobileconsents.networking.CallListener
 import com.clearcode.mobileconsents.networking.ConsentClient
@@ -30,16 +31,20 @@ import kotlin.coroutines.suspendCoroutine
 internal class MobileConsentSdkTest : DescribeSpec({
 
   val uuid = UUID.fromString("843ddd4a-3eae-4286-a17b-0e8d3337e767")
+  val secondUuid = UUID.fromString("844ddd4a-3eae-4286-a17b-0e8d3337e767")
   val consentString = javaClass.getResourceAsString("/consent_solution.json")
   val applicationProperties = ApplicationProperties(
-    osVersion = "4.4.4",
-    packageName = "com.example",
-    appName = "Sample"
+    operatingSystem = "4.4.4",
+    applicationId = "com.example",
+    applicationName = "Sample"
   )
   val consent = Consent(
     consentSolutionId = uuid,
     consentSolutionVersionId = uuid,
-    processingPurposes = emptyList(),
+    processingPurposes = listOf(
+      ProcessingPurpose(consentItemId = uuid, consentGiven = true, language = "en"),
+      ProcessingPurpose(consentItemId = secondUuid, consentGiven = false, language = "en")
+    ),
     customData = emptyMap()
   )
   lateinit var server: MockWebServer
@@ -57,7 +62,12 @@ internal class MobileConsentSdkTest : DescribeSpec({
     consentClient = ConsentClient(baseUrl, baseUrl, OkHttpClient(), moshi)
     storage = ConsentStorage(Mutex(), tempfile(suffix = ".txt"), MoshiFileHandler(moshi))
     consentSolution = ConsentSolutionResponseJsonAdapter(moshi).fromJson(consentString)!!.toDomain()
-    consentSdk = MobileConsentSdk(consentClient, storage, applicationProperties, Dispatchers.Unconfined)
+    consentSdk = MobileConsentSdk(
+      consentClient = consentClient,
+      consentStorage = storage,
+      applicationProperties = applicationProperties,
+      dispatcher = Dispatchers.Unconfined
+    )
   }
 
   afterTest {
@@ -95,6 +105,29 @@ internal class MobileConsentSdkTest : DescribeSpec({
       shouldThrowExactly<IOException> {
         consentSdk.getConsentSuspending(uuid)
       } shouldHaveMessage "Required value 'consentItems' (JSON name 'universalConsentItems') missing at $"
+    }
+
+    it("returns all stored consent choices") {
+      server.enqueue(MockResponse())
+
+      consentSdk.postConsentSuspending(consent)
+
+      val choices = consentSdk.getConsentChoicesSuspending()
+
+      choices[uuid] shouldBe true
+      choices[secondUuid] shouldBe false
+    }
+
+    it("returns specific consent choice") {
+      server.enqueue(MockResponse())
+
+      consentSdk.postConsentSuspending(consent)
+
+      val choice = consentSdk.getConsentChoiceSuspending(uuid)
+      val secondChoice = consentSdk.getConsentChoiceSuspending(secondUuid)
+
+      choice shouldBe true
+      secondChoice shouldBe false
     }
   }
 })
@@ -140,6 +173,37 @@ internal suspend fun MobileConsentSdk.postConsentSuspending(consent: Consent) =
       consent = consent,
       listener = object : CallListener<Unit> {
         override fun onSuccess(result: Unit) {
+          continuation.resumeWith(Result.success(result))
+        }
+
+        override fun onFailure(error: IOException) {
+          continuation.resumeWithException(error)
+        }
+      }
+    )
+  }
+
+internal suspend fun MobileConsentSdk.getConsentChoicesSuspending() =
+  suspendCoroutine<Map<UUID, Boolean>> { continuation ->
+    getConsentChoices(
+      listener = object : CallListener<Map<UUID, Boolean>> {
+        override fun onSuccess(result: Map<UUID, Boolean>) {
+          continuation.resumeWith(Result.success(result))
+        }
+
+        override fun onFailure(error: IOException) {
+          continuation.resumeWithException(error)
+        }
+      }
+    )
+  }
+
+internal suspend fun MobileConsentSdk.getConsentChoiceSuspending(consentId: UUID) =
+  suspendCoroutine<Boolean> { continuation ->
+    getConsentChoice(
+      consentId = consentId,
+      listener = object : CallListener<Boolean> {
+        override fun onSuccess(result: Boolean) {
           continuation.resumeWith(Result.success(result))
         }
 

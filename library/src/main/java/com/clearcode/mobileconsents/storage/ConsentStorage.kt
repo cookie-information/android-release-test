@@ -15,7 +15,15 @@ import java.util.UUID
 private const val userIdKey = "user_id_key"
 private const val scratchFileSuffix = ".tmp"
 
-// TODO Handle corruption of data
+/**
+ * Storage responsible for saving generated [UUID] of user and all consent choices.
+ * Data is stored in text file inside of App internal memory. All data is stored as Map<String, String> and
+ * serialized to JSON. For serialization Moshi library is being used [MoshiFileHandler]
+ * @param mutex used for synchronization of write operations.
+ * @param file storage's text file.
+ * @param fileHandler used for serialization.
+ * @param dispatcher coroutine IO dispatcher.
+ */
 internal class ConsentStorage(
   private val mutex: Mutex,
   private val file: File,
@@ -27,9 +35,16 @@ internal class ConsentStorage(
     createStorageFile(file)
   }
 
+  /**
+   * Store list of consent choices ([ProcessingPurpose]) as Map of UUIDs and Booleans.
+   */
   suspend fun storeConsentChoices(purposes: List<ProcessingPurpose>) =
     writeValues(purposes.associate { it.consentItemId.toString() to it.consentGiven.toString() })
 
+  /**
+   * Obtain user id necessary for posting consents. If there is no user id stored it is generated, it should only happen
+   * once per App's installation.
+   */
   suspend fun getUserId(): UUID {
     val userId = readValue(userIdKey)
     return if (userId == null) {
@@ -47,11 +62,20 @@ internal class ConsentStorage(
     return value.toBoolean()
   }
 
+  /**
+   * Get all of stored consent choices. User id is filtered out.
+   */
   suspend fun getAllConsentChoices(): Map<UUID, Boolean> =
     readAll()
       .filterKeys { it != userIdKey }
       .entries.associate { UUID.fromString(it.key) to it.value.toBoolean() }
 
+  /**
+   * Write new values to storage. Old data is copied from storage file to scratch file, along with new data.
+   * If any of new data has same key as old one, the old one will be overwritten with new value. After successful
+   * copying the scratch file is renamed to the storage file. Function is synchronized via mutex shared across all
+   * SDK instances.
+   */
   private suspend fun writeValues(values: Map<String, String>) = withContext(dispatcher) {
     mutex.withLock {
       val scratchFile = File(file.path + scratchFileSuffix)
@@ -81,6 +105,9 @@ internal class ConsentStorage(
     file.source().use(fileHandler::readFrom)
   }
 
+  /**
+   * Create storage file and its parent directories if needed.
+   */
   private fun createStorageFile(file: File) {
     file.parentFile?.mkdirs()
     if (!file.exists()) {

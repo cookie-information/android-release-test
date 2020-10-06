@@ -5,7 +5,7 @@ import android.os.Build.VERSION
 import com.clearcode.mobileconsents.ApplicationProperties
 
 internal fun Context.getApplicationProperties() = ApplicationProperties(
-  osVersion = VERSION.RELEASE,
-  packageName = packageName,
-  appName = packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, 0)).toString()
+  operatingSystem = "Android ${VERSION.RELEASE}",
+  applicationId = packageName,
+  applicationName = packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, 0)).toString()
 )
