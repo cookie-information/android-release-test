@@ -28,6 +28,6 @@ dependencies {
   implementation(Libraries.Android.CoreKtx)
   implementation(Libraries.Design.Material)
   implementation(Libraries.Design.ConstraintLayout)
-  implementation(Libraries.Chucker.Core)
+  debugImplementation(Libraries.Chucker.Core)
   implementation(project(":library"))
 }

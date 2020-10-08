@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.clearcode.mobileconsents.CallListener
 import com.clearcode.mobileconsents.Consent
 import com.clearcode.mobileconsents.ConsentSolution
@@ -22,7 +21,6 @@ import kotlinx.android.synthetic.main.activity_main.recyclerConsents
 import kotlinx.android.synthetic.main.activity_main.textError
 import kotlinx.android.synthetic.main.activity_main.textLanguage
 import kotlinx.android.synthetic.main.activity_main.textUuid
-import okhttp3.OkHttpClient
 import java.io.IOException
 import java.util.UUID
 
@@ -43,7 +41,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     sdk = MobileConsentSdk.Builder(this.applicationContext)
       .partnerUrl(getString(R.string.sample_partner_url))
-      .callFactory(OkHttpClient.Builder().addInterceptor(ChuckerInterceptor(this)).build())
+      .callFactory(getOkHttpClient(this.applicationContext))
       .build()
   }
 

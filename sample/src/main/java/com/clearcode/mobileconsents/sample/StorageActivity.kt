@@ -2,14 +2,12 @@ package com.clearcode.mobileconsents.sample
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.clearcode.mobileconsents.CallListener
 import com.clearcode.mobileconsents.MobileConsentSdk
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.buttonFetch
 import kotlinx.android.synthetic.main.activity_storage.buttonMainPage
 import kotlinx.android.synthetic.main.activity_storage.recyclerStorage
-import okhttp3.OkHttpClient
 import java.io.IOException
 import java.util.UUID
 
@@ -23,7 +21,7 @@ class StorageActivity : AppCompatActivity(R.layout.activity_storage) {
 
     sdk = MobileConsentSdk.Builder(this.applicationContext)
       .partnerUrl(getString(R.string.sample_partner_url))
-      .callFactory(OkHttpClient.Builder().addInterceptor(ChuckerInterceptor(this)).build())
+      .callFactory(getOkHttpClient(this.applicationContext))
       .build()
 
     buttonMainPage.setOnClickListener {
