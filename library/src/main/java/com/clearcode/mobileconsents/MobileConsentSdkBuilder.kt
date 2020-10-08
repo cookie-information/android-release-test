@@ -18,7 +18,8 @@ private const val storageFileName = "storage.txt"
 
 /**
  * Builder for SDK instances. The builder is implementation of Fluent Builder Patternt,
- * thus all parameters must be provided in a valid order.
+ * thus all parameters must be provided in a valid order. You can get instance of this builder
+ * via [MobileConsentSdk.Builder] static function.
  */
 public class MobileConsentSdkBuilder internal constructor(
   private val context: Context

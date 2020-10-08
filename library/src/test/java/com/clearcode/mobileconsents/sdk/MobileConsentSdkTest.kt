@@ -1,17 +1,17 @@
 package com.clearcode.mobileconsents.sdk
 
-import com.clearcode.mobileconsents.ApplicationProperties
+import com.clearcode.mobileconsents.CallListener
 import com.clearcode.mobileconsents.Consent
 import com.clearcode.mobileconsents.ConsentSolution
 import com.clearcode.mobileconsents.MobileConsentSdk
 import com.clearcode.mobileconsents.ProcessingPurpose
 import com.clearcode.mobileconsents.adapter.moshi
-import com.clearcode.mobileconsents.networking.CallListener
 import com.clearcode.mobileconsents.networking.ConsentClient
 import com.clearcode.mobileconsents.networking.response.ConsentSolutionResponseJsonAdapter
 import com.clearcode.mobileconsents.networking.response.toDomain
 import com.clearcode.mobileconsents.storage.ConsentStorage
 import com.clearcode.mobileconsents.storage.MoshiFileHandler
+import com.clearcode.mobileconsents.system.ApplicationProperties
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.engine.spec.tempfile
@@ -153,8 +153,8 @@ internal fun Class<*>.getResourceAsString(path: String) = getResourceAsStream(pa
 
 internal suspend fun MobileConsentSdk.getConsentSuspending(consentId: UUID): ConsentSolution =
   suspendCoroutine { continuation ->
-    getConsent(
-      consentId = consentId,
+    getConsentSolution(
+      consentSolutionId = consentId,
       listener = object : CallListener<ConsentSolution> {
         override fun onSuccess(result: ConsentSolution) {
           continuation.resumeWith(Result.success(result))
@@ -169,7 +169,7 @@ internal suspend fun MobileConsentSdk.getConsentSuspending(consentId: UUID): Con
 
 internal suspend fun MobileConsentSdk.postConsentSuspending(consent: Consent) =
   suspendCoroutine<Unit> { continuation ->
-    postConsentItem(
+    postConsent(
       consent = consent,
       listener = object : CallListener<Unit> {
         override fun onSuccess(result: Unit) {
@@ -201,7 +201,7 @@ internal suspend fun MobileConsentSdk.getConsentChoicesSuspending() =
 internal suspend fun MobileConsentSdk.getConsentChoiceSuspending(consentId: UUID) =
   suspendCoroutine<Boolean> { continuation ->
     getConsentChoice(
-      consentId = consentId,
+      consentItemId = consentId,
       listener = object : CallListener<Boolean> {
         override fun onSuccess(result: Boolean) {
           continuation.resumeWith(Result.success(result))

@@ -1,9 +1,9 @@
 package com.clearcode.mobileconsents.networking
 
-import com.clearcode.mobileconsents.ApplicationProperties
 import com.clearcode.mobileconsents.Consent
 import com.clearcode.mobileconsents.adapter.extension.parseToRequestBody
 import com.clearcode.mobileconsents.networking.request.ConsentRequestJsonAdapter
+import com.clearcode.mobileconsents.system.ApplicationProperties
 import com.clearcode.mobileconsents.toRequest
 import com.clearcode.mobileconsents.util.getUtcDate
 import com.squareup.moshi.Moshi
@@ -26,11 +26,11 @@ internal class ConsentClient(
 
   /**
    * Get consent from CDN server.
-   * @param consentId [UUID] of consent solution.
+   * @param consentSolutionId [UUID] of consent solution.
    */
-  fun getConsent(consentId: UUID): Call {
+  fun getConsentSolution(consentSolutionId: UUID): Call {
     val url = getUrl.newBuilder()
-      .addPathSegment(consentId.toString())
+      .addPathSegment(consentSolutionId.toString())
       .addPathSegment(consentJsonFileName)
       .build()
     val request = Request.Builder().url(url).build()

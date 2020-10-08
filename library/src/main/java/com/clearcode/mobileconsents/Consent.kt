@@ -2,6 +2,8 @@ package com.clearcode.mobileconsents
 
 import com.clearcode.mobileconsents.networking.request.ConsentRequest
 import com.clearcode.mobileconsents.networking.request.CustomDataRequest
+import com.clearcode.mobileconsents.system.ApplicationProperties
+import com.clearcode.mobileconsents.system.toRequest
 import java.util.UUID
 
 /**

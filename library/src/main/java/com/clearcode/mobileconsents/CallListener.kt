@@ -1,4 +1,4 @@
-package com.clearcode.mobileconsents.networking
+package com.clearcode.mobileconsents
 
 import java.io.IOException
 

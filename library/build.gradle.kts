@@ -43,8 +43,8 @@ dependencies {
 tasks.dokkaHtml.configure {
   dokkaSourceSets {
     configureEach {
+      moduleDisplayName = "Mobile Consents SDK"
       skipEmptyPackages = true
-      noAndroidSdkLink = false
     }
   }
 }

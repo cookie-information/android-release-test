@@ -1,4 +1,4 @@
-package com.clearcode.mobileconsents.networking
+package com.clearcode.mobileconsents
 
 /**
  * Interface returned from every async operation of SDK, use it for cancellation of background operations.

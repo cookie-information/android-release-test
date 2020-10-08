@@ -3,8 +3,7 @@ package com.clearcode.mobileconsents
 import java.util.UUID
 
 /**
- * Solution fetched from CDN server, containing information which developer can show to the user in order
- * to obtain their consents.
+ * Solution fetched from CDN server, containing consents presented to the user.
  * @param consentSolutionId UUID of consent solution.
  * @param consentSolutionVersionId UUID of consent solution version.
  * @param consentItems list of consent items, which can be displayed to the user.

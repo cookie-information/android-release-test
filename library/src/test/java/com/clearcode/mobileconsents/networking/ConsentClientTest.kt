@@ -1,10 +1,10 @@
 package com.clearcode.mobileconsents.networking
 
-import com.clearcode.mobileconsents.ApplicationProperties
 import com.clearcode.mobileconsents.Consent
 import com.clearcode.mobileconsents.ProcessingPurpose
 import com.clearcode.mobileconsents.adapter.moshi
 import com.clearcode.mobileconsents.sdk.getResourceAsString
+import com.clearcode.mobileconsents.system.ApplicationProperties
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import okhttp3.Call
@@ -55,7 +55,7 @@ internal class ConsentClientTest : DescribeSpec({
     }
 
     it("creates valid url for getting consents") {
-      consentClient.getConsent(consentId = uuid).enqueue(EmptyCallback)
+      consentClient.getConsentSolution(consentSolutionId = uuid).enqueue(EmptyCallback)
 
       val request = server.takeRequest()
       request.requestUrl shouldBe baseUrl.newBuilder()

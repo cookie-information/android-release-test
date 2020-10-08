@@ -3,13 +3,12 @@ package com.clearcode.mobileconsents
 import android.content.Context
 import com.clearcode.mobileconsents.adapter.extension.parseFromResponseBody
 import com.clearcode.mobileconsents.adapter.moshi
-import com.clearcode.mobileconsents.networking.CallListener
 import com.clearcode.mobileconsents.networking.ConsentClient
-import com.clearcode.mobileconsents.networking.Subscription
 import com.clearcode.mobileconsents.networking.extension.enqueueSuspending
 import com.clearcode.mobileconsents.networking.response.ConsentSolutionResponseJsonAdapter
 import com.clearcode.mobileconsents.networking.response.toDomain
 import com.clearcode.mobileconsents.storage.ConsentStorage
+import com.clearcode.mobileconsents.system.ApplicationProperties
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -38,14 +37,14 @@ public class MobileConsentSdk internal constructor(
 
   /**
    * Obtain [ConsentSolution] from CDN server.
-   * @param consentId UUID identifier of consent.
+   * @param consentSolutionId UUID identifier of consent.
    * @param listener listener for success/failure of operation.
    * @returns [Subscription] an object allowing for call cancellation.
    */
-  public fun getConsent(consentId: UUID, listener: CallListener<ConsentSolution>): Subscription {
+  public fun getConsentSolution(consentSolutionId: UUID, listener: CallListener<ConsentSolution>): Subscription {
     val job = scope.launch {
       try {
-        val call = consentClient.getConsent(consentId)
+        val call = consentClient.getConsentSolution(consentSolutionId)
         val responseBody = call.enqueueSuspending()
         val adapter = ConsentSolutionResponseJsonAdapter(moshi)
         val result = adapter.parseFromResponseBody(responseBody)
@@ -66,7 +65,7 @@ public class MobileConsentSdk internal constructor(
    * @param listener listener for success/failure of operation.
    * @returns [Subscription] object allowing for call cancellation.
    */
-  public fun postConsentItem(consent: Consent, listener: CallListener<Unit>): Subscription {
+  public fun postConsent(consent: Consent, listener: CallListener<Unit>): Subscription {
     val job = scope.launch {
       try {
         val userId = consentStorage.getUserId()
@@ -108,10 +107,10 @@ public class MobileConsentSdk internal constructor(
    * @param listener listener for success/failure of operation.
    * @return [Subscription] object allowing for call cancellation.
    */
-  public fun getConsentChoice(consentId: UUID, listener: CallListener<Boolean>): Subscription {
+  public fun getConsentChoice(consentItemId: UUID, listener: CallListener<Boolean>): Subscription {
     val job = scope.launch {
       try {
-        listener.onSuccess(consentStorage.getConsentChoice(consentId))
+        listener.onSuccess(consentStorage.getConsentChoice(consentItemId))
       } catch (e: IOException) {
         listener.onFailure(e)
       }

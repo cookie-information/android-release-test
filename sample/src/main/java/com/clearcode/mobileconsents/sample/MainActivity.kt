@@ -7,11 +7,11 @@ import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import com.chuckerteam.chucker.api.ChuckerInterceptor
+import com.clearcode.mobileconsents.CallListener
 import com.clearcode.mobileconsents.Consent
 import com.clearcode.mobileconsents.ConsentSolution
 import com.clearcode.mobileconsents.MobileConsentSdk
 import com.clearcode.mobileconsents.ProcessingPurpose
-import com.clearcode.mobileconsents.networking.CallListener
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.buttonFetch
 import kotlinx.android.synthetic.main.activity_main.buttonSend
@@ -84,8 +84,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
   private fun fetchConsentSolution(consentId: UUID) {
     setupData(null)
-    sdk.getConsent(
-      consentId = consentId,
+    sdk.getConsentSolution(
+      consentSolutionId = consentId,
       listener = object : CallListener<ConsentSolution> {
         override fun onSuccess(result: ConsentSolution) {
           postOnMainThread {
@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
   private fun sendConsent(consent: Consent) {
     setupData(null)
-    sdk.postConsentItem(
+    sdk.postConsent(
       consent = consent,
       listener = object : CallListener<Unit> {
         override fun onSuccess(result: Unit) {
