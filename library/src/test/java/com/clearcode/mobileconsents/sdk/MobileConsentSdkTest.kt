@@ -82,7 +82,7 @@ internal class MobileConsentSdkTest : DescribeSpec({
     }
 
     it("posts consent and returns result") {
-      server.enqueue(MockResponse().setBody(true.toString()))
+      server.enqueue(MockResponse())
 
       consentSdk.postConsentSuspending(consent) shouldBe Unit
     }

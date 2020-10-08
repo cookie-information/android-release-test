@@ -4,6 +4,7 @@ import android.content.Context
 import com.clearcode.mobileconsents.adapter.extension.parseFromResponseBody
 import com.clearcode.mobileconsents.adapter.moshi
 import com.clearcode.mobileconsents.networking.ConsentClient
+import com.clearcode.mobileconsents.networking.extension.closeQuietly
 import com.clearcode.mobileconsents.networking.extension.enqueueSuspending
 import com.clearcode.mobileconsents.networking.response.ConsentSolutionResponseJsonAdapter
 import com.clearcode.mobileconsents.networking.response.toDomain
@@ -70,7 +71,7 @@ public class MobileConsentSdk internal constructor(
       try {
         val userId = consentStorage.getUserId()
         val call = consentClient.postConsent(consent, userId, applicationProperties)
-        call.enqueueSuspending()
+        call.enqueueSuspending().closeQuietly()
         consentStorage.storeConsentChoices(consent.processingPurposes)
         listener.onSuccess(Unit)
       } catch (e: IOException) {

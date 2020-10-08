@@ -41,6 +41,7 @@ internal class ConsentStorageTest : DescribeSpec({
   describe("Consent Storage") {
     it("stores all consent choices") {
       consentStorage.storeConsentChoices(listOf(firstProcessingPurpose, secondProcessingPurpose))
+
       val choices = consentStorage.getAllConsentChoices()
 
       choices[firstConsentId] shouldBe true
