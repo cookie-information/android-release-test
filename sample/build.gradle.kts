@@ -29,5 +29,5 @@ dependencies {
   implementation(Libraries.Design.Material)
   implementation(Libraries.Design.ConstraintLayout)
   debugImplementation(Libraries.Chucker.Core)
-  implementation(project(":library"))
+  implementation(project(":Mobile Consents"))
 }

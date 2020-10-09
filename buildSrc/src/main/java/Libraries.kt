@@ -3,13 +3,13 @@
 
 object Libraries {
   object Android {
-    const val GradlePlugin = "com.android.tools.build:gradle:4.0.1"
+    const val GradlePlugin = "com.android.tools.build:gradle:4.0.2"
 
     const val ApplicationPluginId = "com.android.application"
 
     const val LibraryPluginId = "com.android.library"
 
-    const val CoreKtx = "androidx.core:core-ktx:1.3.1"
+    const val CoreKtx = "androidx.core:core-ktx:1.3.2"
   }
 
   object Kotlin {
@@ -33,7 +33,7 @@ object Libraries {
   }
 
   object Kotest {
-    const val Version = "4.2.3"
+    const val Version = "4.2.6"
 
     const val RunnerJunit5 = "io.kotest:kotest-runner-junit5-jvm:$Version"
 
@@ -41,7 +41,7 @@ object Libraries {
   }
 
   object Detekt {
-    const val Version = "1.13.1"
+    const val Version = "1.14.1"
 
     const val GradlePluginId = "io.gitlab.arturbosch.detekt"
 
@@ -69,7 +69,7 @@ object Libraries {
   }
 
   object Moshi {
-    const val Version = "1.9.3"
+    const val Version = "1.11.0"
 
     const val Core = "com.squareup.moshi:moshi:$Version"
 
@@ -94,7 +94,7 @@ object Libraries {
   }
 
   object Dokka {
-    const val Version = "1.4.0-rc"
+    const val Version = "1.4.0"
 
     const val PluginId = "org.jetbrains.dokka"
 
