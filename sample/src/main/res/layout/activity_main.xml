@@ -6,7 +6,7 @@
   android:layout_height="match_parent"
   android:orientation="vertical"
   android:padding="8dp"
-  tools:context="com.clearcode.mobileconsents.sample.MainActivity">
+  tools:context="com.cookieinformation.mobileconsents.sample.MainActivity">
 
   <TextView
     android:id="@+id/textHeader"
