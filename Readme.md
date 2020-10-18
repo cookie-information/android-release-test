@@ -1,8 +1,21 @@
-# Module Mobile Consents
+# Mobile Consents
 ### Android SDK for easy user consent management.
   
+## Integration  
+To add SDK to your app add dependency in `build.gradle(.kts)` file:
+
+Groovy dsl
+```groovy
+implementation "com.cookieinformation.mobileconsents:0.0.1"
+```  
+
+Kotlin dsl
+```kotlin
+implementation("com.cookieinformation.mobileconsents:0.0.1")
+```
+  
 #### Error Handling
-All exceptions thrown by SDK are wrapped by an `IOException` and passed to the `onFailure`method of a `CallListener` callback.
+All exceptions thrown by SDK are wrapped by an `IOException` and passed to the `onFailure` method of a `CallListener` callback.
   
 #### Async operations
 All SDK's public methods are executed asynchronously, on background thread pool. You should rely on callbacks (`CallListener`) to handle
@@ -34,7 +47,7 @@ val sdk = MobileConsentSdk.Builder(context)
    .build()
 ```
 Note that you have to pass `Context` of your application to the builder.
-The `partnerUrl` parameter defines server where all consents choices will be sent. `callFactory` method is optional - if OkHttp's `Call.Factory` isn't provided, SDK will instantiate it's own.\
+The `partnerUrl` parameter defines server where all consents choices will be sent. `callFactory` method is optional - if OkHttp's [Call.Factory](https://square.github.io/okhttp/3.x/okhttp/okhttp3/Call.Factory.html) isn't provided, SDK will instantiate it's own.
 
 #### Consent Solution downloading
 
@@ -54,6 +67,7 @@ sdk.getConsentSolution(
   }
 );
 ```
+
 #### Kotlin:
 ```kotlin
 sdk.getConsentSolution(
@@ -111,7 +125,7 @@ sdk.postConsent(
 Once a request is successful, all consent choices are stored in SDK's internal storage, as a map of consent item IDs and booleans representing user choices.
 
 #### Reading consent choices
-\
+
 To read consent choices from SDK, use following methods:
 
 To retrieve all consent choices, saved on device memory, use `getConsentChoices` method:
@@ -127,8 +141,9 @@ sdk.getConsentChoices(
       // do something with error
     }
   }
- );    
+ );
 ```
+
 #### Kotlin:
 ```kotlin
 sdk.getConsentChoices(
@@ -160,6 +175,7 @@ sdk.getConsentChoice(
   }
  );    
 ```
+
 #### Kotlin:
 ```kotlin
 sdk.getConsentChoices(

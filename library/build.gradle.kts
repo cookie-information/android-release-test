@@ -2,7 +2,8 @@ plugins {
   id(Libraries.Android.LibraryPluginId)
   kotlin(Libraries.Kotlin.AndroidPluginId)
   kotlin(Libraries.Kotlin.KaptPluginId)
-  id(Libraries.Dokka.PluginId) version Libraries.Dokka.Version
+  id(Libraries.Dokka.PluginId) version Libraries.Kotlin.Version
+  id(Libraries.MavenPublish.PluginId)
 }
 
 android {
@@ -40,11 +41,17 @@ dependencies {
   dokkaHtmlPlugin(Libraries.Dokka.KotlinAsJava)
 }
 
-tasks.dokkaHtml.configure {
+tasks.dokkaJavadoc.configure {
   dokkaSourceSets {
     configureEach {
-      includes.from("SdkDocumentation.md")
       skipEmptyPackages.set(true)
     }
+  }
+}
+
+signing {
+  val signingKey = findProperty("SONATYPE_NEXUS_SIGNING_KEY") as? String ?: ""
+  if (signingKey.isNotEmpty()) {
+    useInMemoryPgpKeys(signingKey, "")
   }
 }

@@ -94,10 +94,14 @@ object Libraries {
   }
 
   object Dokka {
-    const val Version = "1.4.0"
-
     const val PluginId = "org.jetbrains.dokka"
 
-    const val KotlinAsJava = "org.jetbrains.dokka:kotlin-as-java-plugin:$Version"
+    const val KotlinAsJava = "org.jetbrains.dokka:kotlin-as-java-plugin:${Kotlin.Version}"
+  }
+
+  object MavenPublish {
+    const val PluginId = "com.vanniktech.maven.publish"
+
+    const val GradlePlugin = "com.vanniktech:gradle-maven-publish-plugin:0.13.0"
   }
 }

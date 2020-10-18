@@ -20,6 +20,7 @@ buildscript {
   dependencies {
     classpath(Libraries.Android.GradlePlugin)
     classpath(Libraries.Kotlin.GradlePlugin)
+    classpath(Libraries.MavenPublish.GradlePlugin)
     classpath(Libraries.Detekt.GradlePlugin)
     classpath(Libraries.GradleVersions.GradlePlugin)
   }
@@ -70,22 +71,14 @@ allprojects {
         versionCode = Build.VersionCode
         versionName = "0.0.1"
       }
-
-      flavorDimensions("environment")
-
-      productFlavors {
-        register("staging") {
-          buildConfigField("String", "BASE_URL", """"https://cdnapi-staging.azureedge.net/v1/"""")
-        }
-
+      buildTypes {
         // TODO Add proper url once it will be ready
-        register("production") {
+        named("release") {
           buildConfigField("String", "BASE_URL", """"https://cdnapi-staging.azureedge.net/v1/"""")
         }
-      }
-
-      variantFilter {
-        ignore = name == "productionDebug"
+        named("debug") {
+          buildConfigField("String", "BASE_URL", """"https://cdnapi-staging.azureedge.net/v1/"""")
+        }
       }
     }
 
