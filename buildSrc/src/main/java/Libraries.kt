@@ -24,6 +24,8 @@ object Libraries {
     const val AndroidExtensionsPluginId = "android.extensions"
 
     const val KaptPluginId = "kapt"
+
+    const val DokkaGradlePlugin = "org.jetbrains.dokka:dokka-gradle-plugin:$Version"
   }
 
   object Coroutines {

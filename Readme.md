@@ -6,12 +6,12 @@ To add SDK to your app add dependency in `build.gradle(.kts)` file:
 
 Groovy dsl
 ```groovy
-implementation "com.cookieinformation.mobileconsents:0.0.1"
+implementation "com.cookieinformation:mobileconsents:0.0.1"
 ```  
 
 Kotlin dsl
 ```kotlin
-implementation("com.cookieinformation.mobileconsents:0.0.1")
+implementation("com.cookieinformation:mobileconsents:0.0.1")
 ```
   
 #### Error Handling
