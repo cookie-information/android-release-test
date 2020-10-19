@@ -1,17 +1,18 @@
+[![Maven Central](https://img.shields.io/maven-central/v/com.cookieinformation/mobileconsents.svg?label=latest%20release)](https://search.maven.org/artifact/com.cookieinformation/mobileconsents)
 # Mobile Consents
 ### Android SDK for easy user consent management.
-  
+
 ## Integration  
 To add SDK to your app add dependency in `build.gradle(.kts)` file:
 
-Groovy dsl
+Groovy DSL
 ```groovy
-implementation "com.cookieinformation:mobileconsents:0.0.1"
+implementation "com.cookieinformation:mobileconsents:<latest_release>"
 ```  
 
-Kotlin dsl
+Kotlin DSL
 ```kotlin
-implementation("com.cookieinformation:mobileconsents:0.0.1")
+implementation("com.cookieinformation:mobileconsents:<latest_release>")
 ```
   
 #### Error Handling
