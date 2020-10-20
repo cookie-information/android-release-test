@@ -21,7 +21,8 @@ All exceptions thrown by SDK are wrapped by an `IOException` and passed to the `
 #### Async operations
 All SDK's public methods are executed asynchronously, on background thread pool. You should rely on callbacks (`CallListener`) to handle
 operation results. You can easily wrap those callbacks with Coroutines / LiveData / RxJava etc, if you use any of them. Note that if you want
-to process result on the main thread (update UI etc.) you have to switch the thread yourself.
+to process result on the main thread (update UI etc.) you have to switch the thread yourself. Every method of the SDK returns a `Subscription`
+object, which you can use to cancel the ongoing request (see the `Async operation cancelling` section).
   
 #### Dependencies: 
 SDK exposes [OkHttp](https://square.github.io/okhttp/) in its API. 
@@ -48,7 +49,7 @@ val sdk = MobileConsentSdk.Builder(context)
    .build()
 ```
 Note that you have to pass `Context` of your application to the builder.
-The `partnerUrl` parameter defines server where all consents choices will be sent. `callFactory` method is optional - if OkHttp's [Call.Factory](https://square.github.io/okhttp/3.x/okhttp/okhttp3/Call.Factory.html) isn't provided, SDK will instantiate it's own.
+The `partnerUrl` parameter defines server where all consents choices will be sent. `callFactory` method is optional - if OkHttp's [Call.Factory](https://square.github.io/okhttp/4.x/okhttp/okhttp3/-call/-factory/) isn't provided, SDK will instantiate it's own.
 
 #### Consent Solution downloading
 
@@ -191,4 +192,43 @@ sdk.getConsentChoices(
     }
   }
 )
+```
+
+#### Async operation cancelling
+
+Use `Subscription` object returned from every SDKs method.
+#### Java:
+```java
+Subscription subscription = sdk.getConsentChoice(
+  consentItemId, // UUID of consent item 
+  new CallListener<Boolean>() {
+    @Override public void onSuccess(@NotNull Boolean result) {
+      // do something with result
+    }
+
+    @Override public void onFailure(@NotNull IOException error) {
+      // do something with error
+    }
+  }
+ );   
+
+subscription.cancel(); 
+```
+
+#### Kotlin:
+```kotlin
+val subscription = sdk.getConsentChoices(
+  consentItemId = consentItemId, // UUID of consent item 
+  listener = object : CallListener<Boolean> {
+    override fun onSuccess(result: Boolean) {
+        // do something with result
+    }
+
+    override fun onFailure(error: IOException) {
+        // do something with error
+    }
+  }
+)
+
+subscription.cancel()
 ```

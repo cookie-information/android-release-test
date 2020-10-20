@@ -95,12 +95,6 @@ object Libraries {
     const val Core = "com.github.chuckerteam.chucker:library:3.3.0"
   }
 
-  object Dokka {
-    const val PluginId = "org.jetbrains.dokka"
-
-    const val KotlinAsJava = "org.jetbrains.dokka:kotlin-as-java-plugin:${Kotlin.Version}"
-  }
-
   object MavenPublish {
     const val PluginId = "com.vanniktech.maven.publish"
 
