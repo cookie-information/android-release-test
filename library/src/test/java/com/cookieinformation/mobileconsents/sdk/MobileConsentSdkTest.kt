@@ -153,7 +153,7 @@ internal fun Class<*>.getResourceAsString(path: String) = getResourceAsStream(pa
 
 internal suspend fun MobileConsentSdk.getConsentSuspending(consentId: UUID): ConsentSolution =
   suspendCoroutine { continuation ->
-    getConsentSolution(
+    fetchConsentSolution(
       consentSolutionId = consentId,
       listener = object : CallListener<ConsentSolution> {
         override fun onSuccess(result: ConsentSolution) {
@@ -185,7 +185,7 @@ internal suspend fun MobileConsentSdk.postConsentSuspending(consent: Consent) =
 
 internal suspend fun MobileConsentSdk.getConsentChoicesSuspending() =
   suspendCoroutine<Map<UUID, Boolean>> { continuation ->
-    getConsentChoices(
+    getSavedConsents(
       listener = object : CallListener<Map<UUID, Boolean>> {
         override fun onSuccess(result: Map<UUID, Boolean>) {
           continuation.resumeWith(Result.success(result))
@@ -200,7 +200,7 @@ internal suspend fun MobileConsentSdk.getConsentChoicesSuspending() =
 
 internal suspend fun MobileConsentSdk.getConsentChoiceSuspending(consentId: UUID) =
   suspendCoroutine<Boolean> { continuation ->
-    getConsentChoice(
+    getSavedConsent(
       consentItemId = consentId,
       listener = object : CallListener<Boolean> {
         override fun onSuccess(result: Boolean) {

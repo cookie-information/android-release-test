@@ -1,6 +1,6 @@
 package com.cookieinformation.mobileconsents.networking.response
 
-import com.cookieinformation.mobileconsents.Translation
+import com.cookieinformation.mobileconsents.ConsentTranslation
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -11,7 +11,7 @@ internal data class TranslationResponse(
   @Json(name = "shortText") val shortText: String
 )
 
-internal fun TranslationResponse.toDomain() = Translation(
+internal fun TranslationResponse.toDomain() = ConsentTranslation(
   language = language,
   longText = longText,
   shortText = shortText

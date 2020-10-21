@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
   private fun fetchConsentSolution(consentId: UUID) {
     setupData(null)
-    sdk.getConsentSolution(
+    sdk.fetchConsentSolution(
       consentSolutionId = consentId,
       listener = object : CallListener<ConsentSolution> {
         override fun onSuccess(result: ConsentSolution) {

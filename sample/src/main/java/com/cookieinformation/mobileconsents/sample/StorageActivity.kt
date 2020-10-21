@@ -32,7 +32,7 @@ class StorageActivity : AppCompatActivity(R.layout.activity_storage) {
   }
 
   private fun fetchStorageItems() {
-    sdk.getConsentChoices(
+    sdk.getSavedConsents(
       listener = object : CallListener<Map<UUID, Boolean>> {
         override fun onSuccess(result: Map<UUID, Boolean>) {
           storageAdapter.submitList(result.map { StorageItem(it.key, it.value) })

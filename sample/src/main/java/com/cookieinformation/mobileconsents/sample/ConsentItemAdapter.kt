@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.cookieinformation.mobileconsents.ConsentItem
-import com.cookieinformation.mobileconsents.Translation
+import com.cookieinformation.mobileconsents.ConsentTranslation
 import kotlinx.android.synthetic.main.item_consent.view.container
 import kotlinx.android.synthetic.main.item_consent.view.switchConsent
 import kotlinx.android.synthetic.main.item_consent.view.textConsentId
@@ -73,7 +73,7 @@ private object ConsentItemDiffCallback : DiffUtil.ItemCallback<ConsentChoice>() 
 }
 
 data class ConsentChoice(
-  val translation: Translation,
+  val translation: ConsentTranslation,
   val itemId: UUID,
   val choice: Boolean,
 )

@@ -42,7 +42,7 @@ public class MobileConsentSdk internal constructor(
    * @param listener listener for success/failure of operation.
    * @returns [Subscription] an object allowing for call cancellation.
    */
-  public fun getConsentSolution(consentSolutionId: UUID, listener: CallListener<ConsentSolution>): Subscription {
+  public fun fetchConsentSolution(consentSolutionId: UUID, listener: CallListener<ConsentSolution>): Subscription {
     val job = scope.launch {
       try {
         val call = consentClient.getConsentSolution(consentSolutionId)
@@ -89,7 +89,7 @@ public class MobileConsentSdk internal constructor(
    * @param listener listener for success/failure of operation.
    * @return [Subscription] object allowing for call cancellation.
    */
-  public fun getConsentChoices(listener: CallListener<Map<UUID, Boolean>>): Subscription {
+  public fun getSavedConsents(listener: CallListener<Map<UUID, Boolean>>): Subscription {
     val job = scope.launch {
       try {
         listener.onSuccess(consentStorage.getAllConsentChoices())
@@ -108,7 +108,7 @@ public class MobileConsentSdk internal constructor(
    * @param listener listener for success/failure of operation.
    * @return [Subscription] object allowing for call cancellation.
    */
-  public fun getConsentChoice(consentItemId: UUID, listener: CallListener<Boolean>): Subscription {
+  public fun getSavedConsent(consentItemId: UUID, listener: CallListener<Boolean>): Subscription {
     val job = scope.launch {
       try {
         listener.onSuccess(consentStorage.getConsentChoice(consentItemId))

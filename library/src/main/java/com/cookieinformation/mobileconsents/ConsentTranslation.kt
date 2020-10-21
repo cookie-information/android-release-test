@@ -6,7 +6,7 @@ package com.cookieinformation.mobileconsents
  * @param shortText consent's short explanation.
  * @param longText consent's detailed explanation.
  */
-public data class Translation(
+public data class ConsentTranslation(
   val language: String,
   val longText: String,
   val shortText: String

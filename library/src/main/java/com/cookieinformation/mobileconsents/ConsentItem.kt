@@ -9,5 +9,5 @@ import java.util.UUID
  */
 public data class ConsentItem(
   val consentItemId: UUID,
-  val translations: List<Translation>
+  val translations: List<ConsentTranslation>
 )

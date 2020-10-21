@@ -27,9 +27,9 @@ object, which you can use to cancel the ongoing request (see the `Async operatio
 #### Dependencies: 
 SDK exposes [OkHttp](https://square.github.io/okhttp/) in its API. 
   
-### Example usage:
+### Using the SDK:
 
-#### Obtaining SDK instance
+#### Initializing
 
 To instantiate SDK use `Builder` static method of `MobileConsentSdk` class:
 
@@ -48,15 +48,37 @@ val sdk = MobileConsentSdk.Builder(context)
    .callFactory(OkHttpClient())
    .build()
 ```
-Note that you have to pass `Context` of your application to the builder.
+Note that you have to pass `Context` of your Application/Activity to the builder.
 The `partnerUrl` parameter defines server where all consents choices will be sent. `callFactory` method is optional - if OkHttp's [Call.Factory](https://square.github.io/okhttp/4.x/okhttp/okhttp3/-call/-factory/) isn't provided, SDK will instantiate it's own.
 
-#### Consent Solution downloading
+#### Getting consent solution
 
-To fetch `ConsentSolution` from server, use `getConsentSolution` method:
+To fetch `ConsentSolution` from server, use `fetchConsentSolution` method:
+
+ConsentSolution object structure:
+```kotlin
+// ConsentSolution object structure
+public data class ConsentSolution(
+  val consentItems: List<ConsentItem>,
+  val consentSolutionId: UUID,
+  val consentSolutionVersionId: UUID
+)
+
+public data class ConsentItem(
+  val consentItemId: UUID,
+  val translations: List<Translation>
+)
+
+public data class ConsentTranslation(
+  val language: String,
+  val longText: String,
+  val shortText: String
+)
+```
+
 #### Java:
 ```java
-sdk.getConsentSolution(
+sdk.fetchConsentSolution(
   consenSolutiontId, // UUID of consent solution
   new CallListener<ConsentSolution>() {
     @Override public void onSuccess(ConsentSolution result) {
@@ -72,7 +94,7 @@ sdk.getConsentSolution(
 
 #### Kotlin:
 ```kotlin
-sdk.getConsentSolution(
+sdk.fetchConsentSolution(
   consentSolutionId = consentSolutionId, // UUID of consent solution
   listener = object : CallListener<ConsentSolution> {
     override fun onSuccess(result: ConsentSolution) {
@@ -87,9 +109,28 @@ sdk.getConsentSolution(
 ```
 After downloading a solution, you can show all consent items to the user and obtain their choices.
 
-#### Uploading consent choices to a server
+#### Sending consent to a server
 
-SDK requires you to gather all consent choices in one `Consent` object. To see its exact structure, see Kdoc of this class. A `Consent` object can also store any additional info you want - in a form of a `Map<String, String>` map.
+SDK requires you to gather all consent choices in one `Consent` object. : 
+```kotlin
+public data class Consent(
+  val consentSolutionId: UUID,
+  val consentSolutionVersionId: UUID,
+  val processingPurposes: List<ProcessingPurpose>,
+  val customData: Map<String, String>,
+)
+```
+
+Inside, you can pass a list of `ProcessingPurpose` - user consents:
+```kotlin
+public data class ProcessingPurpose(
+  val consentItemId: UUID,
+  val consentGiven: Boolean,
+  val language: String
+)
+```
+
+A `Consent` object can also store any additional info you want - in a form of a `Map<String, String>` map.
 
 To post `Consent` to a server, use `postConsent` method:
 
@@ -126,14 +167,14 @@ sdk.postConsent(
 ```
 Once a request is successful, all consent choices are stored in SDK's internal storage, as a map of consent item IDs and booleans representing user choices.
 
-#### Reading consent choices
+#### Getting locally saved consent data
 
 To read consent choices from SDK, use following methods:
 
 To retrieve all consent choices, saved on device memory, use `getConsentChoices` method:
 #### Java:
 ```java
-sdk.getConsentChoices(
+sdk.getSavedConsents(
   new CallListener<Map<UUID, Boolean>>() {
     @Override public void onSuccess(@NotNull Map<UUID, Boolean> result) {
       // do something with result
@@ -148,7 +189,7 @@ sdk.getConsentChoices(
 
 #### Kotlin:
 ```kotlin
-sdk.getConsentChoices(
+sdk.getSavedConsents(
   listener = object : CallListener<Map<UUID, Boolean>> {
     override fun onSuccess(result: Map<UUID, Boolean>) {
         // do something with result
@@ -164,7 +205,7 @@ sdk.getConsentChoices(
 To retrieve specific consent choice, use `getConsentChoice` method and pass id of `ConsentItem`:
 #### Java:
 ```java
-sdk.getConsentChoice(
+sdk.getSavedConsent(
   consentItemId, // UUID of consent item 
   new CallListener<Boolean>() {
     @Override public void onSuccess(@NotNull Boolean result) {
@@ -180,7 +221,7 @@ sdk.getConsentChoice(
 
 #### Kotlin:
 ```kotlin
-sdk.getConsentChoices(
+sdk.getSavedConsent(
   consentItemId = consentItemId, // UUID of consent item 
   listener = object : CallListener<Boolean> {
     override fun onSuccess(result: Boolean) {
