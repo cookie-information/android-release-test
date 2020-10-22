@@ -130,7 +130,7 @@ public data class ProcessingPurpose(
 )
 ```
 
-A `Consent` object can also store any additional info you want - in a form of a `Map<String, String>` map.
+A `Consent` object can also store any additional info you want - in a form of a `Map<String, String>` map as a `customData` field.
 
 To post `Consent` to a server, use `postConsent` method:
 
