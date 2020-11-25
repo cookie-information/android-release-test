@@ -73,9 +73,8 @@ allprojects {
         versionName = "0.0.1"
       }
       buildTypes {
-        // TODO Add proper url once it will be ready
         named("release") {
-          buildConfigField("String", "BASE_URL", """"https://cdnapi-staging.azureedge.net/v1/"""")
+          buildConfigField("String", "BASE_URL", """"https://cdnapi-prod.azureedge.net/v1/"""")
         }
         named("debug") {
           buildConfigField("String", "BASE_URL", """"https://cdnapi-staging.azureedge.net/v1/"""")
