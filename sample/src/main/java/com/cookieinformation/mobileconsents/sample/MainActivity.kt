@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import com.cookieinformation.mobileconsents.CallListener
 import com.cookieinformation.mobileconsents.Consent
+import com.cookieinformation.mobileconsents.ConsentItem
 import com.cookieinformation.mobileconsents.ConsentSolution
 import com.cookieinformation.mobileconsents.MobileConsentSdk
 import com.cookieinformation.mobileconsents.ProcessingPurpose
@@ -126,7 +127,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     consentSolution = fetchedConsent
     consentItemChoices.clear()
     fetchedConsent?.consentItems?.forEach {
-      consentItemChoices[it.consentItemId] = false
+      consentItemChoices[it.consentItemId] = it.type == ConsentItem.Type.Info
     }
     buttonSend.isEnabled = fetchedConsent != null
     consentItemAdapter.submitList(fetchedConsent?.consentItems, textLanguage.text.toString())

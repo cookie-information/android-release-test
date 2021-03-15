@@ -12,7 +12,9 @@ import kotlinx.android.synthetic.main.item_consent.view.container
 import kotlinx.android.synthetic.main.item_consent.view.switchConsent
 import kotlinx.android.synthetic.main.item_consent.view.textConsentId
 import kotlinx.android.synthetic.main.item_consent.view.textConsentLongText
+import kotlinx.android.synthetic.main.item_consent.view.textConsentRequired
 import kotlinx.android.synthetic.main.item_consent.view.textConsentShortText
+import kotlinx.android.synthetic.main.item_consent.view.textConsentType
 import java.util.UUID
 
 class ConsentItemAdapter(
@@ -33,11 +35,14 @@ class ConsentItemAdapter(
   private fun List<ConsentItem>.mapToAdapterItem(preferredTranslation: String) = map {
     val preferredLanguageCode = preferredTranslation.toUpperCase()
     val translation =
-      it.translations.firstOrNull { it.language == preferredLanguageCode } ?: it.translations.first()
+      it.translations.firstOrNull { it.languageCode == preferredLanguageCode } ?: it.translations.first()
     ConsentChoice(
       translation = translation,
-      choice = false,
-      itemId = it.consentItemId
+      choice = it.type == ConsentItem.Type.Info,
+      enableChoice = it.type == ConsentItem.Type.Setting,
+      itemId = it.consentItemId,
+      type = it.type.toString(),
+      required = it.required.toString()
     )
   }
 }
@@ -52,7 +57,10 @@ class ConsentItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
       textConsentId.text = consentItem.itemId.toString()
       textConsentShortText.text = consentItem.translation.shortText
       textConsentLongText.text = consentItem.translation.longText
+      textConsentType.text = consentItem.type
+      textConsentRequired.text = consentItem.required
       switchConsent.isChecked = consentItem.choice
+      switchConsent.isEnabled = consentItem.enableChoice
       container.setOnClickListener {
         switchConsent.toggle()
       }
@@ -76,4 +84,7 @@ data class ConsentChoice(
   val translation: ConsentTranslation,
   val itemId: UUID,
   val choice: Boolean,
+  val enableChoice: Boolean,
+  val type: String,
+  val required: String
 )

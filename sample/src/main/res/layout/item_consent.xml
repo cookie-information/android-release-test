@@ -81,5 +81,43 @@
       app:layout_constraintTop_toBottomOf="@id/textConsentLongTextLabel"
       tools:text="@tools:sample/lorem" />
 
+    <TextView
+      android:id="@+id/textConsentTypeLabel"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/text_consent_type_label"
+      android:textSize="18sp"
+      android:textStyle="bold"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/textConsentLongText" />
+
+    <TextView
+      android:id="@+id/textConsentType"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="8dp"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/textConsentTypeLabel"
+      tools:text="Setting" />
+
+    <TextView
+      android:id="@+id/textConsentRequiredLabel"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/text_consent_required_label"
+      android:textSize="18sp"
+      android:textStyle="bold"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/textConsentType" />
+
+    <TextView
+      android:id="@+id/textConsentRequired"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="8dp"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/textConsentRequiredLabel"
+      tools:text="required" />
+
   </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

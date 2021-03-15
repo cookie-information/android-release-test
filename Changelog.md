@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Added `required` and `type` fields in `ConsentItem`.
+- Added support for suggested texts for use in the user interface.
+
+### Changed
+
 ## v0.1.1 - 2020-11-26
 
 ### Added

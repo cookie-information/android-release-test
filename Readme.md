@@ -61,12 +61,15 @@ ConsentSolution object structure:
 public data class ConsentSolution(
   val consentItems: List<ConsentItem>,
   val consentSolutionId: UUID,
-  val consentSolutionVersionId: UUID
+  val consentSolutionVersionId: UUID,
+  val uiTexts: UiTexts
 )
 
 public data class ConsentItem(
   val consentItemId: UUID,
-  val translations: List<Translation>
+  val translations: List<ConsentTranslation>,
+  val required: Boolean,
+  val type: Type, // Setting, Info
 )
 
 public data class ConsentTranslation(
@@ -74,6 +77,12 @@ public data class ConsentTranslation(
   val longText: String,
   val shortText: String
 )
+
+public data class TextTranslation(
+  val languageCode: String,
+  val text: String
+)
+
 ```
 
 #### Java:
@@ -272,4 +281,29 @@ val subscription = sdk.getConsentChoices(
 )
 
 subscription.cancel()
+```
+
+#### UI template texts
+The response from the server `ConsentSolution` also includes suggested texts to be used in the user interface.
+There are two screens considered:
+ - **PrivacyPreferences**: The screen where the user accepts consents when using the application for the first time or registering an account.
+ - **PrivacyCenter**: The screen where the user can change his consents, usually displayed in the application preferences.
+
+```kotlin
+public data class UiTexts(
+  val privacyPreferencesTitle: List<TextTranslation>,
+  val privacyPreferencesDescription: List<TextTranslation>,
+  val privacyPreferencesTabLabel: List<TextTranslation>,
+
+  val privacyCenterButton: List<TextTranslation>,
+  val acceptAllButton: List<TextTranslation>,
+  val rejectAllButton: List<TextTranslation>,
+  val acceptSelectedButton: List<TextTranslation>,
+  val savePreferencesButton: List<TextTranslation>,
+
+  val privacyCenterTitle: List<TextTranslation>,
+
+  val poweredByLabel: List<TextTranslation>,
+  val consentPreferencesLabel: List<TextTranslation>
+)
 ```
