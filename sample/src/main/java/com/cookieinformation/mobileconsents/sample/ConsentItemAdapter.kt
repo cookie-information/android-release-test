@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.cookieinformation.mobileconsents.ConsentItem
-import com.cookieinformation.mobileconsents.ConsentTranslation
+import com.cookieinformation.mobileconsents.TextTranslation
 import kotlinx.android.synthetic.main.item_consent.view.container
 import kotlinx.android.synthetic.main.item_consent.view.switchConsent
 import kotlinx.android.synthetic.main.item_consent.view.textConsentId
@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.item_consent.view.textConsentLongText
 import kotlinx.android.synthetic.main.item_consent.view.textConsentRequired
 import kotlinx.android.synthetic.main.item_consent.view.textConsentShortText
 import kotlinx.android.synthetic.main.item_consent.view.textConsentType
+import java.util.Locale
 import java.util.UUID
 
 class ConsentItemAdapter(
@@ -33,11 +34,12 @@ class ConsentItemAdapter(
   }
 
   private fun List<ConsentItem>.mapToAdapterItem(preferredTranslation: String) = map {
-    val preferredLanguageCode = preferredTranslation.toUpperCase()
-    val translation =
-      it.translations.firstOrNull { it.languageCode == preferredLanguageCode } ?: it.translations.first()
+    val preferredLocaleList = listOf(
+      Locale(if (preferredTranslation.isBlank()) "en" else preferredTranslation.trim().toLowerCase())
+    )
     ConsentChoice(
-      translation = translation,
+      shortText = TextTranslation.getTranslationFor(it.shortText, preferredLocaleList),
+      longText = TextTranslation.getTranslationFor(it.longText, preferredLocaleList),
       choice = it.type == ConsentItem.Type.Info,
       enableChoice = it.type == ConsentItem.Type.Setting,
       itemId = it.consentItemId,
@@ -55,8 +57,8 @@ class ConsentItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
   ) {
     with(itemView) {
       textConsentId.text = consentItem.itemId.toString()
-      textConsentShortText.text = consentItem.translation.shortText
-      textConsentLongText.text = consentItem.translation.longText
+      textConsentShortText.text = consentItem.shortText
+      textConsentLongText.text = consentItem.longText
       textConsentType.text = consentItem.type
       textConsentRequired.text = consentItem.required
       switchConsent.isChecked = consentItem.choice
@@ -77,11 +79,12 @@ private object ConsentItemDiffCallback : DiffUtil.ItemCallback<ConsentChoice>() 
     oldItem.itemId == newItem.itemId
 
   override fun areContentsTheSame(oldItem: ConsentChoice, newItem: ConsentChoice) =
-    oldItem.translation == newItem.translation && oldItem.choice == newItem.choice
+    oldItem == newItem
 }
 
 data class ConsentChoice(
-  val translation: ConsentTranslation,
+  val shortText: String,
+  val longText: String,
   val itemId: UUID,
   val choice: Boolean,
   val enableChoice: Boolean,

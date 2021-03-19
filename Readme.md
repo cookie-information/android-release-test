@@ -67,15 +67,10 @@ public data class ConsentSolution(
 
 public data class ConsentItem(
   val consentItemId: UUID,
-  val translations: List<ConsentTranslation>,
+  val shortText: List<TextTranslation>,
+  val longText: List<TextTranslation>,
   val required: Boolean,
   val type: Type, // Setting, Info
-)
-
-public data class ConsentTranslation(
-  val language: String,
-  val longText: String,
-  val shortText: String
 )
 
 public data class TextTranslation(
@@ -307,3 +302,6 @@ public data class UiTexts(
   val consentPreferencesLabel: List<TextTranslation>
 )
 ```
+
+##### Text translations
+There is static helper method `TextTranslation.getTranslationFor(...)` which returns the best matching translation for given locals list.

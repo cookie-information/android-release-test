@@ -1,6 +1,7 @@
 package com.cookieinformation.mobileconsents.networking.response
 
 import com.cookieinformation.mobileconsents.ConsentItem
+import com.cookieinformation.mobileconsents.TextTranslation
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.util.UUID
@@ -16,12 +17,21 @@ internal data class ItemResponse(
   @Json(name = "type") val type: String
 )
 
-internal fun ItemResponse.toDomain() = ConsentItem(
-  translations = translations.map(ConsentTranslationResponse::toDomain),
-  consentItemId = consentItemId,
-  required = required,
-  type = type.toDomainItemType()
-)
+internal fun ItemResponse.toDomain(): ConsentItem {
+  val shortText = mutableListOf<TextTranslation>()
+  val longText = mutableListOf<TextTranslation>()
+  for (consentTranslation in translations) {
+    shortText.add(TextTranslation(consentTranslation.language, consentTranslation.shortText))
+    longText.add(TextTranslation(consentTranslation.language, consentTranslation.longText))
+  }
+  return ConsentItem(
+    shortText = shortText,
+    longText = longText,
+    consentItemId = consentItemId,
+    required = required,
+    type = type.toDomainItemType()
+  )
+}
 
 private fun String.toDomainItemType(): ConsentItem.Type =
   when (this) {

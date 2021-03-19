@@ -1,5 +1,7 @@
 package com.cookieinformation.mobileconsents
 
+import java.util.Locale
+
 /**
  * Translation of [ConsentItem], with short and long text of consent (one of them cannot be empty).
  * @param languageCode code of transaction's language, e.g. "EN",
@@ -8,4 +10,42 @@ package com.cookieinformation.mobileconsents
 public data class TextTranslation(
   val languageCode: String,
   val text: String
-)
+) {
+
+  public companion object {
+
+    @JvmField
+    internal val DefaultLocale = Locale("en")
+
+    /**
+     * Finds the best matching translation for given list of locales.
+     *
+     * The function returns:
+     * - First matching translation for locale's language if there is one.
+     * - English translation if available.
+     * - An empty string otherwise.
+     *
+     * @param translations List of [TextTranslation].
+     * @param preferredLocales List of preferred locales. The first one has the biggest priority.
+     * @return The best matching translation
+     */
+    @JvmStatic
+    public fun getTranslationFor(translations: List<TextTranslation>, preferredLocales: List<Locale>): String {
+      if (translations.isEmpty()) return ""
+
+      var translation: TextTranslation? = null
+      for (locale in preferredLocales) {
+        val languageCode = locale.language
+        translation = translations.firstOrNull {
+          Locale(it.languageCode).language.equals(languageCode, ignoreCase = true)
+        }
+        if (translation != null) break
+      }
+      if (translation == null) translation =
+        translations.firstOrNull {
+          Locale(it.languageCode).language.equals(DefaultLocale.language, ignoreCase = true)
+        }
+      return translation?.text.orEmpty()
+    }
+  }
+}

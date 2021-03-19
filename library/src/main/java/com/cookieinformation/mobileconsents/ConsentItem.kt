@@ -1,5 +1,6 @@
 package com.cookieinformation.mobileconsents
 
+import com.cookieinformation.mobileconsents.ConsentItem.Type
 import java.util.UUID
 
 /**
@@ -8,13 +9,15 @@ import java.util.UUID
  * All items with type [ConsentItem.Type.Setting] are required and should be accepted by default.
  *
  * @param consentItemId [UUID] of consent item.
- * @param translations list of all available translations.
+ * @param shortText list of all available translations for brief description of the consent.
+ * @param longText list of all available translations for full description of the consent.
  * @param required true if uses must accept the consent, otherwise false.
- * @param required true if uses must accept the consent, otherwise false.
+ * @param type [Type] of the consent.
  */
 public data class ConsentItem(
   val consentItemId: UUID,
-  val translations: List<ConsentTranslation>,
+  val shortText: List<TextTranslation>,
+  val longText: List<TextTranslation>,
   val required: Boolean,
   val type: Type,
 ) {
