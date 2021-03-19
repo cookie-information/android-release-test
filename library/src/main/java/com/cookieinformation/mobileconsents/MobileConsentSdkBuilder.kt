@@ -14,7 +14,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import java.io.File
 
-private const val storageFileName = "storage.txt"
+private const val storageFileName = "mobileconsents_storage.txt"
 
 /**
  * Builder for SDK instances. The builder is implementation of Fluent Builder Patternt,
@@ -69,9 +69,9 @@ public class MobileConsentSdkBuilder internal constructor(
       moshi = moshi
     )
     val consentStorage = ConsentStorage(Mutex, storageFile, MoshiFileHandler(moshi))
-
     return MobileConsentSdk(consentClient, consentStorage, applicationProperties, Dispatchers.IO)
   }
+
   private companion object {
     /**
      *  Global Mutex, used for synchronization of writing data to the storage, shared across all SDK instances.

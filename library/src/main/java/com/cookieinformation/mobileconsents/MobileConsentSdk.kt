@@ -11,9 +11,7 @@ import com.cookieinformation.mobileconsents.networking.response.toDomain
 import com.cookieinformation.mobileconsents.storage.ConsentStorage
 import com.cookieinformation.mobileconsents.system.ApplicationProperties
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.UUID
 
@@ -22,7 +20,6 @@ import java.util.UUID
  * @param consentClient wrapper over [OkHttpClient], enabling for fetching and posting consents.
  * @param consentStorage storage saving all consent choices to local file.
  * @param applicationProperties information about app using SDK, required for sending consent to server.
- * @param dispatcher used for all async operations.
  *
  * For SDK instantiating use [MobileConsentSdk.Builder] static function.
  */
@@ -31,95 +28,50 @@ public class MobileConsentSdk internal constructor(
   private val consentClient: ConsentClient,
   private val consentStorage: ConsentStorage,
   private val applicationProperties: ApplicationProperties,
-  dispatcher: CoroutineDispatcher
+  private val dispatcher: CoroutineDispatcher
 ) {
-
-  private val scope = CoroutineScope(dispatcher + SupervisorJob())
 
   /**
    * Obtain [ConsentSolution] from CDN server.
    * @param consentSolutionId UUID identifier of consent.
-   * @param listener listener for success/failure of operation.
-   * @returns [Subscription] an object allowing for call cancellation.
+   * @returns [ConsentSolution] obtained CDN from server.
+   * @throws [IOException] in case of any error.
    */
-  public fun fetchConsentSolution(consentSolutionId: UUID, listener: CallListener<ConsentSolution>): Subscription {
-    val job = scope.launch {
-      try {
-        val call = consentClient.getConsentSolution(consentSolutionId)
-        val responseBody = call.enqueueSuspending()
-        val adapter = ConsentSolutionResponseJsonAdapter(moshi)
-        val result = adapter.parseFromResponseBody(responseBody)
-        listener.onSuccess(result.toDomain())
-      } catch (error: IOException) {
-        listener.onFailure(error)
-      }
-    }
-
-    return object : Subscription {
-      override fun cancel() = job.cancel()
-    }
+  public suspend fun fetchConsentSolution(consentSolutionId: UUID): ConsentSolution = withContext(dispatcher) {
+    val call = consentClient.getConsentSolution(consentSolutionId)
+    val responseBody = call.enqueueSuspending()
+    val adapter = ConsentSolutionResponseJsonAdapter(moshi)
+    adapter.parseFromResponseBody(responseBody).toDomain()
   }
 
   /**
    * Post [Consent] to server specified by url in SDK's builder.
    * @param consent consent object.
-   * @param listener listener for success/failure of operation.
-   * @returns [Subscription] object allowing for call cancellation.
+   * @throws [IOException] in case of any error.
    */
-  public fun postConsent(consent: Consent, listener: CallListener<Unit>): Subscription {
-    val job = scope.launch {
-      try {
-        val userId = consentStorage.getUserId()
-        val call = consentClient.postConsent(consent, userId, applicationProperties)
-        call.enqueueSuspending().closeQuietly()
-        consentStorage.storeConsentChoices(consent.processingPurposes)
-        listener.onSuccess(Unit)
-      } catch (e: IOException) {
-        listener.onFailure(e)
-      }
-    }
-
-    return object : Subscription {
-      override fun cancel() = job.cancel()
-    }
+  public suspend fun postConsent(consent: Consent): Unit = withContext(dispatcher) {
+    val userId = consentStorage.getUserId()
+    val call = consentClient.postConsent(consent, userId, applicationProperties)
+    call.enqueueSuspending().closeQuietly()
+    consentStorage.storeConsentChoices(consent.processingPurposes)
   }
 
   /**
-   * Obtain past consent choices stored on device memory. Returns Map of ConsentItem id and choice in a form of Boolean.
-   * @param listener listener for success/failure of operation.
-   * @return [Subscription] object allowing for call cancellation.
+   * Obtain past consent choices stored on device memory.
+   * @return returns Map of ConsentItem id and choice in a form of Boolean
+   * @throws [IOException] in case of any error.
    */
-  public fun getSavedConsents(listener: CallListener<Map<UUID, Boolean>>): Subscription {
-    val job = scope.launch {
-      try {
-        listener.onSuccess(consentStorage.getAllConsentChoices())
-      } catch (e: IOException) {
-        listener.onFailure(e)
-      }
-    }
-
-    return object : Subscription {
-      override fun cancel() = job.cancel()
-    }
+  public suspend fun getSavedConsents(): Map<UUID, Boolean> = withContext(dispatcher) {
+    consentStorage.getAllConsentChoices()
   }
 
   /**
-   * Obtain specific Consent choice stored on device memory. If choice is not stored in memory, this will return `false`.
-   * @param listener listener for success/failure of operation.
-   * @return [Subscription] object allowing for call cancellation.
+   * Obtain specific Consent choice stored on device memory.
+   * @return a value of user choice. If choice is not stored in memory, this will return `false`.
+   * @throws [IOException] in case of any error.
    */
-  public fun getSavedConsent(consentItemId: UUID, listener: CallListener<Boolean>): Subscription {
-    val job = scope.launch {
-      try {
-        listener.onSuccess(consentStorage.getConsentChoice(consentItemId))
-      } catch (e: IOException) {
-        listener.onFailure(e)
-      }
-    }
-
-    return object : Subscription {
-      override fun cancel() = job.cancel()
-    }
+  public suspend fun getSavedConsent(consentItemId: UUID): Boolean = withContext(dispatcher) {
+    consentStorage.getConsentChoice(consentItemId)
   }
 
   public companion object {

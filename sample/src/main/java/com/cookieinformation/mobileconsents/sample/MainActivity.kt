@@ -2,11 +2,10 @@ package com.cookieinformation.mobileconsents.sample
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import com.cookieinformation.mobileconsents.CallListener
+import com.cookieinformation.mobileconsents.CallbackMobileConsentSdk
 import com.cookieinformation.mobileconsents.Consent
 import com.cookieinformation.mobileconsents.ConsentItem
 import com.cookieinformation.mobileconsents.ConsentSolution
@@ -28,7 +27,7 @@ import java.util.UUID
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
-  private lateinit var sdk: MobileConsentSdk
+  private lateinit var sdk: CallbackMobileConsentSdk
 
   private val consentItemAdapter = ConsentItemAdapter { uuid, choice -> consentItemChoices[uuid] = choice }
   private var consentSolution: ConsentSolution? = null
@@ -41,10 +40,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     setupActionButtons()
     setupAdapter()
 
-    sdk = MobileConsentSdk.Builder(this.applicationContext)
-      .partnerUrl(getString(R.string.sample_partner_url))
-      .callFactory(getOkHttpClient(this.applicationContext))
-      .build()
+    sdk = CallbackMobileConsentSdk.from(
+      MobileConsentSdk.Builder(this.applicationContext)
+        .partnerUrl(getString(R.string.sample_partner_url))
+        .callFactory(getOkHttpClient(this.applicationContext))
+        .build()
+    )
   }
 
   private fun setupForm() {
@@ -101,17 +102,13 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
       consentSolutionId = consentId,
       listener = object : CallListener<ConsentSolution> {
         override fun onSuccess(result: ConsentSolution) {
-          postOnMainThread {
-            textError?.text = ""
-            setupData(result)
-          }
+          textError?.text = ""
+          setupData(result)
         }
 
         override fun onFailure(error: IOException) {
-          postOnMainThread {
-            consentItemAdapter.submitList(emptyList())
-            textError?.text = error.toString()
-          }
+          consentItemAdapter.submitList(emptyList())
+          textError?.text = error.toString()
         }
       }
     )
@@ -123,15 +120,11 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
       consent = consent,
       listener = object : CallListener<Unit> {
         override fun onSuccess(result: Unit) {
-          postOnMainThread {
-            Snackbar.make(buttonFetch, "Consents sent successfully", Snackbar.LENGTH_SHORT).show()
-          }
+          Snackbar.make(buttonFetch, "Consents sent successfully", Snackbar.LENGTH_SHORT).show()
         }
 
         override fun onFailure(error: IOException) {
-          postOnMainThread {
-            textError?.text = error.toString()
-          }
+          textError?.text = error.toString()
         }
       }
     )
@@ -159,8 +152,4 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     },
     customData = emptyMap()
   )
-}
-
-private inline fun postOnMainThread(crossinline block: () -> Unit) = Handler(Looper.getMainLooper()).post {
-  block()
 }

@@ -5,6 +5,7 @@
 ### Added
 - Added `required` and `type` fields in `ConsentItem`.
 - Added support for suggested texts for use in the user interface.
+- Refactored `MobileConsentSdk` to use it with coroutines or `CallbackMobileConsentSdk` with callbacks
 
 ### Changed
 

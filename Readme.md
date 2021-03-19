@@ -14,14 +14,17 @@ Kotlin DSL
 ```kotlin
 implementation("com.cookieinformation:mobileconsents:<latest_release>")
 ```
-  
+
+#### Concept
+The `MobileConsentSdk` is designed to use it with Kotlin and Coroutines. For those who doesn't use Coroutines we provide wrapper `CallbackMobileConsentSdk` that uses callbacks.
+
 #### Error Handling
-All exceptions thrown by SDK are wrapped by an `IOException` and passed to the `onFailure` method of a `CallListener` callback.
+All exceptions thrown by SDK are wrapped by an `IOException` and thrown by SDK methods or passed to the `onFailure` method of a `CallListener` callback in case of using `CallbackMobileConsentSdk`.
   
 #### Async operations
-All SDK's public methods are executed asynchronously, on background thread pool. You should rely on callbacks (`CallListener`) to handle
-operation results. You can easily wrap those callbacks with Coroutines / LiveData / RxJava etc, if you use any of them. Note that if you want
-to process result on the main thread (update UI etc.) you have to switch the thread yourself. Every method of the SDK returns a `Subscription`
+All SDK's public methods are executed asynchronously using Coroutines on a IO thread pool. If you do not want to use Coroutines, you may use `CallbackMobileConsentSdk` where you should rely on callbacks (`CallListener`) to handle
+operation results. The callbacks, by default, are executed on **Main Thread**.  
+You can easily wrap those callbacks with LiveData / RxJava etc, if you use any of them. Every method of the callback version of the SDK returns a `Subscription`
 object, which you can use to cancel the ongoing request (see the `Async operation cancelling` section).
   
 #### Dependencies: 
@@ -35,10 +38,12 @@ To instantiate SDK use `Builder` static method of `MobileConsentSdk` class:
 
 #### Java:
 ```java
-MobileConsentSdk sdk = MobileConsentSdk.Builder(context)
-  .partnerUrl("https://example.com")
-  .callFactory(new OkHttpClient())
-  .build();
+CallbackMobileConsentSdk sdk = CallbackMobileConsentSdk.from(
+  MobileConsentSdk.Builder(context)
+      .partnerUrl("https://example.com")
+      .callFactory(new OkHttpClient())
+      .build()
+);
 ```
 
 #### Kotlin:
@@ -98,18 +103,16 @@ sdk.fetchConsentSolution(
 
 #### Kotlin:
 ```kotlin
-sdk.fetchConsentSolution(
-  consentSolutionId = consentSolutionId, // UUID of consent solution
-  listener = object : CallListener<ConsentSolution> {
-    override fun onSuccess(result: ConsentSolution) {
-        // do something with result
-    }
-
-    override fun onFailure(error: IOException) {
-        // do something with error
-    }
+ yourCoroutineScope.launch {
+  try {
+    val consentSolution = sdk.fetchConsentSolution(
+      consentSolutionId = consentSolutionId, // UUID of consent solution
+    )
+    // do something with result
+  } catch (e: IOException) {
+    // do something with error
   }
-)
+}
 ```
 After downloading a solution, you can show all consent items to the user and obtain their choices.
 
@@ -156,18 +159,16 @@ sdk.postConsent(
 
 #### Kotlin:
 ```kotlin
-sdk.postConsent(
-  consent = consent, // Consent object
-  listener = object : CallListener<Unit> {
-    override fun onSuccess(result: Unit) {
-        // consent sent successfully
-    }
-
-    override fun onFailure(error: IOException) {
-        // do something with error
-    }
+yourCoroutineScope.launch {
+  try {
+    postConsent(
+      consent = consent, // Consent object
+    )
+    // consent sent successfully
+  } catch (e: IOException) {
+    // do something with error
   }
-)
+}
 ```
 Once a request is successful, all consent choices are stored in SDK's internal storage, as a map of consent item IDs and booleans representing user choices.
 
@@ -193,17 +194,14 @@ sdk.getSavedConsents(
 
 #### Kotlin:
 ```kotlin
-sdk.getSavedConsents(
-  listener = object : CallListener<Map<UUID, Boolean>> {
-    override fun onSuccess(result: Map<UUID, Boolean>) {
-        // do something with result
-    }
-
-    override fun onFailure(error: IOException) {
-        // do something with error
-    }
+yourCoroutineScope.launch {
+  try {
+    val result = getSavedConsents()
+    // do something with result
+  } catch (e: IOException) {
+    // do something with error
   }
-)
+}
 ```
   
 To retrieve specific consent choice, use `getConsentChoice` method and pass id of `ConsentItem`:
@@ -225,18 +223,16 @@ sdk.getSavedConsent(
 
 #### Kotlin:
 ```kotlin
-sdk.getSavedConsent(
-  consentItemId = consentItemId, // UUID of consent item 
-  listener = object : CallListener<Boolean> {
-    override fun onSuccess(result: Boolean) {
-        // do something with result
-    }
-
-    override fun onFailure(error: IOException) {
-        // do something with error
-    }
+yourCoroutineScope.launch {
+  try {
+    val result = getSavedConsent(
+      consentItemId = consentItemId, // UUID of consent item 
+    )
+    // do something with result
+  } catch (e: IOException) {
+    // do something with error
   }
-)
+}
 ```
 
 #### Async operation cancelling
@@ -262,20 +258,14 @@ subscription.cancel();
 
 #### Kotlin:
 ```kotlin
-val subscription = sdk.getConsentChoices(
-  consentItemId = consentItemId, // UUID of consent item 
-  listener = object : CallListener<Boolean> {
-    override fun onSuccess(result: Boolean) {
-        // do something with result
-    }
-
-    override fun onFailure(error: IOException) {
-        // do something with error
-    }
-  }
-)
-
-subscription.cancel()
+// Note that, all jobs are canceled when you CoroutineScope is canceled.
+// However you can cancel the job manually.
+val job = youCoroutineScope.launch {
+  sdk.getConsentChoices(
+    consentItemId = consentItemId // UUID of consent item 
+  )
+}
+job.cancel()
 ```
 
 #### UI template texts

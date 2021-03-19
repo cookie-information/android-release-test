@@ -3,6 +3,7 @@ package com.cookieinformation.mobileconsents.sample
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.cookieinformation.mobileconsents.CallListener
+import com.cookieinformation.mobileconsents.CallbackMobileConsentSdk
 import com.cookieinformation.mobileconsents.MobileConsentSdk
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.buttonFetch
@@ -13,16 +14,18 @@ import java.util.UUID
 
 class StorageActivity : AppCompatActivity(R.layout.activity_storage) {
 
-  private lateinit var sdk: MobileConsentSdk
+  private lateinit var sdk: CallbackMobileConsentSdk
   private val storageAdapter = StorageAdapter()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    sdk = MobileConsentSdk.Builder(this.applicationContext)
-      .partnerUrl(getString(R.string.sample_partner_url))
-      .callFactory(getOkHttpClient(this.applicationContext))
-      .build()
+    sdk = CallbackMobileConsentSdk.from(
+      MobileConsentSdk.Builder(this.applicationContext)
+        .partnerUrl(getString(R.string.sample_partner_url))
+        .callFactory(getOkHttpClient(this.applicationContext))
+        .build()
+    )
 
     buttonMainPage.setOnClickListener {
       finish()
