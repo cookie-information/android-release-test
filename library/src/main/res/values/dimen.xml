@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <item name="mobileconsents_privacy_preferences_padding" type="dimen">15dp</item>
+  <item name="mobileconsents_privacy_preferences_padding_half" type="dimen">7.5dp</item>
+  <item name="mobileconsents_privacy_preferences_fading_edge_size" type="dimen">22.5dp</item>
+</resources>

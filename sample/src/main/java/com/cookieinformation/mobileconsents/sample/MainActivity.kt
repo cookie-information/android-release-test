@@ -14,6 +14,7 @@ import com.cookieinformation.mobileconsents.MobileConsentSdk
 import com.cookieinformation.mobileconsents.ProcessingPurpose
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.buttonFetch
+import kotlinx.android.synthetic.main.activity_main.buttonPrivacyPreferences
 import kotlinx.android.synthetic.main.activity_main.buttonSend
 import kotlinx.android.synthetic.main.activity_main.buttonStorage
 import kotlinx.android.synthetic.main.activity_main.buttonUseSampleId
@@ -51,18 +52,18 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
       val valid = !text.isNullOrBlank()
       layoutUuid.error = if (valid) null else "UUID cannot be empty"
       buttonFetch.isEnabled = valid
+      buttonPrivacyPreferences.isEnabled = valid
     }
     buttonUseSampleId.setOnClickListener {
       textUuid.setText(getString(R.string.sample_uuid))
     }
     buttonFetch.setOnClickListener {
-      val uuid = try {
-        UUID.fromString(textUuid.text.toString())
+      try {
+        val uuid = UUID.fromString(textUuid.text.toString())
+        fetchConsentSolution(uuid)
       } catch (e: IllegalArgumentException) {
         Snackbar.make(buttonFetch, e.message.toString(), Snackbar.LENGTH_SHORT).show()
-        return@setOnClickListener
       }
-      fetchConsentSolution(uuid)
     }
   }
 
@@ -74,6 +75,19 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
     buttonStorage.setOnClickListener {
       startActivity(Intent(this, StorageActivity::class.java))
+    }
+    buttonPrivacyPreferences.setOnClickListener {
+      showPrivacyPreferences()
+    }
+  }
+
+  private fun showPrivacyPreferences() {
+    try {
+      val uuid = UUID.fromString(textUuid.text.toString())
+      val privacyPreferences = PrivacyPreferencesFragment.newInstance(uuid)
+      privacyPreferences.show(supportFragmentManager, PrivacyPreferencesFragment::javaClass.name)
+    } catch (e: IllegalArgumentException) {
+      Snackbar.make(buttonFetch, e.message.toString(), Snackbar.LENGTH_SHORT).show()
     }
   }
 

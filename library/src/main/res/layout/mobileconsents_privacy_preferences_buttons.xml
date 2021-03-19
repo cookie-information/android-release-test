@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/mobileconsents_privacy_preferences_buttons_layout"
+  style="@style/MobileConsents_PrivacyPreferencesButtonsLayout"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical">
+
+  <Button
+    android:id="@+id/mobileconsents_btn_read_more"
+    style="@style/MobileConsents_PrivacyPreferencesButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:text="Read More" />
+
+  <Button
+    android:id="@+id/mobileconsents_btn_reject_all"
+    style="@style/MobileConsents_PrivacyPreferencesButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:text="Reject All" />
+
+  <Button
+    android:id="@+id/mobileconsents_btn_accept_all"
+    style="@style/MobileConsents_PrivacyPreferencesButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:text="Accept All" />
+
+  <Button
+    android:id="@+id/mobileconsents_btn_accept_selected"
+    style="@style/MobileConsents_PrivacyPreferencesButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:text="Accept Selected" />
+
+</LinearLayout>

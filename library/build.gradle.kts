@@ -27,8 +27,11 @@ android {
 }
 
 dependencies {
-  api(Libraries.Kotlin.StdLibJdk7)
+  api(Libraries.Kotlin.StdLib)
   api(Libraries.Okhttp.Core)
+  implementation(Libraries.AndroidX.AppCompat)
+  implementation(Libraries.AndroidX.ConstraintLayout)
+  implementation(Libraries.AndroidX.RecyclerView)
   implementation(Libraries.Moshi.Core)
   kapt(Libraries.Moshi.CodeGen)
   implementation(Libraries.Coroutines.Core)

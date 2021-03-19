@@ -8,8 +8,6 @@ object Libraries {
     const val ApplicationPluginId = "com.android.application"
 
     const val LibraryPluginId = "com.android.library"
-
-    const val CoreKtx = "androidx.core:core-ktx:1.3.2"
   }
 
   object Kotlin {
@@ -17,7 +15,7 @@ object Libraries {
 
     const val GradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$Version"
 
-    const val StdLibJdk7 = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$Version"
+    const val StdLib = "org.jetbrains.kotlin:kotlin-stdlib:$Version"
 
     const val AndroidPluginId = "android"
 
@@ -80,15 +78,28 @@ object Libraries {
 
   @Suppress("ClassNaming")
   object AndroidX {
-    const val Version = "1.3.1"
 
-    const val Core = "androidx.core:core-ktx:$Version"
+    object Version {
+      const val Core = "1.3.1"
+
+      const val AppCompat = "1.2.0"
+
+      const val RecyclerView = "1.1.0"
+
+      const val ConstraintLayout = "2.0.1"
+    }
+
+    const val Core = "androidx.core:core-ktx:${Version.Core}"
+
+    const val AppCompat = "androidx.appcompat:appcompat:${Version.AppCompat}"
+
+    const val RecyclerView = "androidx.recyclerview:recyclerview:${Version.RecyclerView}"
+
+    const val ConstraintLayout = "androidx.constraintlayout:constraintlayout:${Version.ConstraintLayout}"
   }
 
   object Design {
     const val Material = "com.google.android.material:material:1.2.1"
-
-    const val ConstraintLayout = "androidx.constraintlayout:constraintlayout:2.0.1"
   }
 
   object Chucker {

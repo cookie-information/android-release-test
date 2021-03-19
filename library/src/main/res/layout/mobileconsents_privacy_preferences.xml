@@ -1,0 +1,73 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/mobileconsents_privacy_preferences_layout"
+  style="@style/MobileConsents_PrivacyPreferencesLayout"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical">
+
+  <ScrollView
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:clipToPadding="false"
+    android:requiresFadingEdge="vertical"
+    android:fadingEdge="vertical"
+    android:fadingEdgeLength="@dimen/mobileconsents_privacy_preferences_fading_edge_size"
+    android:overScrollMode="never"
+    app:layout_constraintBottom_toTopOf="@id/mobileconsents_privacy_preferences_buttons_layout"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <LinearLayout
+      android:id="@+id/mobileconsents_privacy_preferences_top_layout"
+      style="@style/MobileConsents_PrivacyPreferencesTopLayout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical">
+
+      <TextView
+        android:id="@+id/mobileconsents_privacy_preferences_title"
+        style="@style/MobileConsents_PrivacyPreferencesTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="@tools:sample/lorem" />
+
+      <TextView
+        android:id="@+id/mobileconsents_privacy_preferences_sub_title"
+        style="@style/MobileConsents_PrivacyPreferencesSubTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="@tools:sample/lorem" />
+
+      <TextView
+        android:id="@+id/mobileconsents_privacy_preferences_description"
+        style="@style/MobileConsents_PrivacyPreferencesText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="@tools:sample/lorem" />
+
+      <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mobileconsents_privacy_preferences_list"
+        style="@style/MobileConsents_PrivacyPreferencesList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/mobileconsents_privacy_preferences_item" />
+    </LinearLayout>
+  </ScrollView>
+
+  <include
+    android:id="@+id/mobileconsents_privacy_preferences_buttons_layout"
+    layout="@layout/mobileconsents_privacy_preferences_buttons"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

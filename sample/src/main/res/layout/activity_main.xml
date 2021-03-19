@@ -122,6 +122,18 @@
     android:layout_height="wrap_content"
     android:text="@string/button_show_storage"
     android:textAppearance="@style/BaseTextAppearance"
+    app:layout_constraintBottom_toTopOf="@id/buttonPrivacyPreferences"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent" />
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/buttonPrivacyPreferences"
+    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:enabled="false"
+    android:text="@string/button_privacy_preferences"
+    android:textAppearance="@style/BaseTextAppearance"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent" />

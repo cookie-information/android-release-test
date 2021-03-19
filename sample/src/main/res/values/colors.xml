@@ -3,5 +3,9 @@
   <color name="colorPrimary">#000000</color>
   <color name="colorPrimaryDark">#000000</color>
   <color name="colorAccent">#2E5AFF</color>
+  <color name="onSecondary">#FFFFFF</color>
+  <color name="linkColor">#2E384D</color>
+  <color name="textColor">#596075</color>
+  <color name="textColorStrong">#2E384D</color>
   <color name="white">#FFFFFF</color>
 </resources>

@@ -23,11 +23,11 @@ android {
 }
 
 dependencies {
-  implementation(Libraries.Kotlin.StdLibJdk7)
+  implementation(Libraries.Kotlin.StdLib)
+  implementation(Libraries.AndroidX.AppCompat)
   implementation(Libraries.AndroidX.Core)
-  implementation(Libraries.Android.CoreKtx)
+  implementation(Libraries.AndroidX.ConstraintLayout)
   implementation(Libraries.Design.Material)
-  implementation(Libraries.Design.ConstraintLayout)
   debugImplementation(Libraries.Chucker.Core)
   implementation(project(":Mobile Consents"))
 }
