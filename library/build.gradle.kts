@@ -31,6 +31,7 @@ dependencies {
   api(Libraries.Okhttp.Core)
   implementation(Libraries.AndroidX.AppCompat)
   implementation(Libraries.AndroidX.ConstraintLayout)
+  implementation(Libraries.AndroidX.Fragment)
   implementation(Libraries.AndroidX.RecyclerView)
   implementation(Libraries.Moshi.Core)
   kapt(Libraries.Moshi.CodeGen)
@@ -39,6 +40,7 @@ dependencies {
   testImplementation(Libraries.Okhttp.MockWebServer)
   testImplementation(Libraries.Kotest.Assertions)
   testImplementation(Libraries.Kotest.RunnerJunit5)
+  testImplementation(Libraries.MockK.Core)
 }
 
 signing {

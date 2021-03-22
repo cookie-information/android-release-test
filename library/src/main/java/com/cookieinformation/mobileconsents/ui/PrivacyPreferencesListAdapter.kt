@@ -1,20 +1,15 @@
 package com.cookieinformation.mobileconsents.ui
 
-import android.text.Html
-import android.text.SpannableStringBuilder
-import android.text.method.LinkMovementMethod
-import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
-import androidx.core.text.util.LinkifyCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.cookieinformation.mobileconsents.R
-import com.cookieinformation.mobileconsents.util.changeLinksStyle
+import com.cookieinformation.mobileconsents.util.setTextFomHtml
 import java.util.UUID
 
 private const val requireIndicator = "<a href=\"\">*</a>"
@@ -62,16 +57,6 @@ internal class PrivacyPreferencesListAdapter(
           }
         }
       }
-    }
-
-    private fun TextView.setTextFomHtml(html: String) {
-      @Suppress("DEPRECATION")
-      val stringBuilder = SpannableStringBuilder(Html.fromHtml(html)).apply {
-        changeLinksStyle()
-      }
-      LinkifyCompat.addLinks(this, Linkify.WEB_URLS)
-      text = stringBuilder
-      movementMethod = LinkMovementMethod.getInstance()
     }
   }
 

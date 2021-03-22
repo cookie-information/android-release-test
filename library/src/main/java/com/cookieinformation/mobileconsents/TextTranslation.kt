@@ -23,15 +23,18 @@ public data class TextTranslation(
      * The function returns:
      * - First matching translation for locale's language if there is one.
      * - English translation if available.
-     * - An empty string otherwise.
+     * - An empty translation otherwise.
      *
      * @param translations List of [TextTranslation].
      * @param preferredLocales List of preferred locales. The first one has the biggest priority.
      * @return The best matching translation
      */
     @JvmStatic
-    public fun getTranslationFor(translations: List<TextTranslation>, preferredLocales: List<Locale>): String {
-      if (translations.isEmpty()) return ""
+    public fun getTranslationFor(
+      translations: List<TextTranslation>,
+      preferredLocales: List<Locale>
+    ): TextTranslation {
+      if (translations.isEmpty()) return TextTranslation("", "")
 
       var translation: TextTranslation? = null
       for (locale in preferredLocales) {
@@ -45,7 +48,7 @@ public data class TextTranslation(
         translations.firstOrNull {
           Locale(it.languageCode).language.equals(DefaultLocale.language, ignoreCase = true)
         }
-      return translation?.text.orEmpty()
+      return translation ?: TextTranslation("", "")
     }
   }
 }

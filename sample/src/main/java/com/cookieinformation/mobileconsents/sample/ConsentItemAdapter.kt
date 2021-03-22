@@ -38,8 +38,8 @@ class ConsentItemAdapter(
       Locale(if (preferredTranslation.isBlank()) "en" else preferredTranslation.trim().toLowerCase())
     )
     ConsentChoice(
-      shortText = TextTranslation.getTranslationFor(it.shortText, preferredLocaleList),
-      longText = TextTranslation.getTranslationFor(it.longText, preferredLocaleList),
+      shortText = TextTranslation.getTranslationFor(it.shortText, preferredLocaleList).text,
+      longText = TextTranslation.getTranslationFor(it.longText, preferredLocaleList).text,
       choice = it.type == ConsentItem.Type.Info,
       enableChoice = it.type == ConsentItem.Type.Setting,
       itemId = it.consentItemId,

@@ -1,9 +1,7 @@
 package com.cookieinformation.mobileconsents.ui
 
+import android.app.AlertDialog
 import android.content.Context
-import android.text.SpannableStringBuilder
-import android.text.method.LinkMovementMethod
-import android.text.util.Linkify
 import android.util.AttributeSet
 import android.view.View
 import android.widget.Button
@@ -11,45 +9,11 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.annotation.MainThread
-import androidx.core.text.HtmlCompat
-import androidx.core.text.util.LinkifyCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.cookieinformation.mobileconsents.R
 import com.cookieinformation.mobileconsents.ui.PrivacyPreferencesViewData.ButtonState
-import com.cookieinformation.mobileconsents.util.changeLinksStyle
+import com.cookieinformation.mobileconsents.util.setTextFomHtml
 import java.util.UUID
-
-// TODO remove this when presenter is ready
-internal val fakeViewData = PrivacyPreferencesViewData(
-  title = "Privacy settings",
-  subTitle = "<a href=\"https://cookieinformation.com\">Powered by Cookie Information</a>",
-  description = "Some are used for statistical purposes and others are set up by third party services." +
-    "<a href=\"https://cookieinformation.com/\">Test link</a>",
-  items = listOf(
-    PrivacyPreferencesItem(
-      id = UUID.randomUUID(),
-      required = true,
-      accepted = true,
-      text = "I agree to the Terms of Services.",
-    ),
-    PrivacyPreferencesItem(
-      id = UUID.randomUUID(),
-      required = false,
-      accepted = false,
-      text = "I consent to the use of my personal data. <a href=\"https://cookieinformation.com\">Example link</a>",
-    ),
-    PrivacyPreferencesItem(
-      id = UUID.randomUUID(),
-      required = false,
-      accepted = false,
-      text = "Personalised Experience",
-    ),
-  ),
-  buttonReadMore = ButtonState("Read More", true),
-  buttonAcceptAll = ButtonState("Accept All", true),
-  buttonRejectAll = ButtonState("Reject All", false),
-  buttonAcceptSelected = ButtonState("Accept Selected", true),
-)
 
 public class PrivacyPreferencesView @JvmOverloads constructor(
   context: Context,
@@ -100,10 +64,6 @@ public class PrivacyPreferencesView @JvmOverloads constructor(
     }
 
     setupButtons()
-
-    // TODO remove this when presenter is ready
-    showData(fakeViewData)
-    showData(fakeViewData)
   }
 
   private fun setupButtons() {
@@ -142,11 +102,14 @@ public class PrivacyPreferencesView @JvmOverloads constructor(
   }
 
   internal fun showProgressBar() {
-    consentsView.visibility = View.INVISIBLE
     progressBar.visibility = View.VISIBLE
   }
 
-  internal fun showData(data: PrivacyPreferencesViewData) {
+  internal fun hideProgressBar() {
+    progressBar.visibility = View.GONE
+  }
+
+  internal fun showViewData(data: PrivacyPreferencesViewData) {
     findViewById<TextView>(R.id.mobileconsents_privacy_preferences_title).text = data.title
     updateHtmlText(R.id.mobileconsents_privacy_preferences_sub_title, data.subTitle, false)
     updateHtmlText(R.id.mobileconsents_privacy_preferences_description, data.description, true)
@@ -156,8 +119,11 @@ public class PrivacyPreferencesView @JvmOverloads constructor(
     updateButton(R.id.mobileconsents_btn_accept_selected, data.buttonAcceptSelected)
     updateConsentList(data)
 
-    progressBar.visibility = View.GONE
     consentsView.visibility = View.VISIBLE
+  }
+
+  internal fun hideViewData() {
+    consentsView.visibility = View.GONE
   }
 
   private fun updateConsentList(data: PrivacyPreferencesViewData) =
@@ -172,18 +138,45 @@ public class PrivacyPreferencesView @JvmOverloads constructor(
 
   private fun updateHtmlText(@IdRes viewId: Int, html: String, boldLinks: Boolean) {
     findViewById<TextView>(viewId).apply {
-      val stringBuilder = SpannableStringBuilder(HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT)).apply {
-        changeLinksStyle(bold = boldLinks)
-      }
-      LinkifyCompat.addLinks(this, Linkify.WEB_URLS)
-      text = stringBuilder
-      movementMethod = LinkMovementMethod.getInstance()
+      setTextFomHtml(html, boldLinks)
     }
   }
 
-  internal fun showError() {
-    progressBar.visibility = View.GONE
-    consentsView.visibility = View.INVISIBLE
-    consentListAdapter.submitList(null)
+  override fun onDetachedFromWindow() {
+    removeCallbacks(null)
+    super.onDetachedFromWindow()
+  }
+
+  internal fun showRetryDialog(onRetry: () -> Unit, onDismiss: () -> Unit) {
+    // postDelayed is workaround for: If view is embedded in a DialogFragment, the below dialog is shown under the DialogFragment.
+    postDelayed(
+      {
+        AlertDialog.Builder(context)
+          .setCancelable(false)
+          .setTitle(R.string.mobileconsents_privacy_preferences_title_error_fetch)
+          .setMessage(R.string.mobileconsents_privacy_preferences_msg_error_fetch)
+          .setPositiveButton(R.string.mobileconsents_privacy_preferences_btn_retry) { _, _ -> onRetry() }
+          .setNegativeButton(android.R.string.cancel) { _, _ -> onDismiss() }
+          .create()
+          .show()
+      },
+      0
+    )
+  }
+
+  internal fun showErrorDialog(onDismiss: () -> Unit) {
+    // postDelayed is workaround for: If view is embedded in a DialogFragment, the below dialog is shown under the DialogFragment.
+    postDelayed(
+      {
+        AlertDialog.Builder(context)
+          .setCancelable(false)
+          .setTitle(R.string.mobileconsents_privacy_preferences_title_error_send)
+          .setMessage(R.string.mobileconsents_privacy_preferences_msg_error_send)
+          .setPositiveButton(android.R.string.ok) { _, _ -> onDismiss() }
+          .create()
+          .show()
+      },
+      0
+    )
   }
 }

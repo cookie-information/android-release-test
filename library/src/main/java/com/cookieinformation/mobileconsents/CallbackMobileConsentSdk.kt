@@ -23,6 +23,13 @@ public class CallbackMobileConsentSdk internal constructor(
   private val scope = CoroutineScope(dispatcher)
 
   /**
+   * Returns associated instance of MobileConsentSdk.
+   *
+   * @return associated instance of MobileConsentSdk.
+   */
+  public fun getMobileConsentSdk(): MobileConsentSdk = mobileConsentSdk
+
+  /**
    * Obtain [ConsentSolution] from CDN server.
    * @param consentSolutionId UUID identifier of consent.
    * @param listener listener for success/failure of operation.

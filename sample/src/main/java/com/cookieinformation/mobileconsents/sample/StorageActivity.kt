@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.cookieinformation.mobileconsents.CallListener
 import com.cookieinformation.mobileconsents.CallbackMobileConsentSdk
-import com.cookieinformation.mobileconsents.MobileConsentSdk
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.buttonFetch
 import kotlinx.android.synthetic.main.activity_storage.buttonMainPage
@@ -20,12 +19,7 @@ class StorageActivity : AppCompatActivity(R.layout.activity_storage) {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    sdk = CallbackMobileConsentSdk.from(
-      MobileConsentSdk.Builder(this.applicationContext)
-        .partnerUrl(getString(R.string.sample_partner_url))
-        .callFactory(getOkHttpClient(this.applicationContext))
-        .build()
-    )
+    sdk = (application as App).sdk
 
     buttonMainPage.setOnClickListener {
       finish()

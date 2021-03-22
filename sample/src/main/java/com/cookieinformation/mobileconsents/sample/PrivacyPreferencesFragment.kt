@@ -1,34 +1,46 @@
 package com.cookieinformation.mobileconsents.sample
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
+import com.cookieinformation.mobileconsents.ui.DefaultLocaleProvider
+import com.cookieinformation.mobileconsents.ui.PrivacyPreferencesDialogFragment
 import java.util.UUID
 
-private const val consentIdKey = "mobileconsents_consents_id"
+private const val mobileConsentSdkSolutionIdKey = "mobileConsentSdkSolutionIdKey"
 
-class PrivacyPreferencesFragment : DialogFragment() {
-
-  private lateinit var consentsId: UUID
+class PrivacyPreferencesFragment : PrivacyPreferencesDialogFragment() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    consentsId = UUID.fromString(requireArguments().getString(consentIdKey))
+    val app = requireContext().applicationContext as App
+    val mobileConsentSdk = app.sdk
+    val consentsId = UUID.fromString(requireArguments().getString(mobileConsentSdkSolutionIdKey))
+    initialize(
+      mobileConsentSdk = mobileConsentSdk.getMobileConsentSdk(),
+      consentSolutionId = consentsId,
+      localeProvider = DefaultLocaleProvider(app)
+    )
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-    inflater.inflate(R.layout.fragment_privacy_preferences, container, false)
+  override fun onConsentsChosen(consents: Map<UUID, Boolean>) {
+    // Not yet implemented
+    dismiss()
+  }
+
+  override fun onReadMore() {
+    // Not yet implemented
+  }
+
+  override fun onDismissed() {
+    dismiss()
+  }
 
   companion object {
 
     @JvmStatic
-    fun newInstance(consentsId: UUID) =
-      PrivacyPreferencesFragment().apply {
-        arguments = Bundle().apply {
-          putString(consentIdKey, consentsId.toString())
-        }
+    fun newInstance(consentsId: UUID) = PrivacyPreferencesFragment().apply {
+      arguments = Bundle().apply {
+        putString(mobileConsentSdkSolutionIdKey, consentsId.toString())
       }
+    }
   }
 }

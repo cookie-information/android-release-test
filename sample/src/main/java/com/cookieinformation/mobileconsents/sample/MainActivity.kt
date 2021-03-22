@@ -9,7 +9,6 @@ import com.cookieinformation.mobileconsents.CallbackMobileConsentSdk
 import com.cookieinformation.mobileconsents.Consent
 import com.cookieinformation.mobileconsents.ConsentItem
 import com.cookieinformation.mobileconsents.ConsentSolution
-import com.cookieinformation.mobileconsents.MobileConsentSdk
 import com.cookieinformation.mobileconsents.ProcessingPurpose
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.buttonFetch
@@ -40,12 +39,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     setupActionButtons()
     setupAdapter()
 
-    sdk = CallbackMobileConsentSdk.from(
-      MobileConsentSdk.Builder(this.applicationContext)
-        .partnerUrl(getString(R.string.sample_partner_url))
-        .callFactory(getOkHttpClient(this.applicationContext))
-        .build()
-    )
+    sdk = (application as App).sdk
   }
 
   private fun setupForm() {

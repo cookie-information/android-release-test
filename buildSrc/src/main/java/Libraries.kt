@@ -87,6 +87,8 @@ object Libraries {
       const val RecyclerView = "1.1.0"
 
       const val ConstraintLayout = "2.0.1"
+
+      const val Fragment = "1.3.1"
     }
 
     const val Core = "androidx.core:core-ktx:${Version.Core}"
@@ -96,6 +98,8 @@ object Libraries {
     const val RecyclerView = "androidx.recyclerview:recyclerview:${Version.RecyclerView}"
 
     const val ConstraintLayout = "androidx.constraintlayout:constraintlayout:${Version.ConstraintLayout}"
+
+    const val Fragment = "androidx.fragment:fragment-ktx:${Version.Fragment}"
   }
 
   object Design {
@@ -110,5 +114,10 @@ object Libraries {
     const val PluginId = "com.vanniktech.maven.publish"
 
     const val GradlePlugin = "com.vanniktech:gradle-maven-publish-plugin:0.13.0"
+  }
+
+  @Suppress("ClassNaming")
+  object MockK {
+    const val Core = "io.mockk:mockk:1.10.6"
   }
 }

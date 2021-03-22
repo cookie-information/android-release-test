@@ -7,4 +7,5 @@ internal data class PrivacyPreferencesItem(
   val required: Boolean,
   val accepted: Boolean,
   val text: String,
+  val language: String,
 )
