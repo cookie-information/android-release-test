@@ -38,7 +38,9 @@ public class PrivacyPreferencesView @JvmOverloads constructor(
   }
 
   private val intentListeners = mutableSetOf<IntentListener>()
-  private val consentListAdapter = PrivacyPreferencesListAdapter(::onChoiceChanged)
+  private val consentListAdapter = PrivacyPreferencesListAdapter(
+    R.layout.mobileconsents_privacy_preferences_item, ::onChoiceChanged
+  )
 
   private val consentsView: View
   private val progressBar: View

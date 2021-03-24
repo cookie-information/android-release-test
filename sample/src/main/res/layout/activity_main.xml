@@ -134,6 +134,18 @@
     android:enabled="false"
     android:text="@string/button_privacy_preferences"
     android:textAppearance="@style/BaseTextAppearance"
+    app:layout_constraintBottom_toTopOf="@id/buttonPrivacyCenter"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent" />
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/buttonPrivacyCenter"
+    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:enabled="false"
+    android:text="@string/button_privacy_center"
+    android:textAppearance="@style/BaseTextAppearance"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent" />

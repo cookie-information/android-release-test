@@ -16,6 +16,7 @@
   <string name="button_show_main_page">Show Main Page</string>
   <string name="button_show_storage">Show Storage</string>
   <string name="button_privacy_preferences">Privacy Preferences</string>
+  <string name="button_privacy_center">Privacy Center</string>
   <string name="text_value_label">Consent given:</string>
   <string name="text_key_label">Consent Item ID:</string>
   <string name="text_consent_storage">Consent Storage</string>

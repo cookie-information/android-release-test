@@ -12,5 +12,5 @@ internal data class PrivacyPreferencesViewData(
   val buttonAcceptSelected: ButtonState,
 ) {
 
-  data class ButtonState(val text: CharSequence, val enabled: Boolean)
+  data class ButtonState(val text: String, val enabled: Boolean)
 }

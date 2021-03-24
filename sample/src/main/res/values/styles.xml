@@ -25,7 +25,5 @@
     <item name="android:textAppearance">@style/BaseTextAppearance</item>
   </style>
 
-  <style name="MobileConsents_TitleTextAppearance" parent="MobileConsents_TextAppearance">
-    <item name="android:textColor">@color/textColorStrong</item>
-  </style>
+  <style name="MobileConsents_TextAppearance" parent="BaseTextAppearance" />
 </resources>

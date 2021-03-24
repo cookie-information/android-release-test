@@ -7,9 +7,9 @@ import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.core.text.util.LinkifyCompat
 
-internal fun TextView.setTextFomHtml(html: String, boldLinks: Boolean = true) {
+internal fun TextView.setTextFomHtml(html: String, boldLinks: Boolean = true, underline: Boolean = false) {
   val stringBuilder = SpannableStringBuilder(HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT)).apply {
-    changeLinksStyle(bold = boldLinks)
+    changeLinksStyle(underline = underline, bold = boldLinks)
   }
   LinkifyCompat.addLinks(this, Linkify.WEB_URLS)
   text = stringBuilder

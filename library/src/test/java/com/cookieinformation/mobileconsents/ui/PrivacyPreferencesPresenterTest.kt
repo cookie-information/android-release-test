@@ -508,6 +508,7 @@ private fun sampleRequiredItem(checked: Boolean) = PrivacyPreferencesItem(
   required = true,
   accepted = checked,
   text = "Required consent",
+  details = "",
   language = "EN",
 )
 
@@ -516,6 +517,7 @@ private fun sampleOptionalItem(checked: Boolean) = PrivacyPreferencesItem(
   required = false,
   accepted = checked,
   text = "Optional consent",
+  details = "",
   language = "EN",
 )
 

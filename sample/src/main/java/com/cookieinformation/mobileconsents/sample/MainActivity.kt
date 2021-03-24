@@ -12,6 +12,7 @@ import com.cookieinformation.mobileconsents.ConsentSolution
 import com.cookieinformation.mobileconsents.ProcessingPurpose
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.buttonFetch
+import kotlinx.android.synthetic.main.activity_main.buttonPrivacyCenter
 import kotlinx.android.synthetic.main.activity_main.buttonPrivacyPreferences
 import kotlinx.android.synthetic.main.activity_main.buttonSend
 import kotlinx.android.synthetic.main.activity_main.buttonStorage
@@ -48,14 +49,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
       layoutUuid.error = if (valid) null else "UUID cannot be empty"
       buttonFetch.isEnabled = valid
       buttonPrivacyPreferences.isEnabled = valid
+      buttonPrivacyCenter.isEnabled = valid
     }
     buttonUseSampleId.setOnClickListener {
       textUuid.setText(getString(R.string.sample_uuid))
     }
     buttonFetch.setOnClickListener {
       try {
-        val uuid = UUID.fromString(textUuid.text.toString())
-        fetchConsentSolution(uuid)
+        fetchConsentSolution(UUID.fromString(textUuid.text.toString()))
       } catch (e: IllegalArgumentException) {
         Snackbar.make(buttonFetch, e.message.toString(), Snackbar.LENGTH_SHORT).show()
       }
@@ -74,6 +75,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     buttonPrivacyPreferences.setOnClickListener {
       showPrivacyPreferences()
     }
+    buttonPrivacyCenter.setOnClickListener {
+      showPrivacyCenter()
+    }
   }
 
   private fun showPrivacyPreferences() {
@@ -81,6 +85,18 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
       val uuid = UUID.fromString(textUuid.text.toString())
       val privacyPreferences = PrivacyPreferencesFragment.newInstance(uuid)
       privacyPreferences.show(supportFragmentManager, PrivacyPreferencesFragment::javaClass.name)
+    } catch (e: IllegalArgumentException) {
+      Snackbar.make(buttonFetch, e.message.toString(), Snackbar.LENGTH_SHORT).show()
+    }
+  }
+
+  private fun showPrivacyCenter() {
+    try {
+      val uuid = UUID.fromString(textUuid.text.toString())
+      val intent = Intent(this, PrivacyCenterActivity::class.java).apply {
+        putExtra(PrivacyCenterActivity.ConsentSolutionIdExtra, uuid)
+      }
+      startActivity(intent)
     } catch (e: IllegalArgumentException) {
       Snackbar.make(buttonFetch, e.message.toString(), Snackbar.LENGTH_SHORT).show()
     }

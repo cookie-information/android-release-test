@@ -4,17 +4,14 @@
   android:id="@+id/mobileconsents_privacy_preferences_layout"
   style="@style/MobileConsents_PrivacyPreferencesLayout"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:orientation="vertical">
+  android:layout_height="match_parent" >
 
   <ScrollView
+    android:id="@+id/mobileconsents_privacy_preferences_scroll"
+    style="@style/MobileConsents_PrivacyPreferencesScrollView"
     android:layout_width="0dp"
     android:layout_height="0dp"
     android:clipToPadding="false"
-    android:requiresFadingEdge="vertical"
-    android:fadingEdge="vertical"
-    android:fadingEdgeLength="@dimen/mobileconsents_privacy_preferences_fading_edge_size"
-    android:overScrollMode="never"
     app:layout_constraintBottom_toTopOf="@id/mobileconsents_privacy_preferences_buttons_layout"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -43,20 +40,25 @@
 
       <TextView
         android:id="@+id/mobileconsents_privacy_preferences_description"
-        style="@style/MobileConsents_PrivacyPreferencesText"
+        style="@style/MobileConsents_PrivacyPreferencesDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="@tools:sample/lorem" />
 
-      <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mobileconsents_privacy_preferences_list"
-        style="@style/MobileConsents_PrivacyPreferencesList"
+      <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="false"
-        android:overScrollMode="never"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/mobileconsents_privacy_preferences_item" />
+        android:layout_height="wrap_content">
+        <!-- RelativeLayout fixes problem with rendering all items when height is wrap_content -->
+        <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/mobileconsents_privacy_preferences_list"
+          style="@style/MobileConsents_PrivacyPreferencesList"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:nestedScrollingEnabled="false"
+          android:overScrollMode="never"
+          app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+          tools:listitem="@layout/mobileconsents_privacy_preferences_item" />
+      </RelativeLayout>
     </LinearLayout>
   </ScrollView>
 

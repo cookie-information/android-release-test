@@ -310,6 +310,7 @@ internal class PrivacyPreferencesPresenter(
       required = item.required,
       accepted = savedConsents[item.consentItemId] ?: false,
       text = translation.text,
+      details = "",
       language = translation.languageCode
     )
   }

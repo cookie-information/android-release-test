@@ -3,8 +3,9 @@ package com.cookieinformation.mobileconsents.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
+import android.widget.CompoundButton
 import android.widget.TextView
+import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,13 +16,14 @@ import java.util.UUID
 private const val requireIndicator = "<a href=\"\">*</a>"
 
 internal class PrivacyPreferencesListAdapter(
+  @LayoutRes private val itemLayoutId: Int,
   private val onConsentItemChoiceChanged: (UUID, Boolean) -> Unit
 ) :
   ListAdapter<PrivacyPreferencesItem, PrivacyPreferencesListAdapter.ItemViewHolder>(AdapterConsentItemDiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
     ItemViewHolder(
-      LayoutInflater.from(parent.context).inflate(R.layout.mobileconsents_privacy_preferences_item, parent, false)
+      LayoutInflater.from(parent.context).inflate(itemLayoutId, parent, false)
     )
 
   override fun onBindViewHolder(holder: ItemViewHolder, position: Int) =
@@ -29,15 +31,25 @@ internal class PrivacyPreferencesListAdapter(
 
   class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    private val consentSwitch = itemView.findViewById<CheckBox>(R.id.mobileconsents_privacy_preferences_item_checkbox)
-    private val consentText = itemView.findViewById<TextView>(R.id.mobileconsents_privacy_preferences_item_text).apply {
-      setOnClickListener {
-        consentSwitch.apply {
-          // Pretend user action
-          isPressed = true
-          toggle()
-          isPressed = false
-        }
+    private val consentSwitch =
+      itemView.findViewById<CompoundButton>(R.id.mobileconsents_privacy_preferences_item_checkbox)
+
+    private val consentText =
+      itemView.findViewById<TextView>(R.id.mobileconsents_privacy_preferences_item_text).apply {
+        setOnClickListener { toggleSwitch() }
+      }
+
+    private val consentDetails =
+      itemView.findViewById<TextView?>(R.id.mobileconsents_privacy_preferences_item_details)?.apply {
+        setOnClickListener { toggleSwitch() }
+      }
+
+    private fun toggleSwitch() {
+      consentSwitch.apply {
+        // Pretend user action
+        isPressed = true
+        toggle()
+        isPressed = false
       }
     }
 
@@ -46,7 +58,7 @@ internal class PrivacyPreferencesListAdapter(
       onConsentItemChanged: (UUID, Boolean) -> Unit
     ) {
       consentText.apply {
-        setTextFomHtml(if (consentItem.required) "consentItem.text$requireIndicator" else consentItem.text)
+        setTextFomHtml(if (consentItem.required) "${consentItem.text}$requireIndicator" else consentItem.text)
       }
       consentSwitch.apply {
         isChecked = consentItem.accepted
@@ -56,6 +68,10 @@ internal class PrivacyPreferencesListAdapter(
             onConsentItemChanged.invoke(consentItem.id, isChecked)
           }
         }
+      }
+      consentDetails?.apply {
+        setTextFomHtml(consentItem.details)
+        visibility = if (consentItem.details.isBlank()) View.GONE else View.VISIBLE
       }
     }
   }
