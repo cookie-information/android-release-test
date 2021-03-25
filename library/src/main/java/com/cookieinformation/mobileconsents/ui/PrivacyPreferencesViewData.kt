@@ -1,6 +1,6 @@
 package com.cookieinformation.mobileconsents.ui
 
-internal data class PrivacyPreferencesViewData(
+public data class PrivacyPreferencesViewData(
   val title: String,
   val subTitle: String,
   val description: String,
@@ -12,5 +12,5 @@ internal data class PrivacyPreferencesViewData(
   val buttonAcceptSelected: ButtonState,
 ) {
 
-  data class ButtonState(val text: String, val enabled: Boolean)
+  public data class ButtonState(val text: String, val enabled: Boolean)
 }

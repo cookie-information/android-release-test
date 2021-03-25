@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.cookieinformation.mobileconsents.R
+import com.cookieinformation.mobileconsents.ui.PrivacyCenterView.IntentListener
 import java.util.UUID
 
 public class PrivacyCenterView @JvmOverloads constructor(
@@ -17,7 +18,7 @@ public class PrivacyCenterView @JvmOverloads constructor(
   attrs: AttributeSet? = null,
   defStyleAttr: Int = 0,
   defStyleRes: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
+) : FrameLayout(context, attrs, defStyleAttr, defStyleRes), ConsentSolutionView<PrivacyCenterViewData, IntentListener> {
 
   @MainThread
   public interface IntentListener {
@@ -59,10 +60,6 @@ public class PrivacyCenterView @JvmOverloads constructor(
     }
 
     findViewById<Button>(R.id.mobileconsents_privacy_center_btn_accept).setOnClickListener { onAcceptClicked() }
-
-    // TODO For manual testing purpose - remove after presenter is implemented
-    showViewData(PrivacyCenterViewIntentListener.ViewData)
-    addIntentListener(PrivacyCenterViewIntentListener)
   }
 
   private fun onAcceptClicked() {
@@ -81,8 +78,6 @@ public class PrivacyCenterView @JvmOverloads constructor(
     for (listener in intentListeners) {
       listener.onPrivacyCenterDetailsToggle(id)
     }
-    // TODO For manual testing purpose - remove after presenter is implemented
-    showViewData(PrivacyCenterViewIntentListener.ViewData)
   }
 
   private fun onDismissRequest() {
@@ -91,27 +86,25 @@ public class PrivacyCenterView @JvmOverloads constructor(
     }
   }
 
-  @MainThread
-  public fun addIntentListener(intentListener: IntentListener) {
-    require(!intentListeners.contains(intentListener))
-    intentListeners.add(intentListener)
+  public override fun addIntentListener(listener: IntentListener) {
+    require(!intentListeners.contains(listener))
+    intentListeners.add(listener)
   }
 
-  @MainThread
-  public fun removeIntentListener(intentListener: IntentListener) {
-    require(intentListeners.contains(intentListener))
-    intentListeners.remove(intentListener)
+  public override fun removeIntentListener(listener: IntentListener) {
+    require(intentListeners.contains(listener))
+    intentListeners.remove(listener)
   }
 
-  internal fun showProgressBar() {
+  override fun showProgressBar() {
     progressBar.visibility = View.VISIBLE
   }
 
-  internal fun hideProgressBar() {
+  override fun hideProgressBar() {
     progressBar.visibility = View.GONE
   }
 
-  internal fun showViewData(data: PrivacyCenterViewData) {
+  override fun showViewData(data: PrivacyCenterViewData) {
     findViewById<Toolbar>(R.id.mobileconsents_privacy_center_toolbar).apply {
       title = data.title
     }
@@ -124,7 +117,17 @@ public class PrivacyCenterView @JvmOverloads constructor(
     contentView.visibility = View.VISIBLE
   }
 
-  internal fun hideViewData() {
+  override fun hideViewData() {
     contentView.visibility = View.GONE
+  }
+
+  override fun showRetryDialog(onRetry: () -> Unit, onDismiss: () -> Unit) {
+    // postDelayed is workaround for: If view is embedded in a DialogFragment, the below dialog is shown under the DialogFragment.
+    postDelayed({ createRetryDialog(context, onRetry, onDismiss).show() }, 0)
+  }
+
+  override fun showErrorDialog(onDismiss: () -> Unit) {
+    // postDelayed is workaround for: If view is embedded in a DialogFragment, the below dialog is shown under the DialogFragment.
+    postDelayed({ createErrorDialog(context, onDismiss).show() }, 0)
   }
 }

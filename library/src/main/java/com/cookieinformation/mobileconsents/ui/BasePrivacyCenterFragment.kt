@@ -4,23 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.cookieinformation.mobileconsents.MobileConsentSdk
-import com.cookieinformation.mobileconsents.R
-import com.cookieinformation.mobileconsents.ui.PrivacyPreferencesViewModel.Event
+import com.cookieinformation.mobileconsents.ui.ConsentSolutionViewModel.Event
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.util.UUID
 
-public abstract class PrivacyPreferencesDialogFragment : DialogFragment(), PrivacyPreferencesListener {
+public abstract class BasePrivacyCenterFragment : Fragment(), ConsentSolutionListener {
 
   private lateinit var mobileConsentSdk: MobileConsentSdk
   private lateinit var consentSolutionId: UUID
   private lateinit var localeProvider: LocaleProvider
 
-  private val viewModel: PrivacyPreferencesViewModel by viewModels {
+  private val viewModel: PrivacyCenterViewModel by viewModels {
     createViewModelFactory(
       mobileConsentSdk,
       consentSolutionId,
@@ -39,14 +38,14 @@ public abstract class PrivacyPreferencesDialogFragment : DialogFragment(), Priva
   }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-    inflater.inflate(R.layout.privacy_preferences_dialog_fragment, container, false)
+    PrivacyCenterView(requireContext())
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     viewModel.events
       .onEach(::handleEvent)
       .launchIn(viewLifecycleOwner.lifecycleScope)
-    viewModel.attachView(requireView().findViewById(R.id.privacyPreferencesView))
+    viewModel.attachView(view as PrivacyCenterView)
   }
 
   override fun onDestroyView() {
@@ -65,5 +64,5 @@ public abstract class PrivacyPreferencesDialogFragment : DialogFragment(), Priva
     mobileConsentSdk: MobileConsentSdk,
     consentSolutionId: UUID,
     localeProvider: LocaleProvider
-  ) = PrivacyPreferencesViewModel.Factory(mobileConsentSdk, consentSolutionId, localeProvider)
+  ) = PrivacyCenterViewModel.Factory(mobileConsentSdk, consentSolutionId, localeProvider)
 }

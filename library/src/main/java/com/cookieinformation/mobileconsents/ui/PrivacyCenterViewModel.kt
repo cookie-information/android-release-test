@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import com.cookieinformation.mobileconsents.MobileConsentSdk
 import java.util.UUID
 
-internal class PrivacyPreferencesViewModel(
+internal class PrivacyCenterViewModel(
   mobileConsentSdk: MobileConsentSdk,
   consentSolutionId: UUID,
   localeProvider: LocaleProvider
-) : ConsentSolutionViewModel<PrivacyPreferencesView, PrivacyPreferencesPresenter>(
-  PrivacyPreferencesPresenter(),
+) : ConsentSolutionViewModel<PrivacyCenterView, PrivacyCenterPresenter>(
+  PrivacyCenterPresenter(),
   mobileConsentSdk,
   consentSolutionId,
   localeProvider
@@ -23,7 +23,7 @@ internal class PrivacyPreferencesViewModel(
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
-      return PrivacyPreferencesViewModel(mobileConsentSdk, consentSolutionId, localeProvider) as T
+      return PrivacyCenterViewModel(mobileConsentSdk, consentSolutionId, localeProvider) as T
     }
   }
 }

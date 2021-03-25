@@ -10,7 +10,7 @@
     android:layout_height="match_parent" />
 
   <com.cookieinformation.mobileconsents.ui.PrivacyPreferencesView
-    android:id="@+id/privacyPreferencesView"
+    android:id="@+id/mobileconsents_privacy_preferences_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
 </FrameLayout>

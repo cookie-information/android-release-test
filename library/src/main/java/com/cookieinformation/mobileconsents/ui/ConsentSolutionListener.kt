@@ -2,11 +2,11 @@ package com.cookieinformation.mobileconsents.ui
 
 import java.util.UUID
 
-public interface PrivacyPreferencesListener {
+public interface ConsentSolutionListener {
 
   public fun onConsentsChosen(consents: Map<UUID, Boolean>)
 
-  public fun onReadMore()
-
   public fun onDismissed()
+
+  public fun onReadMore()
 }

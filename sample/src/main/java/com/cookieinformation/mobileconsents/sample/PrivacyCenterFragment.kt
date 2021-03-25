@@ -1,13 +1,13 @@
 package com.cookieinformation.mobileconsents.sample
 
 import android.os.Bundle
-import com.cookieinformation.mobileconsents.ui.BasePrivacyPreferencesDialogFragment
+import com.cookieinformation.mobileconsents.ui.BasePrivacyCenterFragment
 import com.cookieinformation.mobileconsents.ui.DefaultLocaleProvider
 import java.util.UUID
 
 private const val mobileConsentSdkSolutionIdKey = "mobileConsentSdkSolutionIdKey"
 
-class PrivacyPreferencesFragment : BasePrivacyPreferencesDialogFragment() {
+class PrivacyCenterFragment : BasePrivacyCenterFragment() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -22,22 +22,21 @@ class PrivacyPreferencesFragment : BasePrivacyPreferencesDialogFragment() {
   }
 
   override fun onConsentsChosen(consents: Map<UUID, Boolean>) {
-    // Not yet implemented
-    dismiss()
-  }
-
-  override fun onReadMore() {
-    // Not yet implemented
+    requireActivity().onBackPressed()
   }
 
   override fun onDismissed() {
-    dismiss()
+    requireActivity().onBackPressed()
+  }
+
+  override fun onReadMore() {
+    // Should be called for Privacy Center
   }
 
   companion object {
 
     @JvmStatic
-    fun newInstance(consentsId: UUID) = PrivacyPreferencesFragment().apply {
+    fun newInstance(consentsId: UUID) = PrivacyCenterFragment().apply {
       arguments = Bundle().apply {
         putString(mobileConsentSdkSolutionIdKey, consentsId.toString())
       }

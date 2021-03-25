@@ -2,22 +2,22 @@ package com.cookieinformation.mobileconsents.ui
 
 import java.util.UUID
 
-internal sealed class PrivacyCenterItem {
+public sealed class PrivacyCenterItem {
 
-  data class PrivacyCenterInfoItem(
+  public data class PrivacyCenterInfoItem(
     val id: UUID,
     val text: String,
+    val details: String,
     val language: String,
     val expanded: Boolean
   ) : PrivacyCenterItem()
 
-  data class PrivacyCenterDetailsItem(
+  public data class PrivacyCenterDetailsItem(
     val id: UUID,
     val details: String,
-    val language: String,
   ) : PrivacyCenterItem()
 
-  data class PrivacyCenterPreferencesItem(
+  public data class PrivacyCenterPreferencesItem(
     val id: UUID,
     val title: String,
     val subTitle: String,

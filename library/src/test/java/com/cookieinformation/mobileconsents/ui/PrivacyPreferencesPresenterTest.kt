@@ -1,12 +1,7 @@
 package com.cookieinformation.mobileconsents.ui
 
-import com.cookieinformation.mobileconsents.ConsentItem
-import com.cookieinformation.mobileconsents.ConsentItem.Type.Info
-import com.cookieinformation.mobileconsents.ConsentItem.Type.Setting
-import com.cookieinformation.mobileconsents.ConsentSolution
+import com.cookieinformation.mobileconsents.Consent
 import com.cookieinformation.mobileconsents.MobileConsentSdk
-import com.cookieinformation.mobileconsents.TextTranslation
-import com.cookieinformation.mobileconsents.UiTexts
 import com.cookieinformation.mobileconsents.ui.PrivacyPreferencesView.ButtonId.AcceptAll
 import com.cookieinformation.mobileconsents.ui.PrivacyPreferencesView.ButtonId.AcceptSelected
 import com.cookieinformation.mobileconsents.ui.PrivacyPreferencesView.ButtonId.ReadMore
@@ -15,13 +10,11 @@ import com.cookieinformation.mobileconsents.ui.PrivacyPreferencesViewData.Button
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
-import java.io.IOException
 import java.util.Locale
 import java.util.UUID
 
@@ -33,7 +26,7 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
 
   lateinit var localeProvider: LocaleProvider
 
-  lateinit var listener: PrivacyPreferencesListener
+  lateinit var listener: ConsentSolutionListener
 
   lateinit var presenter: PrivacyPreferencesPresenter
 
@@ -56,86 +49,6 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
     listener = mockk(relaxed = true)
 
     presenter = PrivacyPreferencesPresenter(dispatcher = Dispatchers.Unconfined)
-  }
-
-  describe("PrivacyPreferencesPresenter: attach/detach view") {
-
-    it("when attachView and detachView is called, expect add and remove view listener") {
-      presenter.attachView(view)
-      presenter.detachView()
-
-      verify(exactly = 1) { view.addIntentListener(presenter) }
-      verify(exactly = 1) { view.removeIntentListener(presenter) }
-    }
-  }
-
-  describe("PrivacyPreferencesPresenter: fetch") {
-
-    it("when sdk's getSavedConsents and fetchConsentSolution satisfy, expect view shows loading then data") {
-      coEvery { sdk.getSavedConsents() } returns emptyMap()
-      coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns sampleConsentSolution
-
-      presenter.initDefault()
-
-      coVerify(exactly = 1) { sdk.getSavedConsents() }
-      coVerify(exactly = 1) { sdk.fetchConsentSolution(consentSolutionId) }
-      verify(exactly = 1) { view.showProgressBar() }
-      verify(exactly = 1) { view.hideViewData() }
-      verify(exactly = 1) { view.hideProgressBar() }
-      verify(exactly = 1) { view.showViewData(any()) }
-      verify(exactly = 0) { view.showRetryDialog(any(), any()) }
-      verify(exactly = 0) { view.showErrorDialog(any()) }
-    }
-
-    it("when sdk's getSavedConsents fails and fetchConsentSolution satisfies, expect view shows loading then error") {
-      coEvery { sdk.getSavedConsents() } throws IOException()
-      coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns sampleConsentSolution
-
-      presenter.initDefault()
-
-      coVerify(exactly = 1) { sdk.getSavedConsents() }
-      coVerify(exactly = 0) { sdk.fetchConsentSolution(consentSolutionId) }
-      verify(exactly = 1) { view.showProgressBar() }
-      verify(exactly = 2) { view.hideViewData() }
-      verify(exactly = 1) { view.hideProgressBar() }
-      verify(exactly = 1) { view.showRetryDialog(any(), any()) }
-      verify(exactly = 0) { view.showViewData(any()) }
-      verify(exactly = 0) { view.showErrorDialog(any()) }
-    }
-
-    it("when sdk's getSavedConsents satisfies and fetchConsentSolution fails, expect view shows loading then error") {
-      coEvery { sdk.getSavedConsents() } returns emptyMap()
-      coEvery { sdk.fetchConsentSolution(consentSolutionId) } throws IOException()
-
-      presenter.initDefault()
-
-      coVerify(exactly = 1) { sdk.getSavedConsents() }
-      coVerify(exactly = 1) { sdk.fetchConsentSolution(consentSolutionId) }
-      verify(exactly = 1) { view.showProgressBar() }
-      verify(exactly = 2) { view.hideViewData() }
-      verify(exactly = 1) { view.hideProgressBar() }
-      verify(exactly = 1) { view.showRetryDialog(any(), any()) }
-      verify(exactly = 0) { view.showViewData(any()) }
-      verify(exactly = 0) { view.showErrorDialog(any()) }
-    }
-
-    it("when sdk's getSavedConsents and fetchConsentSolution satisfy, attach view after fetch") {
-      coEvery { sdk.getSavedConsents() } returns emptyMap()
-      coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns sampleConsentSolution
-
-      presenter.initialize(sdk, consentSolutionId, localeProvider, listener)
-      presenter.fetch()
-      presenter.attachView(view)
-
-      coVerify(exactly = 1) { sdk.getSavedConsents() }
-      coVerify(exactly = 1) { sdk.fetchConsentSolution(consentSolutionId) }
-      verify(exactly = 0) { view.showProgressBar() }
-      verify(exactly = 0) { view.hideViewData() }
-      verify(exactly = 1) { view.hideProgressBar() }
-      verify(exactly = 0) { view.showRetryDialog(any(), any()) }
-      verify(exactly = 1) { view.showViewData(any()) }
-      verify(exactly = 0) { view.showErrorDialog(any()) }
-    }
   }
 
   describe("PrivacyPreferencesPresenter: view data") {
@@ -289,6 +202,7 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
 
       viewDataSlot.captured shouldBe expectedViewData
       verify(exactly = 0) { listener.onConsentsChosen(any()) }
+      verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 1) { listener.onReadMore() }
     }
 
@@ -319,7 +233,9 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
       )
 
       viewDataSlot.captured shouldBe expectedViewData
-      consentsChosenSlot.captured shouldBe userChoiceMap(requiredChosen = true, opticalChosen = true)
+      consentsChosenSlot.captured shouldBe userChoiceMap(requiredChosen = true, optionalChosen = true)
+      verify(exactly = 1) { listener.onConsentsChosen(any()) }
+      verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 0) { listener.onReadMore() }
     }
 
@@ -349,7 +265,9 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
       )
 
       viewDataSlot.captured shouldBe expectedViewData
-      consentsChosenSlot.captured shouldBe userChoiceMap(opticalChosen = false)
+      consentsChosenSlot.captured shouldBe userChoiceMap(optionalChosen = false)
+      verify(exactly = 1) { listener.onConsentsChosen(any()) }
+      verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 0) { listener.onReadMore() }
     }
 
@@ -380,135 +298,40 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
       )
 
       viewDataSlot.captured shouldBe expectedViewData
-      consentsChosenSlot.captured shouldBe userChoiceMap(requiredChosen = true, opticalChosen = false)
+      consentsChosenSlot.captured shouldBe userChoiceMap(requiredChosen = true, optionalChosen = false)
+      verify(exactly = 1) { listener.onConsentsChosen(any()) }
+      verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 0) { listener.onReadMore() }
     }
   }
 
-  describe("PrivacyPreferencesPresenter: send") {
+  describe("PrivacyPreferencesPresenter: send correct data") {
 
     it("when sdk's postConsent satisfy, onConsentsChosen is called") {
-      coEvery { sdk.getSavedConsents() } returns mapOf(sampleRequiredConsentItem.consentItemId to true)
+      coEvery { sdk.getSavedConsents() } returns mapOf(
+        sampleRequiredConsentItem.consentItemId to true,
+        sampleOptionalConsentItem.consentItemId to false,
+      )
       coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns createConsentSolution(
         listOf(sampleRequiredConsentItem, sampleOptionalConsentItem, sampleInfoConsentItem)
       )
-      coEvery { sdk.postConsent(any()) } returns Unit
+      val consentsSlot = slot<Consent>()
+      coEvery { sdk.postConsent(capture(consentsSlot)) } returns Unit
 
-      val viewDataSlot = slot<PrivacyPreferencesViewData>()
-      every { view.showViewData(capture(viewDataSlot)) } returns Unit
+      presenter.initDefault()
+      presenter.send()
 
-      presenter.initialize(sdk, consentSolutionId, localeProvider, listener)
-      presenter.fetch()
-      presenter.attachView(view)
-      presenter.onPrivacyPreferenceButtonClicked(AcceptSelected)
-
-      val expectedViewData = createViewData(
-        items = listOf(sampleRequiredItem(true), sampleOptionalItem(false)),
-        enabledRejectAll = false,
-        enabledAcceptSelected = true,
-      )
-
-      viewDataSlot.captured shouldBe expectedViewData
-
-      verify(exactly = 1) { view.showProgressBar() }
-      verify(exactly = 0) { view.hideViewData() }
-      verify(exactly = 1) { view.hideProgressBar() }
-      verify(exactly = 0) { view.showRetryDialog(any(), any()) }
-      verify(exactly = 2) { view.showViewData(any()) }
-      verify(exactly = 0) { view.showErrorDialog(any()) }
-
-      verify(exactly = 1) { listener.onConsentsChosen(any()) }
-      verify(exactly = 0) { listener.onReadMore() }
-    }
-
-    it("when sdk's postConsent fails, view show error dialog") {
-      coEvery { sdk.getSavedConsents() } returns mapOf(sampleRequiredConsentItem.consentItemId to true)
-      coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns createConsentSolution(
-        listOf(sampleRequiredConsentItem, sampleOptionalConsentItem, sampleInfoConsentItem)
-      )
-      coEvery { sdk.postConsent(any()) } throws IOException()
-
-      val viewDataSlot = slot<PrivacyPreferencesViewData>()
-      every { view.showViewData(capture(viewDataSlot)) } returns Unit
-
-      presenter.initialize(sdk, consentSolutionId, localeProvider, listener)
-      presenter.fetch()
-      presenter.attachView(view)
-      presenter.onPrivacyPreferenceButtonClicked(AcceptSelected)
-
-      val expectedViewData = createViewData(
-        items = listOf(sampleRequiredItem(true), sampleOptionalItem(false)),
-        enabledRejectAll = false,
-        enabledAcceptSelected = true,
-      )
-
-      viewDataSlot.captured shouldBe expectedViewData
-
-      verify(exactly = 1) { view.showProgressBar() }
-      verify(exactly = 0) { view.hideViewData() }
-      verify(exactly = 2) { view.hideProgressBar() }
-      verify(exactly = 0) { view.showRetryDialog(any(), any()) }
-      verify(exactly = 3) { view.showViewData(any()) }
-      verify(exactly = 1) { view.showErrorDialog(any()) }
-
-      verify(exactly = 0) { listener.onConsentsChosen(any()) }
-      verify(exactly = 0) { listener.onReadMore() }
+      consentsSlot.captured shouldBe sampleConsent(requiredChosen = true, optionalChosen = false)
     }
   }
 })
-
-private val sampleRequiredConsentItem = ConsentItem(
-  consentItemId = UUID.fromString("a10853b5-85b8-4541-a9ab-fd203176bdce"),
-  shortText = listOf(TextTranslation("EN", "Required consent")),
-  longText = listOf(TextTranslation("EN", "Required consent description")),
-  required = true,
-  type = Setting
-)
-
-private val sampleOptionalConsentItem = ConsentItem(
-  consentItemId = UUID.fromString("ef7d8f35-fc1a-4369-ada2-c00cc0eecc4b"),
-  shortText = listOf(TextTranslation("EN", "Optional consent")),
-  longText = listOf(TextTranslation("EN", "Optional consent description")),
-  required = false,
-  type = Setting
-)
-
-private val sampleInfoConsentItem = ConsentItem(
-  consentItemId = UUID.fromString("1d5920c7-c5d1-4c08-93cc-4238457d7a1f"),
-  shortText = listOf(TextTranslation("EN", "Info")),
-  longText = listOf(TextTranslation("EN", "Information")),
-  required = true,
-  type = Info
-)
-
-private val sampleUiTexts = UiTexts(
-  privacyPreferencesTitle = listOf(TextTranslation("EN", "privacyPreferencesTitle")),
-  privacyPreferencesDescription = listOf(TextTranslation("EN", "privacyPreferencesDescription")),
-  privacyPreferencesTabLabel = listOf(TextTranslation("EN", "privacyPreferencesTabLabel")),
-  privacyCenterButton = listOf(TextTranslation("EN", "privacyCenterButton")),
-  acceptAllButton = listOf(TextTranslation("EN", "acceptAllButton")),
-  rejectAllButton = listOf(TextTranslation("EN", "rejectAllButton")),
-  acceptSelectedButton = listOf(TextTranslation("EN", "acceptSelectedButton")),
-  savePreferencesButton = listOf(TextTranslation("EN", "savePreferencesButton")),
-  privacyCenterTitle = listOf(TextTranslation("EN", "privacyCenterTitle")),
-  poweredByLabel = listOf(TextTranslation("EN", "poweredByLabel")),
-  consentPreferencesLabel = listOf(TextTranslation("EN", "consentPreferencesLabel")),
-)
-
-private fun createConsentSolution(consentItems: List<ConsentItem>): ConsentSolution =
-  ConsentSolution(
-    consentItems = consentItems,
-    consentSolutionId = UUID.fromString("843ddd4a-3eae-4286-a17b-0e8d3337e767"),
-    consentSolutionVersionId = UUID.fromString("00000000-0000-0000-0000-000000000000"),
-    uiTexts = sampleUiTexts
-  )
 
 private fun sampleRequiredItem(checked: Boolean) = PrivacyPreferencesItem(
   id = UUID.fromString("a10853b5-85b8-4541-a9ab-fd203176bdce"),
   required = true,
   accepted = checked,
   text = "Required consent",
-  details = "",
+  details = "Required consent description",
   language = "EN",
 )
 
@@ -517,7 +340,7 @@ private fun sampleOptionalItem(checked: Boolean) = PrivacyPreferencesItem(
   required = false,
   accepted = checked,
   text = "Optional consent",
-  details = "",
+  details = "Optional consent description",
   language = "EN",
 )
 
@@ -538,13 +361,13 @@ private fun createViewData(
     buttonAcceptSelected = ButtonState("acceptSelectedButton", enabledAcceptSelected),
   )
 
-private fun userChoiceMap(requiredChosen: Boolean, opticalChosen: Boolean): Map<UUID, Boolean> = mapOf(
+private fun userChoiceMap(requiredChosen: Boolean, optionalChosen: Boolean): Map<UUID, Boolean> = mapOf(
   sampleRequiredConsentItem.consentItemId to requiredChosen,
-  sampleOptionalConsentItem.consentItemId to opticalChosen,
+  sampleOptionalConsentItem.consentItemId to optionalChosen,
   sampleInfoConsentItem.consentItemId to true
 )
 
-private fun userChoiceMap(opticalChosen: Boolean): Map<UUID, Boolean> = mapOf(
-  sampleOptionalConsentItem.consentItemId to opticalChosen,
+private fun userChoiceMap(optionalChosen: Boolean): Map<UUID, Boolean> = mapOf(
+  sampleOptionalConsentItem.consentItemId to optionalChosen,
   sampleInfoConsentItem.consentItemId to true
 )

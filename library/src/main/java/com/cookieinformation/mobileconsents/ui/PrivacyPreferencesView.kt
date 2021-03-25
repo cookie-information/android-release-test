@@ -1,6 +1,5 @@
 package com.cookieinformation.mobileconsents.ui
 
-import android.app.AlertDialog
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
@@ -8,9 +7,9 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.annotation.IdRes
-import androidx.annotation.MainThread
 import androidx.recyclerview.widget.RecyclerView
 import com.cookieinformation.mobileconsents.R
+import com.cookieinformation.mobileconsents.ui.PrivacyPreferencesView.IntentListener
 import com.cookieinformation.mobileconsents.ui.PrivacyPreferencesViewData.ButtonState
 import com.cookieinformation.mobileconsents.util.setTextFomHtml
 import java.util.UUID
@@ -20,7 +19,8 @@ public class PrivacyPreferencesView @JvmOverloads constructor(
   attrs: AttributeSet? = null,
   defStyleAttr: Int = 0,
   defStyleRes: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
+) : FrameLayout(context, attrs, defStyleAttr, defStyleRes),
+  ConsentSolutionView<PrivacyPreferencesViewData, IntentListener> {
 
   public enum class ButtonId {
     ReadMore,
@@ -29,7 +29,6 @@ public class PrivacyPreferencesView @JvmOverloads constructor(
     AcceptSelected
   }
 
-  @MainThread
   public interface IntentListener {
 
     public fun onPrivacyPreferenceChoiceChanged(id: UUID, accepted: Boolean)
@@ -91,27 +90,25 @@ public class PrivacyPreferencesView @JvmOverloads constructor(
     }
   }
 
-  @MainThread
-  public fun addIntentListener(intentListener: IntentListener) {
-    require(!intentListeners.contains(intentListener))
-    intentListeners.add(intentListener)
+  public override fun addIntentListener(listener: IntentListener) {
+    require(!intentListeners.contains(listener))
+    intentListeners.add(listener)
   }
 
-  @MainThread
-  public fun removeIntentListener(intentListener: IntentListener) {
-    require(intentListeners.contains(intentListener))
-    intentListeners.remove(intentListener)
+  public override fun removeIntentListener(listener: IntentListener) {
+    require(intentListeners.contains(listener))
+    intentListeners.remove(listener)
   }
 
-  internal fun showProgressBar() {
+  override fun showProgressBar() {
     progressBar.visibility = View.VISIBLE
   }
 
-  internal fun hideProgressBar() {
+  override fun hideProgressBar() {
     progressBar.visibility = View.GONE
   }
 
-  internal fun showViewData(data: PrivacyPreferencesViewData) {
+  override fun showViewData(data: PrivacyPreferencesViewData) {
     findViewById<TextView>(R.id.mobileconsents_privacy_preferences_title).text = data.title
     updateHtmlText(R.id.mobileconsents_privacy_preferences_sub_title, data.subTitle, false)
     updateHtmlText(R.id.mobileconsents_privacy_preferences_description, data.description, true)
@@ -124,7 +121,7 @@ public class PrivacyPreferencesView @JvmOverloads constructor(
     consentsView.visibility = View.VISIBLE
   }
 
-  internal fun hideViewData() {
+  override fun hideViewData() {
     consentsView.visibility = View.GONE
   }
 
@@ -149,36 +146,13 @@ public class PrivacyPreferencesView @JvmOverloads constructor(
     super.onDetachedFromWindow()
   }
 
-  internal fun showRetryDialog(onRetry: () -> Unit, onDismiss: () -> Unit) {
+  override fun showRetryDialog(onRetry: () -> Unit, onDismiss: () -> Unit) {
     // postDelayed is workaround for: If view is embedded in a DialogFragment, the below dialog is shown under the DialogFragment.
-    postDelayed(
-      {
-        AlertDialog.Builder(context)
-          .setCancelable(false)
-          .setTitle(R.string.mobileconsents_privacy_preferences_title_error_fetch)
-          .setMessage(R.string.mobileconsents_privacy_preferences_msg_error_fetch)
-          .setPositiveButton(R.string.mobileconsents_privacy_preferences_btn_retry) { _, _ -> onRetry() }
-          .setNegativeButton(android.R.string.cancel) { _, _ -> onDismiss() }
-          .create()
-          .show()
-      },
-      0
-    )
+    postDelayed({ createRetryDialog(context, onRetry, onDismiss).show() }, 0)
   }
 
-  internal fun showErrorDialog(onDismiss: () -> Unit) {
+  override fun showErrorDialog(onDismiss: () -> Unit) {
     // postDelayed is workaround for: If view is embedded in a DialogFragment, the below dialog is shown under the DialogFragment.
-    postDelayed(
-      {
-        AlertDialog.Builder(context)
-          .setCancelable(false)
-          .setTitle(R.string.mobileconsents_privacy_preferences_title_error_send)
-          .setMessage(R.string.mobileconsents_privacy_preferences_msg_error_send)
-          .setPositiveButton(android.R.string.ok) { _, _ -> onDismiss() }
-          .create()
-          .show()
-      },
-      0
-    )
+    postDelayed({ createErrorDialog(context, onDismiss).show() }, 0)
   }
 }
