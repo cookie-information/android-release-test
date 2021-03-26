@@ -13,7 +13,8 @@ import com.cookieinformation.mobileconsents.R
 import com.cookieinformation.mobileconsents.ui.PrivacyCenterItem.PrivacyCenterDetailsItem
 import com.cookieinformation.mobileconsents.ui.PrivacyCenterItem.PrivacyCenterInfoItem
 import com.cookieinformation.mobileconsents.ui.PrivacyCenterItem.PrivacyCenterPreferencesItem
-import com.cookieinformation.mobileconsents.util.setTextFomHtml
+import com.cookieinformation.mobileconsents.util.setOnClickListenerButDoNotInvokeWhenSpanClicked
+import com.cookieinformation.mobileconsents.util.setTextFromHtml
 import java.util.UUID
 
 private const val itemTypeInfo = 1
@@ -68,12 +69,12 @@ internal class PrivacyCenterListAdapter(
       when (item) {
         is PrivacyCenterInfoItem -> with(consentText) {
           setIndicatorDrawable(item.expanded)
-          setTextFomHtml(item.text)
-          setOnClickListener {
+          setTextFromHtml(item.text)
+          setOnClickListenerButDoNotInvokeWhenSpanClicked {
             onConsentInfoExpandToggle(item.id)
           }
         }
-        is PrivacyCenterDetailsItem -> consentText.setTextFomHtml(item.details)
+        is PrivacyCenterDetailsItem -> consentText.setTextFromHtml(item.details)
         else -> error("Invalid PrivacyCenterItem")
       }
     }
@@ -106,7 +107,7 @@ internal class PrivacyCenterListAdapter(
     override fun bind(item: PrivacyCenterItem) {
       val preferencesItem = item as PrivacyCenterPreferencesItem
       title.text = preferencesItem.title
-      subTitle.setTextFomHtml(preferencesItem.subTitle, boldLinks = false, underline = true)
+      subTitle.setTextFromHtml(preferencesItem.subTitle, boldLinks = false, underline = true)
       preferencesAdapter.submitList(preferencesItem.items)
     }
   }

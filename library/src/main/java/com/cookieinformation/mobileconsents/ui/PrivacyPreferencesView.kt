@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cookieinformation.mobileconsents.R
 import com.cookieinformation.mobileconsents.ui.PrivacyPreferencesView.IntentListener
 import com.cookieinformation.mobileconsents.ui.PrivacyPreferencesViewData.ButtonState
-import com.cookieinformation.mobileconsents.util.setTextFomHtml
+import com.cookieinformation.mobileconsents.util.setTextFromHtml
 import java.util.UUID
 
 public class PrivacyPreferencesView @JvmOverloads constructor(
@@ -137,7 +137,7 @@ public class PrivacyPreferencesView @JvmOverloads constructor(
 
   private fun updateHtmlText(@IdRes viewId: Int, html: String, boldLinks: Boolean) {
     findViewById<TextView>(viewId).apply {
-      setTextFomHtml(html, boldLinks)
+      setTextFromHtml(html, boldLinks)
     }
   }
 

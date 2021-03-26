@@ -10,7 +10,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.cookieinformation.mobileconsents.R
-import com.cookieinformation.mobileconsents.util.setTextFomHtml
+import com.cookieinformation.mobileconsents.util.setOnClickListenerButDoNotInvokeWhenSpanClicked
+import com.cookieinformation.mobileconsents.util.setTextFromHtml
 import java.util.UUID
 
 private const val requireIndicator = "<a href=\"\">*</a>"
@@ -36,12 +37,12 @@ internal class PrivacyPreferencesListAdapter(
 
     private val consentText =
       itemView.findViewById<TextView>(R.id.mobileconsents_privacy_preferences_item_text).apply {
-        setOnClickListener { toggleSwitch() }
+        setOnClickListenerButDoNotInvokeWhenSpanClicked { toggleSwitch() }
       }
 
     private val consentDetails =
       itemView.findViewById<TextView?>(R.id.mobileconsents_privacy_preferences_item_details)?.apply {
-        setOnClickListener { toggleSwitch() }
+        setOnClickListenerButDoNotInvokeWhenSpanClicked { toggleSwitch() }
       }
 
     private fun toggleSwitch() {
@@ -58,7 +59,7 @@ internal class PrivacyPreferencesListAdapter(
       onConsentItemChanged: (UUID, Boolean) -> Unit
     ) {
       consentText.apply {
-        setTextFomHtml(if (consentItem.required) "${consentItem.text}$requireIndicator" else consentItem.text)
+        setTextFromHtml(if (consentItem.required) "${consentItem.text}$requireIndicator" else consentItem.text)
       }
       consentSwitch.apply {
         isChecked = consentItem.accepted
@@ -70,7 +71,7 @@ internal class PrivacyPreferencesListAdapter(
         }
       }
       consentDetails?.apply {
-        setTextFomHtml(consentItem.details)
+        setTextFromHtml(consentItem.details)
         visibility = if (consentItem.details.isBlank()) View.GONE else View.VISIBLE
       }
     }
