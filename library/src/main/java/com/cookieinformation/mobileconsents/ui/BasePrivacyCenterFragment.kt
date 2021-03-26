@@ -7,34 +7,21 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.cookieinformation.mobileconsents.MobileConsentSdk
 import com.cookieinformation.mobileconsents.ui.ConsentSolutionViewModel.Event
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import java.util.UUID
 
 public abstract class BasePrivacyCenterFragment : Fragment(), ConsentSolutionListener {
 
-  private lateinit var mobileConsentSdk: MobileConsentSdk
-  private lateinit var consentSolutionId: UUID
-  private lateinit var localeProvider: LocaleProvider
+  private lateinit var binder: ConsentSolutionBinder
 
-  private val viewModel: PrivacyCenterViewModel by viewModels {
-    createViewModelFactory(
-      mobileConsentSdk,
-      consentSolutionId,
-      localeProvider
-    )
-  }
+  private val viewModel: PrivacyCenterViewModel by viewModels { createViewModelFactory(binder) }
 
-  public fun initialize(
-    mobileConsentSdk: MobileConsentSdk,
-    consentSolutionId: UUID,
-    localeProvider: LocaleProvider
-  ) {
-    this.mobileConsentSdk = mobileConsentSdk
-    this.consentSolutionId = consentSolutionId
-    this.localeProvider = localeProvider
+  protected abstract fun bindConsentSolution(builder: ConsentSolutionBinder.Builder): ConsentSolutionBinder
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    binder = bindConsentSolution(ConsentSolutionBinder.InternalBuilder(requireContext()))
   }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
@@ -60,9 +47,5 @@ public abstract class BasePrivacyCenterFragment : Fragment(), ConsentSolutionLis
       Event.Dismiss -> onDismissed()
     }
 
-  private fun createViewModelFactory(
-    mobileConsentSdk: MobileConsentSdk,
-    consentSolutionId: UUID,
-    localeProvider: LocaleProvider
-  ) = PrivacyCenterViewModel.Factory(mobileConsentSdk, consentSolutionId, localeProvider)
+  private fun createViewModelFactory(binder: ConsentSolutionBinder) = PrivacyCenterViewModel.Factory(binder)
 }

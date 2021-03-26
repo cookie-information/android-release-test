@@ -7,35 +7,22 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.cookieinformation.mobileconsents.MobileConsentSdk
 import com.cookieinformation.mobileconsents.R
 import com.cookieinformation.mobileconsents.ui.ConsentSolutionViewModel.Event
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import java.util.UUID
 
 public abstract class BasePrivacyPreferencesDialogFragment : DialogFragment(), ConsentSolutionListener {
 
-  private lateinit var mobileConsentSdk: MobileConsentSdk
-  private lateinit var consentSolutionId: UUID
-  private lateinit var localeProvider: LocaleProvider
+  private lateinit var binder: ConsentSolutionBinder
 
-  private val viewModel: PrivacyPreferencesViewModel by viewModels {
-    createViewModelFactory(
-      mobileConsentSdk,
-      consentSolutionId,
-      localeProvider
-    )
-  }
+  private val viewModel: PrivacyPreferencesViewModel by viewModels { createViewModelFactory(binder) }
 
-  public fun initialize(
-    mobileConsentSdk: MobileConsentSdk,
-    consentSolutionId: UUID,
-    localeProvider: LocaleProvider
-  ) {
-    this.mobileConsentSdk = mobileConsentSdk
-    this.consentSolutionId = consentSolutionId
-    this.localeProvider = localeProvider
+  protected abstract fun bindConsentSolution(builder: ConsentSolutionBinder.Builder): ConsentSolutionBinder
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    binder = bindConsentSolution(ConsentSolutionBinder.InternalBuilder(requireContext()))
   }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
@@ -61,9 +48,5 @@ public abstract class BasePrivacyPreferencesDialogFragment : DialogFragment(), C
       Event.Dismiss -> onDismissed()
     }
 
-  private fun createViewModelFactory(
-    mobileConsentSdk: MobileConsentSdk,
-    consentSolutionId: UUID,
-    localeProvider: LocaleProvider
-  ) = PrivacyPreferencesViewModel.Factory(mobileConsentSdk, consentSolutionId, localeProvider)
+  private fun createViewModelFactory(binder: ConsentSolutionBinder) = PrivacyPreferencesViewModel.Factory(binder)
 }

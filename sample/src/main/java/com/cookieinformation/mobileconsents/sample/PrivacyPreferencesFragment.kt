@@ -2,27 +2,26 @@ package com.cookieinformation.mobileconsents.sample
 
 import android.os.Bundle
 import com.cookieinformation.mobileconsents.ui.BasePrivacyPreferencesDialogFragment
-import com.cookieinformation.mobileconsents.ui.DefaultLocaleProvider
+import com.cookieinformation.mobileconsents.ui.ConsentSolutionBinder
 import java.util.UUID
 
 private const val mobileConsentSdkSolutionIdKey = "mobileConsentSdkSolutionIdKey"
 
 class PrivacyPreferencesFragment : BasePrivacyPreferencesDialogFragment() {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+  override fun bindConsentSolution(builder: ConsentSolutionBinder.Builder): ConsentSolutionBinder {
     val app = requireContext().applicationContext as App
     val mobileConsentSdk = app.sdk
-    val consentsId = UUID.fromString(requireArguments().getString(mobileConsentSdkSolutionIdKey))
-    initialize(
-      mobileConsentSdk = mobileConsentSdk.getMobileConsentSdk(),
-      consentSolutionId = consentsId,
-      localeProvider = DefaultLocaleProvider(app)
-    )
+    val consentSolutionId = UUID.fromString(requireArguments().getString(mobileConsentSdkSolutionIdKey))
+
+    return builder
+      .setMobileConsentSdk(mobileConsentSdk.getMobileConsentSdk())
+      .setConsentSolutionId(consentSolutionId)
+      .create()
   }
 
   override fun onConsentsChosen(consents: Map<UUID, Boolean>) {
-    // Not yet implemented
+    // Handle user choice
     dismiss()
   }
 

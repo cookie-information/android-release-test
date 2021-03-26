@@ -2,7 +2,6 @@ package com.cookieinformation.mobileconsents.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cookieinformation.mobileconsents.MobileConsentSdk
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -10,9 +9,7 @@ import java.util.UUID
 
 internal open class ConsentSolutionViewModel<ViewType, PresenterType>(
   private val presenter: PresenterType,
-  mobileConsentSdk: MobileConsentSdk,
-  consentSolutionId: UUID,
-  localeProvider: LocaleProvider
+  binder: ConsentSolutionBinder
 ) : ViewModel(), ConsentSolutionListener where ViewType : ConsentSolutionView<*, *>,
                                                PresenterType : ConsentSolutionPresenter<ViewType, *, *> {
 
@@ -30,7 +27,12 @@ internal open class ConsentSolutionViewModel<ViewType, PresenterType>(
 
   init {
     presenter.apply {
-      initialize(mobileConsentSdk, consentSolutionId, localeProvider, this@ConsentSolutionViewModel)
+      initialize(
+        binder.mobileConsentSdk,
+        binder.consentSolutionId,
+        binder.localeProvider,
+        this@ConsentSolutionViewModel
+      )
       fetch()
     }
   }
