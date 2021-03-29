@@ -5,4 +5,5 @@
   <item name="mobileconsents_privacy_center_padding" type="dimen">23dp</item>
   <item name="mobileconsents_privacy_center_padding_half" type="dimen">11.5dp</item>
   <item name="mobileconsents_list_fading_edge_size" type="dimen">22.5dp</item>
+  <item name="mobileconsents_toolbar_button_corners_radius" type="dimen">4dp</item>
 </resources>

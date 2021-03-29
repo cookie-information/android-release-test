@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="mobileconsents_color_text_strong">@android:color/white</color>
+  <color name="mobileconsents_color_text_strong">@color/mobileconsents_color_white</color>
   <color name="mobileconsents_color_info_item_background">#20FFFFFF</color>
   <color name="mobileconsents_color_divider">#40FFFFFF</color>
 </resources>

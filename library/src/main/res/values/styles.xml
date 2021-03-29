@@ -73,14 +73,14 @@
   <style name="MobileConsents_PrivacyCenterButton" parent="MobileConsents_BaseText">
     <item name="android:minHeight">0dp</item>
     <item name="android:minWidth">0dp</item>
-    <item name="android:paddingStart">16dp</item>
-    <item name="android:paddingTop">8dp</item>
-    <item name="android:paddingEnd">16dp</item>
-    <item name="android:paddingBottom">8dp</item>
-    <item name="android:layout_marginEnd">@dimen/mobileconsents_privacy_center_padding</item>
+    <item name="android:paddingStart">10dp</item>
+    <item name="android:paddingTop">4dp</item>
+    <item name="android:paddingEnd">10dp</item>
+    <item name="android:paddingBottom">4dp</item>
+    <item name="android:layout_marginEnd">@dimen/mobileconsents_privacy_center_padding_half</item>
     <item name="android:layout_gravity">end|center_vertical</item>
-    <item name="android:backgroundTint">?attr/colorAccent</item>
-    <item name="android:textColor">@android:color/white</item>
+    <item name="android:background">@drawable/mobileconsents_toolbar_button</item>
+    <item name="android:textColor">@color/mobileconsents_toolbar_button_text_color</item>
   </style>
 
   <style name="MobileConsents_PrivacyCenterList" >
