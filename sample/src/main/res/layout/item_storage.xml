@@ -4,14 +4,14 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:layout_margin="8dp"
+  android:layout_margin="@dimen/defaultPadding"
   android:background="?attr/colorSurface"
   android:elevation="5dp">
 
   <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp">
+    android:padding="@dimen/defaultPadding">
 
     <TextView
       android:id="@+id/textKeyLabel"
@@ -26,7 +26,7 @@
       android:id="@+id/textKey"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
+      android:layout_marginTop="@dimen/defaultPadding"
       android:textStyle="bold"
       android:textSize="15sp"
       app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +38,7 @@
       android:id="@+id/textValueLabel"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
+      android:layout_marginTop="@dimen/defaultPadding"
       android:text="@string/text_value_label"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +48,7 @@
       android:id="@+id/textValue"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
+      android:layout_marginTop="@dimen/defaultPadding"
       android:textStyle="bold"
       android:textSize="15sp"
       app:layout_constraintEnd_toEndOf="parent"

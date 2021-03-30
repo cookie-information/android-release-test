@@ -1,28 +1,28 @@
 package com.cookieinformation.mobileconsents.sample
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
+import androidx.fragment.app.Fragment
 import com.cookieinformation.mobileconsents.CallListener
 import com.cookieinformation.mobileconsents.CallbackMobileConsentSdk
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_main.buttonFetch
-import kotlinx.android.synthetic.main.activity_storage.buttonMainPage
-import kotlinx.android.synthetic.main.activity_storage.recyclerStorage
+import kotlinx.android.synthetic.main.fragment_storage.recyclerStorage
+import kotlinx.android.synthetic.main.fragment_storage.toolbar
 import java.io.IOException
 import java.util.UUID
 
-class StorageActivity : AppCompatActivity(R.layout.activity_storage) {
+class StorageFragment : Fragment(R.layout.fragment_storage) {
 
   private lateinit var sdk: CallbackMobileConsentSdk
   private val storageAdapter = StorageAdapter()
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
 
-    sdk = (application as App).sdk
+    sdk = (requireContext().applicationContext as App).sdk
 
-    buttonMainPage.setOnClickListener {
-      finish()
+    toolbar.setNavigationOnClickListener {
+      requireActivity().onBackPressed()
     }
     recyclerStorage.adapter = storageAdapter
     fetchStorageItems()
@@ -36,7 +36,7 @@ class StorageActivity : AppCompatActivity(R.layout.activity_storage) {
         }
 
         override fun onFailure(error: IOException) {
-          Snackbar.make(buttonFetch, error.message.toString(), Snackbar.LENGTH_SHORT).show()
+          Snackbar.make(toolbar, error.message.toString(), Snackbar.LENGTH_SHORT).show()
         }
       }
     )
