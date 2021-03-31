@@ -10,10 +10,12 @@ private const val mobileConsentSdkSolutionIdKey = "mobileConsentSdkSolutionIdKey
 
 class PrivacyPreferencesFragment : BasePrivacyPreferencesDialogFragment() {
 
+  private val consentSolutionId: UUID
+    get() = UUID.fromString(requireArguments().getString(mobileConsentSdkSolutionIdKey))
+
   override fun bindConsentSolution(builder: ConsentSolutionBinder.Builder): ConsentSolutionBinder {
     val app = requireContext().applicationContext as App
     val mobileConsentSdk = app.sdk
-    val consentSolutionId = UUID.fromString(requireArguments().getString(mobileConsentSdkSolutionIdKey))
 
     return builder
       .setMobileConsentSdk(mobileConsentSdk.getMobileConsentSdk())
@@ -26,7 +28,7 @@ class PrivacyPreferencesFragment : BasePrivacyPreferencesDialogFragment() {
   }
 
   override fun onReadMore() {
-    // Not yet implemented
+    requireActivity().showFragment(PrivacyCenterFragment.newInstance(consentSolutionId))
   }
 
   override fun onDismissed() {
