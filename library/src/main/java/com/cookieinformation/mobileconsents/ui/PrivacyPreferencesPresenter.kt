@@ -34,23 +34,56 @@ internal class PrivacyPreferencesPresenter(
   override fun getGivenConsents(viewData: PrivacyPreferencesViewData): GivenConsent =
     viewData.items.map { it.id to Pair(it.accepted, it.language) }.toMap()
 
-  override fun onPrivacyPreferenceChoiceChanged(id: UUID, accepted: Boolean) {
+  override fun onConsentsChangedWhileFetched(consents: Map<UUID, Boolean>) {
     @Suppress("UNCHECKED_CAST")
     val currentViewState = viewState as ViewState.Fetched<PrivacyPreferencesViewData>
 
-    currentViewState.data.let { data ->
-      val items = data.items.map { if (it.id == id) it.copy(accepted = accepted) else it }
-      val newViewState = currentViewState.copy(
-        data = data.copy(
-          items = items,
-          buttonAcceptSelected = data.buttonAcceptSelected.copy(
-            enabled = areAllRequiredAccepted(items)
-          )
-        )
+    viewState = currentViewState.copy(
+      data = newViewData(
+        currentViewState.data,
+        newItems(currentViewState.data.items, consents)
       )
-      viewState = newViewState
-    }
+    )
   }
+
+  override fun onConsentsChangedWhileSendError(consents: Map<UUID, Boolean>) {
+    @Suppress("UNCHECKED_CAST")
+    val currentViewState = viewState as ViewState.SendError<PrivacyPreferencesViewData>
+
+    viewState = currentViewState.copy(
+      data = newViewData(
+        currentViewState.data,
+        newItems(currentViewState.data.items, consents)
+      )
+    )
+  }
+
+  private fun newItems(
+    items: List<PrivacyPreferencesItem>,
+    consents: Map<UUID, Boolean>
+  ): List<PrivacyPreferencesItem> =
+    items.map {
+      val accepted = consents[it.id] ?: false
+      if (it.accepted != accepted) it.copy(accepted = accepted) else it
+    }
+
+  override fun onPrivacyPreferenceChoiceChanged(id: UUID, accepted: Boolean) {
+    @Suppress("UNCHECKED_CAST")
+    val currentViewState = viewState as ViewState.Fetched<PrivacyPreferencesViewData>
+    val items = currentViewState.data.items.map { if (it.id == id) it.copy(accepted = accepted) else it }
+
+    viewState = currentViewState.copy(data = newViewData(currentViewState.data, items))
+  }
+
+  private fun newViewData(
+    data: PrivacyPreferencesViewData,
+    items: List<PrivacyPreferencesItem>
+  ) = data.copy(
+    items = items,
+    buttonAcceptSelected = data.buttonAcceptSelected.copy(
+      enabled = areAllRequiredAccepted(items)
+    )
+  )
 
   override fun onPrivacyPreferenceButtonClicked(buttonId: ButtonId): Unit =
     when (buttonId) {

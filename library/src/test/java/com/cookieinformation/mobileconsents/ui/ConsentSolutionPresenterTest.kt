@@ -17,6 +17,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import java.io.IOException
 import java.util.Locale
 import java.util.UUID
@@ -37,6 +38,10 @@ private class TestConsentSolutionPresenter :
     TestViewData("TestViewData")
 
   override fun getGivenConsents(viewData: TestViewData): GivenConsent = emptyMap()
+
+  override fun onConsentsChangedWhileFetched(consents: Map<UUID, Boolean>) = Unit
+
+  override fun onConsentsChangedWhileSendError(consents: Map<UUID, Boolean>) = Unit
 }
 
 internal class ConsentSolutionPresenterTest : DescribeSpec({
@@ -50,6 +55,8 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
   lateinit var listener: ConsentSolutionListener
 
   lateinit var presenter: TestConsentSolutionPresenter
+
+  lateinit var saveConsentsFlow: MutableSharedFlow<Map<UUID, Boolean>>
 
   val sampleConsentSolution = createConsentSolution(
     listOf(sampleRequiredConsentItem, sampleOptionalConsentItem, sampleInfoConsentItem)
@@ -68,6 +75,9 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
     localeProvider = mockk()
     every { localeProvider.getLocales() } returns listOf(Locale("en"))
     listener = mockk(relaxed = true)
+
+    saveConsentsFlow = MutableSharedFlow()
+    every { sdk.saveConsentsFlow } returns saveConsentsFlow
 
     presenter = TestConsentSolutionPresenter()
   }
@@ -115,7 +125,7 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
       verify(exactly = 0) { view.showRetryDialog(any(), any()) }
       verify(exactly = 0) { view.showErrorDialog(any()) }
 
-      verify(exactly = 0) { listener.onConsentsChosen(any()) }
+      verify(exactly = 0) { listener.onConsentsChosen(any(), any(), false) }
       verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 0) { listener.onReadMore() }
     }
@@ -136,7 +146,7 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
       verify(exactly = 0) { view.showViewData(any()) }
       verify(exactly = 0) { view.showErrorDialog(any()) }
 
-      verify(exactly = 0) { listener.onConsentsChosen(any()) }
+      verify(exactly = 0) { listener.onConsentsChosen(any(), any(), false) }
       verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 0) { listener.onReadMore() }
     }
@@ -157,7 +167,7 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
       verify(exactly = 0) { view.showViewData(any()) }
       verify(exactly = 0) { view.showErrorDialog(any()) }
 
-      verify(exactly = 0) { listener.onConsentsChosen(any()) }
+      verify(exactly = 0) { listener.onConsentsChosen(any(), any(), false) }
       verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 0) { listener.onReadMore() }
     }
@@ -180,7 +190,7 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
       verify(exactly = 1) { view.showViewData(any()) }
       verify(exactly = 0) { view.showErrorDialog(any()) }
 
-      verify(exactly = 0) { listener.onConsentsChosen(any()) }
+      verify(exactly = 0) { listener.onConsentsChosen(any(), any(), false) }
       verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 0) { listener.onReadMore() }
     }
@@ -189,10 +199,11 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
   describe("ConsentSolutionPresenter: send") {
 
     it("when sdk's postConsent satisfy, onConsentsChosen is called") {
-      coEvery { sdk.getSavedConsents() } returns mapOf(sampleRequiredConsentItem.consentItemId to true)
-      coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns createConsentSolution(
+      val consentSolution = createConsentSolution(
         listOf(sampleRequiredConsentItem, sampleOptionalConsentItem, sampleInfoConsentItem)
       )
+      coEvery { sdk.getSavedConsents() } returns mapOf(sampleRequiredConsentItem.consentItemId to true)
+      coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns consentSolution
       coEvery { sdk.postConsent(any()) } returns Unit
 
       presenter.initialize(sdk, consentSolutionId, localeProvider, listener)
@@ -207,7 +218,7 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
       verify(exactly = 2) { view.showViewData(any()) }
       verify(exactly = 0) { view.showErrorDialog(any()) }
 
-      verify(exactly = 1) { listener.onConsentsChosen(any()) }
+      verify(exactly = 1) { listener.onConsentsChosen(consentSolution, any(), false) }
       verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 0) { listener.onReadMore() }
     }
@@ -231,9 +242,46 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
       verify(exactly = 3) { view.showViewData(any()) }
       verify(exactly = 1) { view.showErrorDialog(any()) }
 
-      verify(exactly = 0) { listener.onConsentsChosen(any()) }
+      verify(exactly = 0) { listener.onConsentsChosen(any(), any(), false) }
       verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 0) { listener.onReadMore() }
+    }
+  }
+
+  describe("ConsentSolutionPresenter: consents changed externally") {
+
+    it("when external save is triggered while has fetched consents, expect onConsentsChosen callback") {
+      val consentSolution = createConsentSolution(
+        listOf(sampleRequiredConsentItem, sampleOptionalConsentItem, sampleInfoConsentItem)
+      )
+      val savedConsents = mapOf(sampleRequiredConsentItem.consentItemId to true)
+      coEvery { sdk.getSavedConsents() } returns savedConsents
+      coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns consentSolution
+
+      presenter.initDefault()
+
+      saveConsentsFlow.emit(mapOf(sampleRequiredConsentItem.consentItemId to true))
+
+      verify(exactly = 0) { listener.onConsentsChosen(any(), any(), false) }
+      verify(exactly = 1) { listener.onConsentsChosen(consentSolution, savedConsents, true) }
+    }
+
+    it("when external save is triggered while showing send error, expect onConsentsChosen callback") {
+      val consentSolution = createConsentSolution(
+        listOf(sampleRequiredConsentItem, sampleOptionalConsentItem, sampleInfoConsentItem)
+      )
+      val savedConsents = mapOf(sampleRequiredConsentItem.consentItemId to true)
+      coEvery { sdk.getSavedConsents() } returns savedConsents
+      coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns consentSolution
+      coEvery { sdk.postConsent(any()) } throws IOException()
+
+      presenter.initDefault()
+      presenter.send()
+
+      saveConsentsFlow.emit(mapOf(sampleRequiredConsentItem.consentItemId to true))
+
+      verify(exactly = 0) { listener.onConsentsChosen(any(), any(), false) }
+      verify(exactly = 1) { listener.onConsentsChosen(consentSolution, savedConsents, true) }
     }
   }
 })

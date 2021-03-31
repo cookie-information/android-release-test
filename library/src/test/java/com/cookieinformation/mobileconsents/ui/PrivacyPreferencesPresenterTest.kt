@@ -15,6 +15,8 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import java.io.IOException
 import java.util.Locale
 import java.util.UUID
 
@@ -29,6 +31,8 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
   lateinit var listener: ConsentSolutionListener
 
   lateinit var presenter: PrivacyPreferencesPresenter
+
+  lateinit var saveConsentsFlow: MutableSharedFlow<Map<UUID, Boolean>>
 
   val sampleConsentSolution = createConsentSolution(
     listOf(sampleRequiredConsentItem, sampleOptionalConsentItem, sampleInfoConsentItem)
@@ -47,6 +51,9 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
     localeProvider = mockk()
     every { localeProvider.getLocales() } returns listOf(Locale("en"))
     listener = mockk(relaxed = true)
+
+    saveConsentsFlow = MutableSharedFlow()
+    every { sdk.saveConsentsFlow } returns saveConsentsFlow
 
     presenter = PrivacyPreferencesPresenter(dispatcher = Dispatchers.Unconfined)
   }
@@ -201,7 +208,7 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
       )
 
       viewDataSlot.captured shouldBe expectedViewData
-      verify(exactly = 0) { listener.onConsentsChosen(any()) }
+      verify(exactly = 0) { listener.onConsentsChosen(any(), any(), false) }
       verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 1) { listener.onReadMore() }
     }
@@ -221,7 +228,7 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
       every { view.showViewData(capture(viewDataSlot)) } returns Unit
 
       val consentsChosenSlot = slot<Map<UUID, Boolean>>()
-      every { listener.onConsentsChosen(capture(consentsChosenSlot)) } returns Unit
+      every { listener.onConsentsChosen(any(), capture(consentsChosenSlot), false) } returns Unit
 
       presenter.initDefault()
       presenter.onPrivacyPreferenceButtonClicked(AcceptAll)
@@ -234,7 +241,7 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
 
       viewDataSlot.captured shouldBe expectedViewData
       consentsChosenSlot.captured shouldBe userChoiceMap(requiredChosen = true, optionalChosen = true)
-      verify(exactly = 1) { listener.onConsentsChosen(any()) }
+      verify(exactly = 1) { listener.onConsentsChosen(any(), any(), false) }
       verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 0) { listener.onReadMore() }
     }
@@ -253,7 +260,7 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
       every { view.showViewData(capture(viewDataSlot)) } returns Unit
 
       val consentsChosenSlot = slot<Map<UUID, Boolean>>()
-      every { listener.onConsentsChosen(capture(consentsChosenSlot)) } returns Unit
+      every { listener.onConsentsChosen(any(), capture(consentsChosenSlot), false) } returns Unit
 
       presenter.initDefault()
       presenter.onPrivacyPreferenceButtonClicked(RejectAll)
@@ -266,7 +273,7 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
 
       viewDataSlot.captured shouldBe expectedViewData
       consentsChosenSlot.captured shouldBe userChoiceMap(optionalChosen = false)
-      verify(exactly = 1) { listener.onConsentsChosen(any()) }
+      verify(exactly = 1) { listener.onConsentsChosen(any(), any(), false) }
       verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 0) { listener.onReadMore() }
     }
@@ -286,7 +293,7 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
       coEvery { view.showViewData(capture(viewDataSlot)) } returns Unit
 
       val consentsChosenSlot = slot<Map<UUID, Boolean>>()
-      every { listener.onConsentsChosen(capture(consentsChosenSlot)) } returns Unit
+      every { listener.onConsentsChosen(any(), capture(consentsChosenSlot), false) } returns Unit
 
       presenter.initDefault()
       presenter.onPrivacyPreferenceButtonClicked(AcceptSelected)
@@ -299,7 +306,7 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
 
       viewDataSlot.captured shouldBe expectedViewData
       consentsChosenSlot.captured shouldBe userChoiceMap(requiredChosen = true, optionalChosen = false)
-      verify(exactly = 1) { listener.onConsentsChosen(any()) }
+      verify(exactly = 1) { listener.onConsentsChosen(any(), any(), false) }
       verify(exactly = 0) { listener.onDismissed() }
       verify(exactly = 0) { listener.onReadMore() }
     }
@@ -322,6 +329,57 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
       presenter.send()
 
       consentsSlot.captured shouldBe sampleConsent(requiredChosen = true, optionalChosen = false)
+    }
+  }
+
+  describe("ConsentSolutionPresenter: consents changed externally") {
+
+    it("when external save is triggered while has fetched consents, expect update data") {
+      val consentSolution = createConsentSolution(
+        listOf(sampleRequiredConsentItem, sampleOptionalConsentItem, sampleInfoConsentItem)
+      )
+      coEvery { sdk.getSavedConsents() } returns emptyMap()
+      coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns consentSolution
+
+      val viewDataSlot = slot<PrivacyPreferencesViewData>()
+      every { view.showViewData(capture(viewDataSlot)) } returns Unit
+
+      presenter.initDefault()
+
+      saveConsentsFlow.emit(mapOf(sampleOptionalConsentItem.consentItemId to true))
+
+      val expectedViewData = createViewData(
+        items = listOf(sampleRequiredItem(false), sampleOptionalItem(true)),
+        enabledRejectAll = false,
+        enabledAcceptSelected = false,
+      )
+
+      viewDataSlot.captured shouldBe expectedViewData
+    }
+
+    it("when external save is triggered while showing send error, expect update data") {
+      val consentSolution = createConsentSolution(
+        listOf(sampleRequiredConsentItem, sampleOptionalConsentItem, sampleInfoConsentItem)
+      )
+      coEvery { sdk.getSavedConsents() } returns emptyMap()
+      coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns consentSolution
+      coEvery { sdk.postConsent(any()) } throws IOException()
+
+      val viewDataSlot = slot<PrivacyPreferencesViewData>()
+      every { view.showViewData(capture(viewDataSlot)) } returns Unit
+
+      presenter.initDefault()
+      presenter.send()
+
+      saveConsentsFlow.emit(mapOf(sampleRequiredConsentItem.consentItemId to true))
+
+      val expectedViewData = createViewData(
+        items = listOf(sampleRequiredItem(true), sampleOptionalItem(false)),
+        enabledRejectAll = false,
+        enabledAcceptSelected = true,
+      )
+
+      viewDataSlot.captured shouldBe expectedViewData
     }
   }
 })

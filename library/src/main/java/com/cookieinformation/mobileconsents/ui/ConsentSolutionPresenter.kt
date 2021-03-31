@@ -10,6 +10,8 @@ import com.cookieinformation.mobileconsents.TextTranslation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.Locale
@@ -136,6 +138,26 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     this.consentSolutionId = consentSolutionId
     this.localeProvider = localeProvider
     this.listener = listener
+    observeConsents()
+  }
+
+  private fun observeConsents() {
+    consentSdk.saveConsentsFlow
+      .onEach {
+        // For the presenter, changes are only useful when data are shown. Loading states can be ignored
+        when (val currentViewState = viewState) {
+          is ViewState.Fetched<*> -> {
+            onConsentsChangedWhileFetched(it)
+            listener?.onConsentsChosen(currentViewState.consentSolution, it, true)
+          }
+          is ViewState.SendError<*> -> {
+            onConsentsChangedWhileSendError(it)
+            listener?.onConsentsChosen(currentViewState.consentSolution, it, true)
+          }
+          else -> Unit
+        }
+      }
+      .launchIn(scope)
   }
 
   @MainThread
@@ -165,7 +187,7 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
         val currentViewState = viewState as ViewState.Fetched<ViewDataType>
         viewState = ViewState.Sending(currentViewState.data, currentViewState.consentSolution)
         consentSdk.postConsent(createConsent())
-        listener?.onConsentsChosen(consentSdk.getSavedConsents())
+        listener?.onConsentsChosen(currentViewState.consentSolution, consentSdk.getSavedConsents(), false)
       } catch (_: IOException) {
         val currentViewState = viewState
         require(currentViewState is ViewState.Sending<*>)
@@ -227,4 +249,8 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
   ): ViewDataType
 
   protected abstract fun getGivenConsents(viewData: ViewDataType): GivenConsent
+
+  protected abstract fun onConsentsChangedWhileFetched(consents: Map<UUID, Boolean>)
+
+  protected abstract fun onConsentsChangedWhileSendError(consents: Map<UUID, Boolean>)
 }

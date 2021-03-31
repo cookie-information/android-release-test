@@ -1,5 +1,6 @@
 package com.cookieinformation.mobileconsents
 
+import android.annotation.SuppressLint
 import android.content.Context
 import com.cookieinformation.mobileconsents.adapter.moshi
 import com.cookieinformation.mobileconsents.networking.ConsentClient
@@ -7,12 +8,15 @@ import com.cookieinformation.mobileconsents.storage.ConsentStorage
 import com.cookieinformation.mobileconsents.storage.MoshiFileHandler
 import com.cookieinformation.mobileconsents.system.getApplicationProperties
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.sync.Mutex
 import okhttp3.Call
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import java.io.File
+import java.lang.ref.WeakReference
+import java.util.UUID
 
 private const val storageFileName = "mobileconsents_storage.txt"
 
@@ -60,7 +64,6 @@ public class MobileConsentSdkBuilder internal constructor(
   override fun build(): MobileConsentSdk {
     val factory = callFactory ?: OkHttpClient()
 
-    val applicationProperties = context.getApplicationProperties()
     val storageFile = File(context.filesDir, storageFileName)
     val consentClient = ConsentClient(
       getUrl = BuildConfig.BASE_URL.toHttpUrl(),
@@ -68,8 +71,15 @@ public class MobileConsentSdkBuilder internal constructor(
       callFactory = factory,
       moshi = moshi
     )
-    val consentStorage = ConsentStorage(Mutex, storageFile, MoshiFileHandler(moshi))
-    return MobileConsentSdk(consentClient, consentStorage, applicationProperties, Dispatchers.IO)
+    val consentStorage =
+      ConsentStorage(Mutex, storageFile, MoshiFileHandler(moshi), getSaveConsentsMutableFlow(), Dispatchers.IO)
+    return MobileConsentSdk(
+      consentClient = consentClient,
+      consentStorage = consentStorage,
+      applicationProperties = context.getApplicationProperties(),
+      dispatcher = Dispatchers.IO,
+      saveConsentsFlow = consentStorage.saveConsentsFlow
+    )
   }
 
   private companion object {
@@ -77,6 +87,25 @@ public class MobileConsentSdkBuilder internal constructor(
      *  Global Mutex, used for synchronization of writing data to the storage, shared across all SDK instances.
      */
     private val Mutex = Mutex()
+
+    /**
+     * Returns global flow for observing end emitting "save consents" events.
+     */
+    @SuppressLint("SyntheticAccessor")
+    fun getSaveConsentsMutableFlow(): MutableSharedFlow<Map<UUID, Boolean>> = synchronized(this) {
+      var eventsEmitter = SaveConsentsMutableFlowReference.get()
+      if (eventsEmitter == null) {
+        eventsEmitter = MutableSharedFlow()
+        SaveConsentsMutableFlowReference = WeakReference(eventsEmitter)
+      }
+      eventsEmitter
+    }
+
+    /**
+     * Reference to global flow for observing end emitting "save consents" events, shared across all SDK instances.
+     * Warning: Do not use this field directly. Use [getSaveConsentsMutableFlow].
+     */
+    private var SaveConsentsMutableFlowReference = WeakReference<MutableSharedFlow<Map<UUID, Boolean>>>(null)
   }
 }
 

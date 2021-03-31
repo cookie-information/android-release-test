@@ -6,6 +6,7 @@ import com.cookieinformation.mobileconsents.Consent
 import com.cookieinformation.mobileconsents.ConsentSolution
 import com.cookieinformation.mobileconsents.MobileConsentSdk
 import com.cookieinformation.mobileconsents.ProcessingPurpose
+import com.cookieinformation.mobileconsents.SaveConsentsObserver
 import com.cookieinformation.mobileconsents.adapter.moshi
 import com.cookieinformation.mobileconsents.networking.ConsentClient
 import com.cookieinformation.mobileconsents.networking.response.ConsentSolutionResponseJsonAdapter
@@ -18,7 +19,11 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.engine.spec.tempfile
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.sync.Mutex
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -54,6 +59,7 @@ internal class MobileConsentSdkTest : DescribeSpec({
   lateinit var storage: ConsentStorage
   lateinit var consentSdk: CallbackMobileConsentSdk
   lateinit var consentSolution: ConsentSolution
+  lateinit var saveConsentsFlow: MutableSharedFlow<Map<UUID, Boolean>>
 
   beforeTest {
     server = MockWebServer()
@@ -61,14 +67,22 @@ internal class MobileConsentSdkTest : DescribeSpec({
 
     baseUrl = server.url("/api/test")
     consentClient = ConsentClient(baseUrl, baseUrl, OkHttpClient(), moshi)
-    storage = ConsentStorage(Mutex(), tempfile(suffix = ".txt"), MoshiFileHandler(moshi))
+    saveConsentsFlow = MutableSharedFlow()
+    storage = ConsentStorage(
+      Mutex(),
+      tempfile(suffix = ".txt"),
+      MoshiFileHandler(moshi),
+      saveConsentsFlow,
+      Dispatchers.Unconfined
+    )
     consentSolution = ConsentSolutionResponseJsonAdapter(moshi).fromJson(consentString)!!.toDomain()
     consentSdk = CallbackMobileConsentSdk(
       MobileConsentSdk(
         consentClient = consentClient,
         consentStorage = storage,
         applicationProperties = applicationProperties,
-        dispatcher = Dispatchers.Unconfined
+        dispatcher = Dispatchers.Unconfined,
+        saveConsentsFlow = saveConsentsFlow,
       ),
       dispatcher = Dispatchers.Unconfined
     )
@@ -89,6 +103,25 @@ internal class MobileConsentSdkTest : DescribeSpec({
       server.enqueue(MockResponse())
 
       consentSdk.postConsentSuspending(consent) shouldBe Unit
+    }
+
+    it("posts consent triggers save event when observer is registered") {
+      server.enqueue(MockResponse())
+      val observer = mockk<SaveConsentsObserver>(relaxed = true)
+      val callListener = mockk<CallListener<Unit>>(relaxed = true)
+
+      val expectedConsents = mapOf(uuid to true, secondUuid to false)
+
+      consentSdk.registerSaveConsentsObserver(observer)
+
+      consentSdk.postConsent(consent, callListener)
+      delay(500) // Make sure that the observer is called
+      verify(exactly = 1) { observer.onConsentsSaved(expectedConsents) }
+
+      consentSdk.unregisterSaveConsentsObserver(observer)
+
+      consentSdk.postConsent(consent, callListener)
+      verify(exactly = 1) { observer.onConsentsSaved(any()) }
     }
 
     it("on fetching exception returns valid exception") {

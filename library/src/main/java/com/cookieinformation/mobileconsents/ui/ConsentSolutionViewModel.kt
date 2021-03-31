@@ -2,6 +2,7 @@ package com.cookieinformation.mobileconsents.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cookieinformation.mobileconsents.ConsentSolution
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -17,8 +18,15 @@ internal open class ConsentSolutionViewModel<ViewType, PresenterType>(
   private var pendingEvent: Event? = null
 
   sealed class Event {
-    data class ConsentsChosen(val consents: Map<UUID, Boolean>) : Event()
+
+    data class ConsentsChosen(
+      val consentSolution: ConsentSolution,
+      val consents: Map<UUID, Boolean>,
+      val external: Boolean
+    ) : Event()
+
     object ReadMore : Event()
+
     object Dismiss : Event()
   }
 
@@ -51,7 +59,8 @@ internal open class ConsentSolutionViewModel<ViewType, PresenterType>(
     isViewAttached = false
   }
 
-  override fun onConsentsChosen(consents: Map<UUID, Boolean>) = emitEvent(Event.ConsentsChosen(consents))
+  override fun onConsentsChosen(consentSolution: ConsentSolution, consents: Map<UUID, Boolean>, external: Boolean) =
+    emitEvent(Event.ConsentsChosen(consentSolution, consents, external))
 
   override fun onReadMore() = emitEvent(Event.ReadMore)
 

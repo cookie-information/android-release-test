@@ -13,6 +13,8 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import java.io.IOException
 import java.util.Locale
 import java.util.UUID
 
@@ -27,6 +29,8 @@ internal class PrivacyCenterPresenterTest : DescribeSpec({
   lateinit var listener: ConsentSolutionListener
 
   lateinit var presenter: PrivacyCenterPresenter
+
+  lateinit var saveConsentsFlow: MutableSharedFlow<Map<UUID, Boolean>>
 
   val sampleConsentSolution = createConsentSolution(
     listOf(sampleRequiredConsentItem, sampleOptionalConsentItem, sampleInfoConsentItem)
@@ -45,6 +49,9 @@ internal class PrivacyCenterPresenterTest : DescribeSpec({
     localeProvider = mockk()
     every { localeProvider.getLocales() } returns listOf(Locale("en"))
     listener = mockk(relaxed = true)
+
+    saveConsentsFlow = MutableSharedFlow()
+    every { sdk.saveConsentsFlow } returns saveConsentsFlow
 
     presenter = PrivacyCenterPresenter(dispatcher = Dispatchers.Unconfined)
   }
@@ -244,7 +251,7 @@ internal class PrivacyCenterPresenterTest : DescribeSpec({
           enabledAccept = false,
         )
         viewDataSlot.captured shouldBe expectedViewData
-        verify(exactly = 0) { listener.onConsentsChosen(any()) }
+        verify(exactly = 0) { listener.onConsentsChosen(any(), any(), false) }
         verify(exactly = 1) { listener.onDismissed() }
         verify(exactly = 0) { listener.onReadMore() }
       }
@@ -271,7 +278,7 @@ internal class PrivacyCenterPresenterTest : DescribeSpec({
           enabledAccept = true,
         )
         viewDataSlot.captured shouldBe expectedViewData
-        verify(exactly = 1) { listener.onConsentsChosen(any()) }
+        verify(exactly = 1) { listener.onConsentsChosen(any(), any(), false) }
         verify(exactly = 0) { listener.onDismissed() }
         verify(exactly = 0) { listener.onReadMore() }
       }
@@ -295,6 +302,63 @@ internal class PrivacyCenterPresenterTest : DescribeSpec({
       presenter.onPrivacyCenterAcceptClicked()
 
       consentsSlot.captured shouldBe sampleConsent(requiredChosen = true, optionalChosen = true)
+    }
+  }
+
+  describe("ConsentSolutionPresenter: consents changed externally") {
+
+    it("when external save is triggered while has fetched consents, expect update data") {
+      val consentSolution = createConsentSolution(
+        listOf(sampleRequiredConsentItem, sampleOptionalConsentItem, sampleInfoConsentItem)
+      )
+      coEvery { sdk.getSavedConsents() } returns emptyMap()
+      coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns consentSolution
+
+      val viewDataSlot = slot<PrivacyCenterViewData>()
+      every { view.showViewData(capture(viewDataSlot)) } returns Unit
+
+      presenter.initDefault()
+
+      saveConsentsFlow.emit(mapOf(sampleRequiredConsentItem.consentItemId to true))
+
+      val expectedViewData = createViewData(
+        items = listOf(
+          sampleInfoItem(false),
+          sampleInfoPreferencesItem(true),
+          samplePreferencesItem(listOf(sampleRequiredItem(true), sampleOptionalItem(false)))
+        ),
+        enabledAccept = true,
+      )
+
+      viewDataSlot.captured shouldBe expectedViewData
+    }
+
+    it("when external save is triggered while showing send error, expect update data") {
+      val consentSolution = createConsentSolution(
+        listOf(sampleRequiredConsentItem, sampleOptionalConsentItem, sampleInfoConsentItem)
+      )
+      coEvery { sdk.getSavedConsents() } returns emptyMap()
+      coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns consentSolution
+      coEvery { sdk.postConsent(any()) } throws IOException()
+
+      val viewDataSlot = slot<PrivacyCenterViewData>()
+      every { view.showViewData(capture(viewDataSlot)) } returns Unit
+
+      presenter.initDefault()
+      presenter.send()
+
+      saveConsentsFlow.emit(mapOf(sampleOptionalConsentItem.consentItemId to true))
+
+      val expectedViewData = createViewData(
+        items = listOf(
+          sampleInfoItem(false),
+          sampleInfoPreferencesItem(true),
+          samplePreferencesItem(listOf(sampleRequiredItem(false), sampleOptionalItem(true)))
+        ),
+        enabledAccept = false,
+      )
+
+      viewDataSlot.captured shouldBe expectedViewData
     }
   }
 })

@@ -36,24 +36,70 @@ internal class PrivacyCenterPresenter(
   override fun getGivenConsents(viewData: PrivacyCenterViewData): GivenConsent =
     preferencesItem.items.map { it.id to Pair(it.accepted, it.language) }.toMap()
 
+  override fun onConsentsChangedWhileFetched(consents: Map<UUID, Boolean>) {
+    @Suppress("UNCHECKED_CAST")
+    val currentViewState = viewState as ViewState.Fetched<PrivacyCenterViewData>
+
+    if (currentViewState.data.items.last() is PrivacyCenterPreferencesItem) {
+      viewState = currentViewState.copy(
+        data = newViewData(
+          currentViewState.data,
+          newPreferencesItems(preferencesItem.items, consents)
+        )
+      )
+    } else {
+      preferencesItem = preferencesItem.copy(items = newPreferencesItems(preferencesItem.items, consents))
+    }
+  }
+
+  override fun onConsentsChangedWhileSendError(consents: Map<UUID, Boolean>) {
+    @Suppress("UNCHECKED_CAST")
+    val currentViewState = viewState as ViewState.SendError<PrivacyCenterViewData>
+
+    if (currentViewState.data.items.last() is PrivacyCenterPreferencesItem) {
+      viewState = currentViewState.copy(
+        data = newViewData(
+          currentViewState.data,
+          newPreferencesItems(preferencesItem.items, consents)
+        )
+      )
+    } else {
+      preferencesItem = preferencesItem.copy(items = newPreferencesItems(preferencesItem.items, consents))
+    }
+  }
+
+  private fun newPreferencesItems(
+    items: List<PrivacyPreferencesItem>,
+    consents: Map<UUID, Boolean>
+  ): List<PrivacyPreferencesItem> =
+    items.map {
+      val accepted = consents[it.id] ?: false
+      if (it.accepted != accepted) it.copy(accepted = accepted) else it
+    }
+
   override fun onPrivacyCenterChoiceChanged(id: UUID, accepted: Boolean) {
     @Suppress("UNCHECKED_CAST")
     val currentViewState = viewState as ViewState.Fetched<PrivacyCenterViewData>
     require(currentViewState.data.items.last() is PrivacyCenterPreferencesItem)
 
     val preferenceItems = preferencesItem.items.map { if (it.id == id) it.copy(accepted = accepted) else it }
+    viewState = currentViewState.copy(data = newViewData(currentViewState.data, preferenceItems))
+  }
+
+  private fun newViewData(
+    viewData: PrivacyCenterViewData,
+    preferenceItems: List<PrivacyPreferencesItem>
+  ): PrivacyCenterViewData {
     preferencesItem = preferencesItem.copy(items = preferenceItems)
     val newItems = mutableListOf<PrivacyCenterItem>().apply {
-      addAll(currentViewState.data.items)
+      addAll(viewData.items)
       removeLast()
       add(preferencesItem)
     }
 
-    viewState = currentViewState.copy(
-      data = currentViewState.data.copy(
-        items = newItems,
-        acceptButtonEnabled = areAllRequiredAccepted(preferenceItems)
-      )
+    return viewData.copy(
+      items = newItems,
+      acceptButtonEnabled = areAllRequiredAccepted(preferenceItems)
     )
   }
 

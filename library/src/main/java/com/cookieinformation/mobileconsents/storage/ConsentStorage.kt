@@ -2,7 +2,8 @@ package com.cookieinformation.mobileconsents.storage
 
 import com.cookieinformation.mobileconsents.ProcessingPurpose
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -22,14 +23,22 @@ private const val scratchFileSuffix = ".tmp"
  * @param mutex used for synchronization of write operations.
  * @param file storage's text file.
  * @param fileHandler used for serialization.
+ * @param saveConsentsMutableFlow MutableSharedFlow for emitting "save consents" events.
  * @param dispatcher coroutine IO dispatcher.
  */
+@Suppress("LongParameterList")
 internal class ConsentStorage(
   private val mutex: Mutex,
   private val file: File,
   private val fileHandler: MoshiFileHandler,
-  private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+  private val saveConsentsMutableFlow: MutableSharedFlow<Map<UUID, Boolean>>,
+  private val dispatcher: CoroutineDispatcher
 ) {
+
+  /**
+   * SharedFlow for observing "save consents" events.
+   */
+  val saveConsentsFlow = saveConsentsMutableFlow.asSharedFlow()
 
   init {
     createStorageFile(file)
@@ -38,8 +47,10 @@ internal class ConsentStorage(
   /**
    * Store list of consent choices ([ProcessingPurpose]) as Map of UUIDs and Booleans.
    */
-  suspend fun storeConsentChoices(purposes: List<ProcessingPurpose>) =
-    writeValues(purposes.associate { it.consentItemId.toString() to it.consentGiven.toString() })
+  suspend fun storeConsentChoices(purposes: List<ProcessingPurpose>) {
+    val writtenValues = writeValues(purposes.associate { it.consentItemId.toString() to it.consentGiven.toString() })
+    saveConsentsMutableFlow.emit(writtenValues.toConsents())
+  }
 
   /**
    * Obtain user id necessary for posting consents. If there is no user id stored it is generated, it should only happen
@@ -66,8 +77,13 @@ internal class ConsentStorage(
    * Get all of stored consent choices. User id is filtered out.
    */
   suspend fun getAllConsentChoices(): Map<UUID, Boolean> =
-    readAll()
-      .filterKeys { it != userIdKey }
+    readAll().toConsents()
+
+  /**
+   * Maps key and value read from file to consents map
+   */
+  private fun Map<String, String>.toConsents(): Map<UUID, Boolean> =
+    filterKeys { it != userIdKey }
       .entries.associate { UUID.fromString(it.key) to it.value.toBoolean() }
 
   /**
@@ -89,6 +105,7 @@ internal class ConsentStorage(
         if (!scratchFile.renameTo(file)) {
           throw IOException("$scratchFile could not be renamed to $file")
         }
+        data
       } catch (e: IOException) {
         scratchFile.delete()
         throw e

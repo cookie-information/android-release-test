@@ -11,6 +11,7 @@ import com.cookieinformation.mobileconsents.networking.response.toDomain
 import com.cookieinformation.mobileconsents.storage.ConsentStorage
 import com.cookieinformation.mobileconsents.system.ApplicationProperties
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.UUID
@@ -20,15 +21,18 @@ import java.util.UUID
  * @param consentClient wrapper over [OkHttpClient], enabling for fetching and posting consents.
  * @param consentStorage storage saving all consent choices to local file.
  * @param applicationProperties information about app using SDK, required for sending consent to server.
+ * @param dispatcher dispatcher for executing background jobs.
+ * @param saveConsentsFlow SharedFlow for observing "save consents" events.
  *
  * For SDK instantiating use [MobileConsentSdk.Builder] static function.
  */
-@Suppress("UnusedPrivateMember")
+@Suppress("UnusedPrivateMember", "LongParameterList")
 public class MobileConsentSdk internal constructor(
   private val consentClient: ConsentClient,
   private val consentStorage: ConsentStorage,
   private val applicationProperties: ApplicationProperties,
-  private val dispatcher: CoroutineDispatcher
+  private val dispatcher: CoroutineDispatcher,
+  public val saveConsentsFlow: SharedFlow<Map<UUID, Boolean>>
 ) {
 
   /**

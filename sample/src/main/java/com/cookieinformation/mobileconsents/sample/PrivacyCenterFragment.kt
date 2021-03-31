@@ -1,6 +1,7 @@
 package com.cookieinformation.mobileconsents.sample
 
 import android.os.Bundle
+import com.cookieinformation.mobileconsents.ConsentSolution
 import com.cookieinformation.mobileconsents.ui.BasePrivacyCenterFragment
 import com.cookieinformation.mobileconsents.ui.ConsentSolutionBinder
 import java.util.UUID
@@ -20,7 +21,7 @@ class PrivacyCenterFragment : BasePrivacyCenterFragment() {
       .create()
   }
 
-  override fun onConsentsChosen(consents: Map<UUID, Boolean>) {
+  override fun onConsentsChosen(consentSolution: ConsentSolution, consents: Map<UUID, Boolean>, external: Boolean) {
     requireActivity().onBackPressed()
   }
 

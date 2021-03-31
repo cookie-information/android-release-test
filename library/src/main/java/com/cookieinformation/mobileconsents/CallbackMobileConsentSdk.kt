@@ -4,9 +4,12 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.UUID
+import java.util.concurrent.CopyOnWriteArraySet
 
 /**
  * SDK allowing easy management of user consents.
@@ -21,6 +24,8 @@ public class CallbackMobileConsentSdk internal constructor(
 ) {
 
   private val scope = CoroutineScope(dispatcher)
+  private val saveConsentsObservers = CopyOnWriteArraySet<SaveConsentsObserver>()
+  private var saveConsentsFlowCollectJob: Job? = null
 
   /**
    * Returns associated instance of MobileConsentSdk.
@@ -105,12 +110,36 @@ public class CallbackMobileConsentSdk internal constructor(
     override fun cancel() = job.cancel()
   }
 
+  /**
+   * Registers the instance of [SaveConsentsObserver]. This method must be called from UI thread.
+   */
+  public fun registerSaveConsentsObserver(observer: SaveConsentsObserver) {
+    saveConsentsObservers.add(observer)
+    if (saveConsentsFlowCollectJob == null) {
+      saveConsentsFlowCollectJob = mobileConsentSdk.saveConsentsFlow
+        .onEach { consents ->
+          saveConsentsObservers.forEach { it.onConsentsSaved(consents) }
+        }
+        .launchIn(scope)
+    }
+  }
+
+  /**
+   * Unregisters the instance of [SaveConsentsObserver]. This method must be called from UI thread.
+   */
+  public fun unregisterSaveConsentsObserver(observer: SaveConsentsObserver) {
+    saveConsentsObservers.remove(observer)
+    if (saveConsentsObservers.isEmpty()) {
+      saveConsentsFlowCollectJob?.cancel()
+      saveConsentsFlowCollectJob = null
+    }
+  }
+
   public companion object {
     /**
      * Use to instantiate SDK with all necessary parameters.
      * @return SDK builder instance.
      */
-    @Suppress("FunctionNaming")
     @JvmStatic
     public fun from(mobileConsentSdk: MobileConsentSdk): CallbackMobileConsentSdk =
       CallbackMobileConsentSdk(mobileConsentSdk, Dispatchers.Main)
@@ -125,4 +154,31 @@ public interface Subscription {
    * Cancel ongoing background operation.
    */
   public fun cancel()
+}
+
+/**
+ * Callback used for all async operations in SDK.
+ */
+public interface CallListener<in T> {
+  /**
+   * Retrieves successful result of async operation.
+   * @return result of async operation.
+   */
+  public fun onSuccess(result: T)
+
+  /**
+   * Retrieves failure of async operation.
+   * @return [IOException]
+   */
+  public fun onFailure(error: IOException)
+}
+
+/**
+ * The Observer interface for monitoring every "contents save" event.
+ */
+public interface SaveConsentsObserver {
+  /**
+   * Called every time when consents are saved
+   */
+  public fun onConsentsSaved(consents: Map<UUID, Boolean>)
 }

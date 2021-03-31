@@ -43,7 +43,7 @@ public abstract class BasePrivacyPreferencesDialogFragment : DialogFragment(), C
 
   private fun handleEvent(event: Event) =
     when (event) {
-      is Event.ConsentsChosen -> onConsentsChosen(event.consents)
+      is Event.ConsentsChosen -> with(event) { onConsentsChosen(consentSolution, consents, external) }
       Event.ReadMore -> onReadMore()
       Event.Dismiss -> onDismissed()
     }

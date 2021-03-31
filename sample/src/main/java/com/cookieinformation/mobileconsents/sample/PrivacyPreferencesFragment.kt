@@ -1,6 +1,7 @@
 package com.cookieinformation.mobileconsents.sample
 
 import android.os.Bundle
+import com.cookieinformation.mobileconsents.ConsentSolution
 import com.cookieinformation.mobileconsents.ui.BasePrivacyPreferencesDialogFragment
 import com.cookieinformation.mobileconsents.ui.ConsentSolutionBinder
 import java.util.UUID
@@ -20,8 +21,7 @@ class PrivacyPreferencesFragment : BasePrivacyPreferencesDialogFragment() {
       .create()
   }
 
-  override fun onConsentsChosen(consents: Map<UUID, Boolean>) {
-    // Handle user choice
+  override fun onConsentsChosen(consentSolution: ConsentSolution, consents: Map<UUID, Boolean>, external: Boolean) {
     dismiss()
   }
 
