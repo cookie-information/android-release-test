@@ -5,6 +5,7 @@
 
   <style name="MobileConsents_BaseText">
     <item name="android:textAppearance">@style/MobileConsents_TextAppearance</item>
+    <item name="android:textColorLink">@color/mobileconsents_color_text_strong</item>
   </style>
 
   <style name="MobileConsents_PrivacyPreferencesLayout" />

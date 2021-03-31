@@ -1,5 +1,6 @@
 package com.cookieinformation.mobileconsents.util
 
+import android.content.ActivityNotFoundException
 import android.text.Spannable
 import android.text.TextPaint
 import android.text.style.URLSpan
@@ -22,7 +23,11 @@ internal fun Spannable.changeLinksStyle(
         }
 
         override fun onClick(widget: View) {
-          super.onClick(widget)
+          try {
+            super.onClick(widget)
+          } catch (_: ActivityNotFoundException) {
+            // Ignore
+          }
           doOnClick?.invoke()
         }
       },
