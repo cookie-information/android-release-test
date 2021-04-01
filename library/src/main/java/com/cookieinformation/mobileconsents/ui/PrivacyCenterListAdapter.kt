@@ -21,6 +21,9 @@ private const val itemTypeInfo = 1
 private const val itemTypeDetails = 2
 private const val itemTypePreferences = 3
 
+/**
+ * RecyclerView's adapter for [PrivacyCenterItem] item model.
+ */
 internal class PrivacyCenterListAdapter(
   private val onConsentInfoExpandToggle: (UUID) -> Unit,
   private val onConsentItemChoiceToggle: (UUID, Boolean) -> Unit

@@ -13,6 +13,10 @@ import com.cookieinformation.mobileconsents.R
 import com.cookieinformation.mobileconsents.ui.PrivacyCenterView.IntentListener
 import java.util.UUID
 
+/**
+ * The Privacy Center view implementation. The view is used in [BasePrivacyCenterFragment] and should not be used directly
+ * (except for ex. capturing events for analytics by [PrivacyCenterView.IntentListener]).
+ */
 public class PrivacyCenterView @JvmOverloads constructor(
   context: Context,
   attrs: AttributeSet? = null,
@@ -20,15 +24,35 @@ public class PrivacyCenterView @JvmOverloads constructor(
   defStyleRes: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes), ConsentSolutionView<PrivacyCenterViewData, IntentListener> {
 
+  /**
+   * A listener for events that can be triggered by the user.
+   */
   @MainThread
   public interface IntentListener {
 
+    /**
+     * Called when the user wants to change the choice for the consent.
+     *
+     * @param id [UUID] of the consents.
+     * @param accepted user's choice.
+     */
     public fun onPrivacyCenterChoiceChanged(id: UUID, accepted: Boolean)
 
+    /**
+     * Called when the user wants toggle visibility of the details information.
+     *
+     * @param id [UUID] of the information.
+     */
     public fun onPrivacyCenterDetailsToggle(id: UUID)
 
+    /**
+     * Called when the user accepts selected consents. It is called only if all required consents are chosen by the user.
+     */
     public fun onPrivacyCenterAcceptClicked()
 
+    /**
+     * Called when the user wants to close the view.
+     */
     public fun onPrivacyCenterDismissRequest()
   }
 

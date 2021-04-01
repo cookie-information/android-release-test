@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.appcompat.app.AlertDialog
 import com.cookieinformation.mobileconsents.R
 
+/**
+ * Creates a dialog which is shown when fetching consents fails.
+ */
 internal fun createRetryDialog(context: Context, onRetry: () -> Unit, onDismiss: () -> Unit) =
   AlertDialog.Builder(context)
     .setCancelable(false)
@@ -13,6 +16,9 @@ internal fun createRetryDialog(context: Context, onRetry: () -> Unit, onDismiss:
     .setNegativeButton(android.R.string.cancel) { _, _ -> onDismiss() }
     .create()
 
+/**
+ * Creates a dialog which is shown when sending user choice fails.
+ */
 internal fun createErrorDialog(context: Context, onDismiss: () -> Unit) =
   AlertDialog.Builder(context)
     .setCancelable(false)

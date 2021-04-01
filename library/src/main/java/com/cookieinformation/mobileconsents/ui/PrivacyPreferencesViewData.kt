@@ -1,5 +1,8 @@
 package com.cookieinformation.mobileconsents.ui
 
+/**
+ * The model for [PrivacyPreferencesView]
+ */
 public data class PrivacyPreferencesViewData(
   val title: String,
   val subTitle: String,

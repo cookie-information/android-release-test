@@ -294,4 +294,112 @@ public data class UiTexts(
 ```
 
 ##### Text translations
-There is static helper method `TextTranslation.getTranslationFor(...)` which returns the best matching translation for given locals list.
+There is static helper method `TextTranslation.getTranslationFor(...)` which returns the best matching translation for given locales list.
+
+#### Predefined plug&play UI components
+There are two predefined, easy to integrate, user interface components:
+
+- `BasePrivacyCenterFragment`: this view allows the user to read information about the consents and accept selected consents.
+
+
+![privacy_center.png](images/privacy_center.png)
+
+- `BasePrivacyPreferencesDialogFragment`: this dialog allows use select and accept his choice quickly. There are only general information about the consents.
+
+
+![privacy_preferences.png](images/privacy_preferences.png)
+
+##### Integration of the `BasePrivacyCenterFragment` or `BasePrivacyPreferencesDialogFragment`
+The integration is very easy. The fragment that extends `BasePrivacyCenterFragment` or `BasePrivacyPreferencesDialogFragment` should be created
+and all abstract methods should be implemented. Then the fragment can be used as any other fragment (with navigation component, in XML layout, etc..).
+
+#### Java:
+```java
+public class PrivacyCenterFragment extends BasePrivacyCenterFragment /* or BasePrivacyPreferencesDialogFragment */ {
+
+  @NotNull
+  @Override
+  protected ConsentSolutionBinder bindConsentSolution(@NotNull ConsentSolutionBinder.Builder builder) {
+    // This method binds the SDK instance and consents solution's ID
+    MobileConsentSdk mobileConsentSdk = ... // your SDK instance (keep in mind that the same instance should be used after configuration has changed)
+    UUID consentSolutionId = ... // your ID of the consent solution
+    return builder
+        .setMobileConsentSdk(mobileConsentSdk)
+        .setConsentSolutionId(consentSolutionId)
+        .create();
+  }
+
+  @Override
+  public void onConsentsChosen(
+      @NotNull ConsentSolution consentSolution,
+      @NotNull Map<UUID, Boolean> consents,
+      boolean external
+  ) {
+    // Handle given consents, you may skip this step if the consents has been saved externally.
+    // Navigate back
+  }
+
+  @Override
+  public void onDismissed() {
+    // Navigate back
+  }
+
+  @Override
+  public void onReadMore() {
+    // This callback in not called for "BasePrivacyCenterFragment" yet
+    // For "BasePrivacyPreferencesDialogFragment" should navigate to "BasePrivacyCenterFragment"
+  }
+}
+```
+
+#### Kotlin:
+```kotlin
+class PrivacyCenterFragment : BasePrivacyCenterFragment() /* or BasePrivacyPreferencesDialogFragment */ {
+
+  override fun bindConsentSolution(builder: ConsentSolutionBinder.Builder): ConsentSolutionBinder {
+    // This method binds the SDK instance and consents solution's ID
+    val mobileConsentSdk = ... // your SDK instance (keep in mind that the same instance should be used after configuration has changed)
+    val consentSolutionId = ... // your ID of the consent solution
+    return builder
+      .setMobileConsentSdk(mobileConsentSdk)
+      .setConsentSolutionId(consentSolutionId)
+      .create()
+  }
+
+  override fun onConsentsChosen(consentSolution: ConsentSolution, consents: Map<UUID, Boolean>, external: Boolean) {
+    // Handle given consents, you may skip this step if the consents has been saved externally.
+    // Navigate back
+  }
+
+  override fun onDismissed() {
+    // Navigate back
+  }
+
+  override fun onReadMore() {
+    // This callback in not called for "BasePrivacyCenterFragment" yet
+    // For "BasePrivacyPreferencesDialogFragment" should navigate to "BasePrivacyCenterFragment"
+  }
+}
+```
+
+##### Styling UI components
+The UI elements inherits the style from the application theme, however there is possibility to change appearance of predefined views.
+
+The text colors are imported from attributes `android:textColorSecondary` and`android:textColorSecondary`.
+The first one is used for emphasised texts like title or links, the second one is used as default text color.
+
+The buttons styles uses the application theme except "Accept" button at the "Privacy Center" toolbar.
+It has custom style based on color `colorAccent`.
+
+Generally it is possible to override style of almost all widgets. If it is necessary, the developer
+must find the corresponding style and override it in his application.
+Here are few examples:
+
+- Changing the font: the developer needs to override `MobileConsents_BaseTextAppearance` style.
+```
+<style name="MobileConsents_BaseTextAppearance">
+  <item name="android:fontFamily">sans-serif-condensed</item>
+</style>
+```
+
+- Changing default text size: the developer needs to override `mobileconsents_text_size` dimension.

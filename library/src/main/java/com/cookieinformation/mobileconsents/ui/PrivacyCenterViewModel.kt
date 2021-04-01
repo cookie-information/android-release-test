@@ -2,6 +2,9 @@ package com.cookieinformation.mobileconsents.ui
 
 import androidx.lifecycle.ViewModel
 
+/**
+ * The view model class for the [BasePrivacyCenterFragment].
+ */
 internal class PrivacyCenterViewModel(binder: ConsentSolutionBinder) :
   ConsentSolutionViewModel<PrivacyCenterView, PrivacyCenterPresenter>(PrivacyCenterPresenter(), binder) {
 

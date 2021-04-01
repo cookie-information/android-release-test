@@ -14,6 +14,10 @@ import com.cookieinformation.mobileconsents.ui.PrivacyPreferencesViewData.Button
 import com.cookieinformation.mobileconsents.util.setTextFromHtml
 import java.util.UUID
 
+/**
+ * The Privacy Preferences view implementation. The view is used in [BasePrivacyPreferencesDialogFragment] and should not be used directly
+ * (except capturing events for analytics by [PrivacyPreferencesView.IntentListener]).
+ */
 public class PrivacyPreferencesView @JvmOverloads constructor(
   context: Context,
   attrs: AttributeSet? = null,
@@ -22,17 +26,47 @@ public class PrivacyPreferencesView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes),
   ConsentSolutionView<PrivacyPreferencesViewData, IntentListener> {
 
+  /**
+   * An enumeration that represents all the possible types of buttons in the view.
+   */
   public enum class ButtonId {
+    /**
+     * Context: user wants to read more about consents
+     */
     ReadMore,
+
+    /**
+     * Context: user wants to reject all consents. It is possible only if there are no required consents.
+     */
     RejectAll,
+
+    /**
+     * Context: user wants to accept all consents.
+     */
     AcceptAll,
-    AcceptSelected
+
+    /**
+     * Context: user wants to accept only selected consents. It is possible only if all required consents are chosen.
+     */
+    AcceptSelected,
   }
 
   public interface IntentListener {
 
+    /**
+     * Called when the user wants to change the choice for the consent.
+     *
+     * @param id [UUID] of the consents.
+     * @param accepted user's choice.
+     */
     public fun onPrivacyPreferenceChoiceChanged(id: UUID, accepted: Boolean)
 
+    /**
+     * Called when the user clicks one of the buttons on the view.
+     * If the buttonId is [ButtonId.AcceptSelected] all required consents are chosen by the user.
+     *
+     * @param buttonId id of the clicked button. See [ButtonId]
+     */
     public fun onPrivacyPreferenceButtonClicked(buttonId: ButtonId)
   }
 

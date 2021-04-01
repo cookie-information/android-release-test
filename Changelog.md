@@ -5,9 +5,13 @@
 ### Added
 - Added `required` and `type` fields in `ConsentItem`.
 - Added support for suggested texts for use in the user interface.
-- Refactored `MobileConsentSdk` to use it with coroutines or `CallbackMobileConsentSdk` with callbacks
+- Added possibility to observe the "save consents" events.
+- Added `BasePrivacyCenterFragment` and `BasePrivacyPreferencesDialogFragment` as base of the user interface elements to integrate in target application.
 
 ### Changed
+- Exposed coroutine API. Refactored `MobileConsentSdk` to use it with coroutines and `CallbackMobileConsentSdk` with callbacks.
+- Changes in `ConsentItem` class regarding text translations.
+- Fragment navigation in "sample app".
 
 ## v0.1.1 - 2020-11-26
 

@@ -16,6 +16,9 @@ import java.util.UUID
 
 private const val requireIndicator = "<a href=\"\">*</a>"
 
+/**
+ * The RecyclerView's adapter for [PrivacyPreferencesItem] item model.
+ */
 internal class PrivacyPreferencesListAdapter(
   @LayoutRes private val itemLayoutId: Int,
   private val onConsentItemChoiceChanged: (UUID, Boolean) -> Unit

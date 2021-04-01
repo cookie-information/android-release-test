@@ -2,6 +2,9 @@ package com.cookieinformation.mobileconsents.ui
 
 import java.util.UUID
 
+/**
+ * The model for item of [PrivacyPreferencesListAdapter]
+ */
 public data class PrivacyPreferencesItem(
   val id: UUID,
   val required: Boolean,

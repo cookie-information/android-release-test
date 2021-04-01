@@ -13,6 +13,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import java.util.UUID
 
+/**
+ * The presenter for the [PrivacyCenterView] view.
+ */
 internal class PrivacyCenterPresenter(
   dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ConsentSolutionPresenter<PrivacyCenterView, PrivacyCenterViewData, IntentListener>(dispatcher), IntentListener {

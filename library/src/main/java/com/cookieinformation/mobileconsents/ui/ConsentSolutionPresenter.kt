@@ -19,6 +19,9 @@ import java.util.UUID
 
 internal typealias GivenConsent = Map<UUID, Pair<Boolean, String>>
 
+/**
+ * Base presenter for the view that displays [ConsentSolution] and allows the user to chose and save the consents.
+ */
 internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewIntentListenerType>(
   dispatcher: CoroutineDispatcher
 ) where ViewType : ConsentSolutionView<ViewDataType, ViewIntentListenerType> {
@@ -112,6 +115,9 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     }
   }
 
+  /**
+   * Attaches the view to the presenter.
+   */
   @MainThread
   fun attachView(view: ViewType) {
     require(this.view == null)
@@ -120,6 +126,9 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     viewState = viewState // force update view
   }
 
+  /**
+   * Detaches curentlly attached view from the presenter.
+   */
   @MainThread
   fun detachView() {
     requireNotNull(view)
@@ -127,6 +136,14 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     view = null
   }
 
+  /**
+   * Initializes the presenter.
+   *
+   * @param consentSdk instance of the [MobileConsentSdk].
+   * @param consentSolutionId [UUID] of the consent solution.
+   * @param localeProvider implementation of the [LocaleProvider].
+   * @param listener implementation of the presenters event handler - [ConsentSolutionListener].
+   */
   @MainThread
   fun initialize(
     consentSdk: MobileConsentSdk,
@@ -160,6 +177,9 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
       .launchIn(scope)
   }
 
+  /**
+   * Disposes the instance. After calling this method the instance can not be used again.
+   */
   @MainThread
   fun dispose() {
     scope.cancel()
@@ -167,19 +187,24 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     view = null
   }
 
+  /**
+   * Fetches the consent solution from server, reads saved choices and shows data if there is an attached view.
+   */
   fun fetch() {
     scope.launch {
       try {
         viewState = ViewState.Fetching
-        val savedConsents = consentSdk.getSavedConsents()
         val consentSolution = consentSdk.fetchConsentSolution(consentSolutionId)
-        viewState = ViewState.Fetched(createViewData(consentSolution, savedConsents), consentSolution)
+        viewState = ViewState.Fetched(createViewData(consentSolution, consentSdk.getSavedConsents()), consentSolution)
       } catch (_: IOException) {
         viewState = ViewState.FetchError
       }
     }
   }
 
+  /**
+   * Sends the user choice to server and saves it locally.
+   */
   fun send() {
     scope.launch {
       try {

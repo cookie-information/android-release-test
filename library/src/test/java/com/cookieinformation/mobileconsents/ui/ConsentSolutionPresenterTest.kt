@@ -137,7 +137,7 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
       presenter.initDefault()
 
       coVerify(exactly = 1) { sdk.getSavedConsents() }
-      coVerify(exactly = 0) { sdk.fetchConsentSolution(consentSolutionId) }
+      coVerify(exactly = 1) { sdk.fetchConsentSolution(consentSolutionId) }
 
       verify(exactly = 1) { view.showProgressBar() }
       verify(exactly = 2) { view.hideViewData() }
@@ -157,7 +157,7 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
 
       presenter.initDefault()
 
-      coVerify(exactly = 1) { sdk.getSavedConsents() }
+      coVerify(exactly = 0) { sdk.getSavedConsents() }
       coVerify(exactly = 1) { sdk.fetchConsentSolution(consentSolutionId) }
 
       verify(exactly = 1) { view.showProgressBar() }
