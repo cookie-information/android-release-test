@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.2.0 - 2021-04-07
 
 ### Added
 - Added `required` and `type` fields in `ConsentItem`.
