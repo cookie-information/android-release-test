@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <style name="MobileConsents_TextAppearance" />
+  <style name="MobileConsents_BaseTextAppearance" />
 
-  <style name="MobileConsents_BaseText">
+  <style name="MobileConsents_TextAppearance" parent="MobileConsents_BaseTextAppearance">
+    <item name="android:textSize">@dimen/mobileconsents_text_size</item>
+    <item name="android:textColor">@color/mobileconsents_color_text</item>
+  </style>
+
+  <style name="MobileConsents_Text">
     <item name="android:textAppearance">@style/MobileConsents_TextAppearance</item>
     <item name="android:textColorLink">@color/mobileconsents_color_text_strong</item>
+  </style>
+
+  <style name="MobileConsents_BaseButton">
+    <item name="android:textAppearance">@style/MobileConsents_TextAppearance</item>
   </style>
 
   <style name="MobileConsents_PrivacyPreferencesLayout" />
@@ -31,20 +40,20 @@
     <item name="android:paddingBottom">@dimen/mobileconsents_privacy_preferences_padding_half</item>
   </style>
 
-  <style name="MobileConsents_PrivacyPreferencesTitle" parent="MobileConsents_BaseText">
+  <style name="MobileConsents_PrivacyPreferencesTitle" parent="MobileConsents_Text">
     <item name="android:textColor">@color/mobileconsents_color_text_strong</item>
     <item name="android:textSize">28sp</item>
     <item name="android:gravity">center</item>
     <item name="android:layout_marginBottom">8dp</item>
   </style>
 
-  <style name="MobileConsents_PrivacyPreferencesSubTitle" parent="MobileConsents_BaseText">
+  <style name="MobileConsents_PrivacyPreferencesSubTitle" parent="MobileConsents_Text">
     <item name="android:textSize">15sp</item>
     <item name="android:gravity">center</item>
     <item name="android:layout_marginBottom">15dp</item>
   </style>
 
-  <style name="MobileConsents_PrivacyPreferencesDescription" parent="MobileConsents_BaseText" />
+  <style name="MobileConsents_PrivacyPreferencesDescription" parent="MobileConsents_Text" />
 
   <style name="MobileConsents_PrivacyPreferencesList">
     <item name="android:paddingTop">@dimen/mobileconsents_privacy_preferences_padding</item>
@@ -52,7 +61,7 @@
     <item name="android:paddingEnd">@dimen/mobileconsents_privacy_preferences_padding</item>
   </style>
 
-  <style name="MobileConsents_PrivacyPreferencesButton" parent="MobileConsents_BaseText" />
+  <style name="MobileConsents_PrivacyPreferencesButton" parent="MobileConsents_BaseButton" />
 
   <style name="MobileConsents_PrivacyPreferencesItem" />
 
@@ -61,7 +70,7 @@
     <item name="android:minHeight">0dp</item>
   </style>
 
-  <style name="MobileConsents_PrivacyPreferencesItemText" parent="MobileConsents_BaseText" />
+  <style name="MobileConsents_PrivacyPreferencesItemText" parent="MobileConsents_Text" />
 
   <style name="MobileConsents_PrivacyCenterLayout" />
 
@@ -71,7 +80,7 @@
     <item name="titleTextColor">@color/mobileconsents_color_text_strong</item>
   </style>
 
-  <style name="MobileConsents_PrivacyCenterButton" parent="MobileConsents_BaseText">
+  <style name="MobileConsents_ToolbarButton" parent="MobileConsents_BaseButton">
     <item name="android:minHeight">0dp</item>
     <item name="android:minWidth">0dp</item>
     <item name="android:paddingStart">10dp</item>
@@ -90,7 +99,7 @@
     <item name="android:requiresFadingEdge">vertical</item>
   </style>
 
-  <style name="MobileConsents_PrivacyCenterInfoItemText" parent="MobileConsents_BaseText">
+  <style name="MobileConsents_PrivacyCenterInfoItemText" parent="MobileConsents_Text">
     <item name="android:paddingStart">@dimen/mobileconsents_privacy_center_padding</item>
     <item name="android:paddingEnd">@dimen/mobileconsents_privacy_center_padding</item>
     <item name="android:paddingTop">@dimen/mobileconsents_privacy_center_padding</item>
@@ -99,7 +108,7 @@
     <item name="android:textAllCaps">true</item>
   </style>
 
-  <style name="MobileConsents_PrivacyCenterDetailsItemText" parent="MobileConsents_BaseText">
+  <style name="MobileConsents_PrivacyCenterDetailsItemText" parent="MobileConsents_Text">
     <item name="android:paddingStart">@dimen/mobileconsents_privacy_center_padding</item>
     <item name="android:paddingTop">@dimen/mobileconsents_privacy_center_padding_half</item>
     <item name="android:paddingEnd">@dimen/mobileconsents_privacy_center_padding</item>
@@ -108,7 +117,7 @@
 
   <style name="MobileConsents_PrivacyCenterPreferences" />
 
-  <style name="MobileConsents_PrivacyCenterPreferencesTitle" parent="MobileConsents_BaseText">
+  <style name="MobileConsents_PrivacyCenterPreferencesTitle" parent="MobileConsents_Text">
     <item name="android:textAllCaps">true</item>
     <item name="android:textStyle">bold</item>
     <item name="android:textColor">@color/mobileconsents_color_text_strong</item>
@@ -118,7 +127,7 @@
     <item name="android:paddingBottom">@dimen/mobileconsents_privacy_center_padding_half</item>
   </style>
 
-  <style name="MobileConsents_PrivacyCenterPreferencesSubTitle" parent="MobileConsents_BaseText">
+  <style name="MobileConsents_PrivacyCenterPreferencesSubTitle" parent="MobileConsents_Text">
     <item name="android:textSize">11sp</item>
     <item name="android:layout_marginTop">4dp</item>
     <item name="android:background">@color/mobileconsents_color_info_item_background</item>
@@ -138,11 +147,11 @@
     <item name="android:layout_marginEnd">@dimen/mobileconsents_privacy_center_padding_half</item>
   </style>
 
-  <style name="MobileConsents_PrivacyCenterPreferencesItemText" parent="MobileConsents_BaseText" >
+  <style name="MobileConsents_PrivacyCenterPreferencesItemText" parent="MobileConsents_Text" >
     <item name="android:paddingStart">@dimen/mobileconsents_privacy_center_padding</item>
   </style>
 
-  <style name="MobileConsents_PrivacyCenterPreferencesItemDetails" parent="MobileConsents_BaseText" >
+  <style name="MobileConsents_PrivacyCenterPreferencesItemDetails" parent="MobileConsents_Text" >
     <item name="android:paddingStart">@dimen/mobileconsents_privacy_center_padding</item>
     <item name="android:paddingBottom">@dimen/mobileconsents_privacy_center_padding_half</item>
   </style>

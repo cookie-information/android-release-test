@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <item name="mobileconsents_text_size" type="dimen">13sp</item>
   <item name="mobileconsents_privacy_preferences_padding" type="dimen">15dp</item>
   <item name="mobileconsents_privacy_preferences_padding_half" type="dimen">7.5dp</item>
   <item name="mobileconsents_privacy_center_padding" type="dimen">23dp</item>

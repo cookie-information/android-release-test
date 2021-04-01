@@ -15,7 +15,7 @@
 
     <androidx.appcompat.widget.AppCompatButton
       android:id="@+id/buttonUseSampleId"
-      style="@style/MobileConsents_PrivacyCenterButton"
+      style="@style/MobileConsents_ToolbarButton"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:background="@drawable/mobileconsents_toolbar_button"
