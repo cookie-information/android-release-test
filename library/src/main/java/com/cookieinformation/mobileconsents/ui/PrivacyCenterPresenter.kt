@@ -82,7 +82,7 @@ internal class PrivacyCenterPresenter(
 
   override fun onPrivacyCenterChoiceChanged(id: UUID, accepted: Boolean) {
     @Suppress("UNCHECKED_CAST")
-    val currentViewState = viewState as ViewState.Fetched<PrivacyCenterViewData>
+    val currentViewState = viewState as? ViewState.Fetched<PrivacyCenterViewData> ?: return
     require(currentViewState.data.items.last() is PrivacyCenterPreferencesItem)
 
     val preferenceItems = preferencesItem.items.map { if (it.id == id) it.copy(accepted = accepted) else it }
@@ -108,7 +108,7 @@ internal class PrivacyCenterPresenter(
 
   override fun onPrivacyCenterDetailsToggle(id: UUID) {
     @Suppress("UNCHECKED_CAST")
-    val currentViewState = viewState as ViewState.Fetched<PrivacyCenterViewData>
+    val currentViewState = viewState as? ViewState.Fetched<PrivacyCenterViewData> ?: return
     val newItems = mutableListOf<PrivacyCenterItem>().apply {
       addAll(currentViewState.data.items)
     }
@@ -125,7 +125,7 @@ internal class PrivacyCenterPresenter(
 
   override fun onPrivacyCenterAcceptClicked() {
     @Suppress("UNCHECKED_CAST")
-    viewState as ViewState.Fetched<PrivacyCenterViewData> // Check state
+    viewState as? ViewState.Fetched<PrivacyCenterViewData> ?: return
     require(areAllRequiredAccepted(preferencesItem.items))
     send()
   }

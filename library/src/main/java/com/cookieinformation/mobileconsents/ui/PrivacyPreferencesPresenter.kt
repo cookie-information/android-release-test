@@ -72,7 +72,7 @@ internal class PrivacyPreferencesPresenter(
 
   override fun onPrivacyPreferenceChoiceChanged(id: UUID, accepted: Boolean) {
     @Suppress("UNCHECKED_CAST")
-    val currentViewState = viewState as ViewState.Fetched<PrivacyPreferencesViewData>
+    val currentViewState = viewState as? ViewState.Fetched<PrivacyPreferencesViewData> ?: return
     val items = currentViewState.data.items.map { if (it.id == id) it.copy(accepted = accepted) else it }
 
     viewState = currentViewState.copy(data = newViewData(currentViewState.data, items))
@@ -102,7 +102,7 @@ internal class PrivacyPreferencesPresenter(
 
   private fun rejectAll() {
     @Suppress("UNCHECKED_CAST")
-    val currentViewState = viewState as ViewState.Fetched<PrivacyPreferencesViewData>
+    val currentViewState = viewState as? ViewState.Fetched<PrivacyPreferencesViewData> ?: return
 
     currentViewState.data.let { data ->
       val items = data.items.map { it.copy(accepted = false) }
@@ -123,7 +123,7 @@ internal class PrivacyPreferencesPresenter(
 
   private fun acceptAll() {
     @Suppress("UNCHECKED_CAST")
-    val currentViewState = viewState as ViewState.Fetched<PrivacyPreferencesViewData>
+    val currentViewState = viewState as? ViewState.Fetched<PrivacyPreferencesViewData> ?: return
 
     currentViewState.data.let { data ->
       val items = data.items.map { it.copy(accepted = true) }
@@ -142,7 +142,7 @@ internal class PrivacyPreferencesPresenter(
 
   private fun acceptSelected() {
     @Suppress("UNCHECKED_CAST")
-    val currentViewState = viewState as ViewState.Fetched<PrivacyPreferencesViewData>
+    val currentViewState = viewState as? ViewState.Fetched<PrivacyPreferencesViewData> ?: return
     require(areAllRequiredAccepted(currentViewState.data.items))
 
     send()
