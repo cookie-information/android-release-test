@@ -403,3 +403,5 @@ Here are few examples:
 ```
 
 - Changing default text size: the developer needs to override `mobileconsents_text_size` dimension.
+
+* Remove this line, it is a test
