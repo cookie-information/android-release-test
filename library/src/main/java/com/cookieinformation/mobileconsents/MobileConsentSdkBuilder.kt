@@ -66,7 +66,7 @@ public class MobileConsentSdkBuilder internal constructor(
 
     val storageFile = File(context.filesDir, storageFileName)
     val consentClient = ConsentClient(
-      getUrl = BuildConfig.BASE_URL.toHttpUrl(),
+      getUrl = BuildConfig.BASE_URL_CONSENT_SOLUTION.toHttpUrl(),
       postUrl = postUrl,
       callFactory = factory,
       moshi = moshi

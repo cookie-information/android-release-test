@@ -74,10 +74,14 @@ allprojects {
       }
       buildTypes {
         named("release") {
-          buildConfigField("String", "BASE_URL", """"https://cdnapi-prod.azureedge.net/v1/"""")
+          buildConfigField("String", "BASE_URL_TOKEN", """"https://consent-api.app.cookieinformation.com/oauth2/token"""")
+          buildConfigField("String", "BASE_URL_CONSENT_SOLUTION", """"https://cdnapi-prod.azureedge.net/v1/"""")
+          buildConfigField("String", "BASE_URL_CONSENT", """"https://consent-api.app.cookieinformation.com/v1"""")
         }
         named("debug") {
-          buildConfigField("String", "BASE_URL", """"https://cdnapi-staging.azureedge.net/v1/"""")
+          buildConfigField("String", "BASE_URL_TOKEN", """"https://consent-api-staging.app.cookieinformation.com/oauth2/token"""")
+          buildConfigField("String", "BASE_URL_CONSENT_SOLUTION", """"https://cdnapi-staging.azureedge.net/v1/"""")
+          buildConfigField("String", "BASE_URL_CONSENT", """"https://consent-api-staging.app.cookieinformation.com/v1"""")
         }
       }
     }
