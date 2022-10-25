@@ -40,13 +40,14 @@ internal open class ConsentSolutionViewModel<ViewType, PresenterType>(
   init {
     presenter.apply {
       initialize(
+        binder.applicationContext,
         binder.mobileConsentSdk,
         binder.consentSolutionId,
         binder.localeProvider,
         this@ConsentSolutionViewModel
       )
       fetch()
-      //authenticate()
+      authenticate()
     }
   }
 

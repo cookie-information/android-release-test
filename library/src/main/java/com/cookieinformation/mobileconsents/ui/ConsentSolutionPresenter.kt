@@ -1,5 +1,6 @@
 package com.cookieinformation.mobileconsents.ui
 
+import android.content.Context
 import androidx.annotation.MainThread
 import com.cookieinformation.mobileconsents.BuildConfig
 import com.cookieinformation.mobileconsents.Consent
@@ -8,6 +9,7 @@ import com.cookieinformation.mobileconsents.ConsentSolution
 import com.cookieinformation.mobileconsents.MobileConsentSdk
 import com.cookieinformation.mobileconsents.ProcessingPurpose
 import com.cookieinformation.mobileconsents.TextTranslation
+import com.cookieinformation.mobileconsents.storage.Preferences
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -55,6 +57,7 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
 
   private var view: ViewType? = null
 
+  private lateinit var applicationContext: Context
   private lateinit var consentSdk: MobileConsentSdk
   private lateinit var consentSolutionId: UUID
   private lateinit var localeProvider: LocaleProvider
@@ -147,11 +150,13 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
    */
   @MainThread
   fun initialize(
+    applicationContext: Context,
     consentSdk: MobileConsentSdk,
     consentSolutionId: UUID,
     localeProvider: LocaleProvider,
     listener: ConsentSolutionListener
   ) {
+    this.applicationContext = applicationContext
     this.consentSdk = consentSdk
     this.consentSolutionId = consentSolutionId
     this.localeProvider = localeProvider
@@ -196,8 +201,18 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     if (BuildConfig.CLIENT_ID.isBlank() || BuildConfig.CLIENT_SECRET.isBlank() || BuildConfig.SOLUTION_ID.isBlank()) {
       throw RuntimeException("\nlocal.properties is missing client id and/or client secret and/or solution id. Please add:\nCLIENT_ID = \"XXX\"\nCLIENT_SECRET = \"XXX\"\nSOLUTION_ID = \"XXX\"")
     }
-    //TODO Add check if token exists and is not to old
-    //TODO Add a ne token request if existing is too old.
+
+    val preferences = Preferences(applicationContext)
+
+    preferences.getAccessToken()?.let {
+      // We have a valid access token
+      fetch()
+    } ?: fetchToken()
+  }
+
+  private fun fetchToken() {
+    // TODO fetch token and then authenticate again
+    //authenticate()
   }
 
   /**

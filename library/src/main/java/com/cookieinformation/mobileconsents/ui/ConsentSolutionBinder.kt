@@ -10,6 +10,7 @@ import java.util.UUID
  * [DefaultLocaleProvider] is used.
  */
 public class ConsentSolutionBinder internal constructor(
+  public val applicationContext: Context,
   public val mobileConsentSdk: MobileConsentSdk,
   public val consentSolutionId: UUID,
   public val localeProvider: LocaleProvider
@@ -66,6 +67,7 @@ public class ConsentSolutionBinder internal constructor(
     }
 
     override fun create(): ConsentSolutionBinder = ConsentSolutionBinder(
+      applicationContext = applicationContext,
       mobileConsentSdk = mobileConsentSdk,
       consentSolutionId = consentSolutionId,
       localeProvider = localeProvider ?: DefaultLocaleProvider(applicationContext)
