@@ -4,6 +4,7 @@ import com.android.build.gradle.internal.plugins.BasePlugin
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
   id(Libraries.Detekt.GradlePluginId) version Libraries.Detekt.Version
@@ -66,11 +67,16 @@ allprojects {
       compileSdkVersion(Build.CompileSdk)
       buildToolsVersion(Build.BuildToolsVersion)
 
+      val localProperties = gradleLocalProperties(rootDir)
+
       defaultConfig {
         minSdkVersion(Build.MinSdk)
         targetSdkVersion(Build.TargetSdk)
         versionCode = Build.VersionCode
         versionName = "0.0.1"
+        buildConfigField("String", "CLIENT_ID", localProperties.getProperty("CLIENT_ID", """"""""))
+        buildConfigField("String", "CLIENT_SECRET", localProperties.getProperty("CLIENT_SECRET", """"""""))
+        buildConfigField("String", "SOLUTION_ID", localProperties.getProperty("SOLUTION_ID", """"""""))
       }
       buildTypes {
         named("release") {

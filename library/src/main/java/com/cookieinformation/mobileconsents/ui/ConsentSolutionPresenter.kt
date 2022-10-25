@@ -1,6 +1,7 @@
 package com.cookieinformation.mobileconsents.ui
 
 import androidx.annotation.MainThread
+import com.cookieinformation.mobileconsents.BuildConfig
 import com.cookieinformation.mobileconsents.Consent
 import com.cookieinformation.mobileconsents.ConsentItem
 import com.cookieinformation.mobileconsents.ConsentSolution
@@ -185,6 +186,18 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     scope.cancel()
     listener = null
     view = null
+  }
+
+  /**
+   * Authenticate the client id with secret key and save the access token.
+   */
+  fun authenticate() {
+    // First check that client id and secret key are present
+    if (BuildConfig.CLIENT_ID.isBlank() || BuildConfig.CLIENT_SECRET.isBlank() || BuildConfig.SOLUTION_ID.isBlank()) {
+      throw RuntimeException("\nlocal.properties is missing client id and/or client secret and/or solution id. Please add:\nCLIENT_ID = \"XXX\"\nCLIENT_SECRET = \"XXX\"\nSOLUTION_ID = \"XXX\"")
+    }
+    //TODO Add check if token exists and is not to old
+    //TODO Add a ne token request if existing is too old.
   }
 
   /**

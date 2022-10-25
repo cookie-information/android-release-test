@@ -46,6 +46,7 @@ internal open class ConsentSolutionViewModel<ViewType, PresenterType>(
         this@ConsentSolutionViewModel
       )
       fetch()
+      //authenticate()
     }
   }
 
