@@ -7,6 +7,8 @@ import com.cookieinformation.mobileconsents.networking.ConsentClient
 import com.cookieinformation.mobileconsents.networking.extension.closeQuietly
 import com.cookieinformation.mobileconsents.networking.extension.enqueueSuspending
 import com.cookieinformation.mobileconsents.networking.response.ConsentSolutionResponseJsonAdapter
+import com.cookieinformation.mobileconsents.networking.response.TokenResponse
+import com.cookieinformation.mobileconsents.networking.response.TokenResponseJsonAdapter
 import com.cookieinformation.mobileconsents.networking.response.toDomain
 import com.cookieinformation.mobileconsents.storage.ConsentStorage
 import com.cookieinformation.mobileconsents.system.ApplicationProperties
@@ -34,6 +36,18 @@ public class MobileConsentSdk internal constructor(
   private val dispatcher: CoroutineDispatcher,
   public val saveConsentsFlow: SharedFlow<Map<UUID, Boolean>>
 ) {
+
+  /**
+   * Obtain [TokenResponse] from authentication server.
+   * @returns [TokenResponse] obtained access token from authentication.
+   * @throws [IOException] in case of any error.
+   */
+  public suspend fun authenticate(): TokenResponse = withContext(dispatcher) {
+    val call = consentClient.getAccessToken()
+    val responseBody = call.enqueueSuspending()
+    val adapter = TokenResponseJsonAdapter(moshi)
+    adapter.parseFromResponseBody(responseBody)
+  }
 
   /**
    * Obtain [ConsentSolution] from CDN server.

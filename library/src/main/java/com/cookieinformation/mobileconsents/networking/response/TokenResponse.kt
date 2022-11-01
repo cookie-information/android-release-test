@@ -4,8 +4,8 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-internal data class TokenResponse(
-  @Json(name = "tokenType") val tokenType: String,
-  @Json(name = "accessToken") val accessToken: String,
-  @Json(name = "expiresIn") val expiresIn: Int
+public data class TokenResponse(
+  @Json(name = "token_type") val tokenType: String,
+  @Json(name = "access_token") val accessToken: String,
+  @Json(name = "expires_in") val expiresIn: Int
 )

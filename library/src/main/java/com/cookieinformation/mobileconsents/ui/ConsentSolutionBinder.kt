@@ -6,8 +6,8 @@ import java.util.UUID
 
 /**
  * The class binds [BasePrivacyCenterFragment] or [BasePrivacyPreferencesDialogFragment] with the instance of
- * [MobileConsentSdk] and [UUID] of the consent solution. Optionally [LocaleProvider] can be set up, by default
- * [DefaultLocaleProvider] is used.
+ * [Context] of the application, the [MobileConsentSdk] and [UUID] of the consent solution. Optionally [LocaleProvider]
+ * can be set up, by default [DefaultLocaleProvider] is used.
  */
 public class ConsentSolutionBinder internal constructor(
   public val applicationContext: Context,

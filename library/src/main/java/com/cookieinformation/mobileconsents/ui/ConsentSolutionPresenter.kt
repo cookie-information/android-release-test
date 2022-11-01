@@ -61,6 +61,7 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
   private lateinit var consentSdk: MobileConsentSdk
   private lateinit var consentSolutionId: UUID
   private lateinit var localeProvider: LocaleProvider
+  private lateinit var preferences: Preferences
   private val locales: List<Locale>
     get() = localeProvider.getLocales()
 
@@ -161,6 +162,7 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     this.consentSolutionId = consentSolutionId
     this.localeProvider = localeProvider
     this.listener = listener
+    preferences = Preferences(applicationContext)
     observeConsents()
   }
 
@@ -202,8 +204,6 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
       throw RuntimeException("\nlocal.properties is missing client id and/or client secret and/or solution id. Please add:\nCLIENT_ID = \"XXX\"\nCLIENT_SECRET = \"XXX\"\nSOLUTION_ID = \"XXX\"")
     }
 
-    val preferences = Preferences(applicationContext)
-
     preferences.getAccessToken()?.let {
       // We have a valid access token
       fetch()
@@ -212,6 +212,10 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
 
   private fun fetchToken() {
     // TODO fetch token and then authenticate again
+    scope.launch {
+      val tokenResponse = consentSdk.authenticate()
+      preferences.setTokenResponse(tokenResponse)
+    }
     //authenticate()
   }
 

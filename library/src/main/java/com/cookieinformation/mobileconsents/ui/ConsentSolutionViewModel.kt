@@ -46,7 +46,7 @@ internal open class ConsentSolutionViewModel<ViewType, PresenterType>(
         binder.localeProvider,
         this@ConsentSolutionViewModel
       )
-      fetch()
+      //fetch()
       authenticate()
     }
   }

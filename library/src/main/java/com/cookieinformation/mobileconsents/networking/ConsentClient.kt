@@ -1,14 +1,18 @@
 package com.cookieinformation.mobileconsents.networking
 
+import com.cookieinformation.mobileconsents.BuildConfig
 import com.cookieinformation.mobileconsents.Consent
 import com.cookieinformation.mobileconsents.adapter.extension.parseToRequestBody
 import com.cookieinformation.mobileconsents.networking.request.ConsentRequestJsonAdapter
+import com.cookieinformation.mobileconsents.networking.request.TokenRequest
+import com.cookieinformation.mobileconsents.networking.request.TokenRequestJsonAdapter
 import com.cookieinformation.mobileconsents.system.ApplicationProperties
 import com.cookieinformation.mobileconsents.toRequest
 import com.cookieinformation.mobileconsents.util.getUtcDate
 import com.squareup.moshi.Moshi
 import okhttp3.Call
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Request
 import java.util.UUID
 
@@ -23,6 +27,21 @@ internal class ConsentClient(
   private val callFactory: Call.Factory,
   private val moshi: Moshi
 ) {
+
+  /**
+   * Get access token from authentication server.
+   */
+  fun getAccessToken(): Call {
+    val adapter = TokenRequestJsonAdapter(moshi)
+    val requestBody =
+      adapter.parseToRequestBody(TokenRequest(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET, "client_credentials"))
+    val url = BuildConfig.BASE_URL_TOKEN.toHttpUrl().newBuilder().build()
+    val request = Request.Builder()
+      .url(url)
+      .post(requestBody)
+      .build()
+    return callFactory.newCall(request)
+  }
 
   /**
    * Get consent from CDN server.
