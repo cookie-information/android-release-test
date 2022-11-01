@@ -1,6 +1,8 @@
+/*
 repositories {
   gradlePluginPortal()
 }
+*/
 
 /*
 plugins {
