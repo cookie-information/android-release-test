@@ -31,7 +31,7 @@ internal class ConsentClient(
   /**
    * Get access token from authentication server.
    */
-  fun getAccessToken(): Call {
+  fun getToken(): Call {
     val adapter = TokenRequestJsonAdapter(moshi)
     val requestBody =
       adapter.parseToRequestBody(TokenRequest(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET, "client_credentials"))

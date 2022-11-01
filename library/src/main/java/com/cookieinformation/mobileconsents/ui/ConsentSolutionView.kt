@@ -35,8 +35,10 @@ public interface ConsentSolutionView<ViewDataType, ViewIntentListenerType> {
    *
    * @param onRetry should be invoked if user wants to retry.
    * @param onDismiss should be invoked when user wants to cancel.
+   * @param title show the title of the dialog.
+   * @param message show the message of the dialog.
    */
-  public fun showRetryDialog(onRetry: () -> Unit, onDismiss: () -> Unit)
+  public fun showRetryDialog(onRetry: () -> Unit, onDismiss: () -> Unit, title: String = "", message: String = "")
 
   /**
    * Shows error dialog.

@@ -180,9 +180,9 @@ public class PrivacyPreferencesView @JvmOverloads constructor(
     super.onDetachedFromWindow()
   }
 
-  override fun showRetryDialog(onRetry: () -> Unit, onDismiss: () -> Unit) {
+  override fun showRetryDialog(onRetry: () -> Unit, onDismiss: () -> Unit, title: String, message: String) {
     // postDelayed is workaround for: If view is embedded in a DialogFragment, the below dialog is shown under the DialogFragment.
-    postDelayed({ createRetryDialog(context, onRetry, onDismiss).show() }, 0)
+    postDelayed({ createRetryDialog(context, onRetry, onDismiss, title, message).show() }, 0)
   }
 
   override fun showErrorDialog(onDismiss: () -> Unit) {

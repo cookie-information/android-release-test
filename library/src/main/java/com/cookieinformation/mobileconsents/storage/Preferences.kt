@@ -3,6 +3,7 @@ package com.cookieinformation.mobileconsents.storage
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.cookieinformation.mobileconsents.BuildConfig
 import com.cookieinformation.mobileconsents.networking.response.TokenResponse
 
 internal class Preferences(private val applicationContext: Context) {
@@ -14,7 +15,8 @@ internal class Preferences(private val applicationContext: Context) {
     sharedPreferences().edit(commit = true) {
       tokenResponse.let {
         putString(KEY__ACCESS_TOKEN, it.accessToken)
-        putLong(KEY__ACCESS_TOKEN_EXPIRES_IN, System.currentTimeMillis() + (it.expiresIn * 1000))
+        val expiresIn = if (BuildConfig.DEBUG) 60000L else  (it.expiresIn * 1000)
+        putLong(KEY__ACCESS_TOKEN_EXPIRES_IN, System.currentTimeMillis() + expiresIn.toLong())
       }
     }
   }

@@ -8,6 +8,7 @@ import com.cookieinformation.mobileconsents.ConsentItem
 import com.cookieinformation.mobileconsents.ConsentSolution
 import com.cookieinformation.mobileconsents.MobileConsentSdk
 import com.cookieinformation.mobileconsents.ProcessingPurpose
+import com.cookieinformation.mobileconsents.R
 import com.cookieinformation.mobileconsents.TextTranslation
 import com.cookieinformation.mobileconsents.storage.Preferences
 import kotlinx.coroutines.CoroutineDispatcher
@@ -34,6 +35,12 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
   protected sealed class ViewState {
 
     object Idle : ViewState()
+
+    object Authenticating : ViewState()
+
+    object AuthenticateError : ViewState()
+
+    object Authenticated : ViewState()
 
     object Fetching : ViewState()
 
@@ -77,7 +84,9 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
       view?.let { view ->
         when (value) {
           ViewState.Idle -> Unit
-          ViewState.Fetching -> handleLoading(view)
+          ViewState.Authenticating, ViewState.Fetching -> handleLoading(view)
+          ViewState.Authenticated -> handleAuthenticated(view)
+          ViewState.AuthenticateError -> handleAuthenticateError(view)
           is ViewState.Fetched<*> -> handleFetched(view, value as ViewState.Fetched<ViewDataType>)
           ViewState.FetchError -> handleFetchError(view)
           is ViewState.Sending<*> -> handleSending(view, value as ViewState.Sending<ViewDataType>)
@@ -85,6 +94,21 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
         }
       }
     }
+
+  private fun handleAuthenticated(view: ViewType) = with(view) {
+    hideProgressBar()
+  }
+
+  private fun handleAuthenticateError(view: ViewType) = with(view) {
+    hideProgressBar()
+    hideViewData()
+    showRetryDialog(
+      onRetry = ::fetchToken,
+      onDismiss = { listener?.onDismissed() },
+      applicationContext.getString(R.string.mobileconsents_privacy_preferences_title_error_token),
+      applicationContext.getString(R.string.mobileconsents_privacy_preferences_msg_error_token)
+    )
+  }
 
   private fun handleLoading(view: ViewType) = with(view) {
     hideViewData()
@@ -101,7 +125,9 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     hideViewData()
     showRetryDialog(
       onRetry = ::fetch,
-      onDismiss = { listener?.onDismissed() }
+      onDismiss = { listener?.onDismissed() },
+      applicationContext.getString(R.string.mobileconsents_privacy_preferences_title_error_fetch),
+      applicationContext.getString(R.string.mobileconsents_privacy_preferences_msg_error_fetch)
     )
   }
 
@@ -196,10 +222,10 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
   }
 
   /**
-   * Authenticate the client id with secret key and save the access token.
+   * Authenticate the client id with secret key and solution id and save the access token.
    */
   fun authenticate() {
-    // First check that client id and secret key are present
+    // First check that client id, secret key and solution id are present
     if (BuildConfig.CLIENT_ID.isBlank() || BuildConfig.CLIENT_SECRET.isBlank() || BuildConfig.SOLUTION_ID.isBlank()) {
       throw RuntimeException("\nlocal.properties is missing client id and/or client secret and/or solution id. Please add:\nCLIENT_ID = \"XXX\"\nCLIENT_SECRET = \"XXX\"\nSOLUTION_ID = \"XXX\"")
     }
@@ -210,13 +236,22 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     } ?: fetchToken()
   }
 
+  /**
+   * Fetches the access token from authentication server, and saves it in shared preferences.
+   */
   private fun fetchToken() {
-    // TODO fetch token and then authenticate again
     scope.launch {
-      val tokenResponse = consentSdk.authenticate()
-      preferences.setTokenResponse(tokenResponse)
+      try {
+        viewState = ViewState.Authenticating
+        val tokenResponse = consentSdk.fetchToken()
+        preferences.setTokenResponse(tokenResponse)
+        ViewState.Authenticated
+        // We have a valid access token
+        fetch()
+      } catch (_: IOException) {
+        viewState = ViewState.AuthenticateError
+      }
     }
-    //authenticate()
   }
 
   /**

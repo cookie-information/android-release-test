@@ -42,8 +42,8 @@ public class MobileConsentSdk internal constructor(
    * @returns [TokenResponse] obtained access token from authentication.
    * @throws [IOException] in case of any error.
    */
-  public suspend fun authenticate(): TokenResponse = withContext(dispatcher) {
-    val call = consentClient.getAccessToken()
+  public suspend fun fetchToken(): TokenResponse = withContext(dispatcher) {
+    val call = consentClient.getToken()
     val responseBody = call.enqueueSuspending()
     val adapter = TokenResponseJsonAdapter(moshi)
     adapter.parseFromResponseBody(responseBody)

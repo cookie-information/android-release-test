@@ -5,15 +5,15 @@ import androidx.appcompat.app.AlertDialog
 import com.cookieinformation.mobileconsents.R
 
 /**
- * Creates a dialog which is shown when fetching consents fails.
+ * Creates a dialog which is shown when fetching fails.
  */
-internal fun createRetryDialog(context: Context, onRetry: () -> Unit, onDismiss: () -> Unit) =
+internal fun createRetryDialog(context: Context, onRetry: () -> Unit, onDismiss: () -> Unit, title: String, message: String) =
   AlertDialog.Builder(context)
     .setCancelable(false)
-    .setTitle(R.string.mobileconsents_privacy_preferences_title_error_fetch)
-    .setMessage(R.string.mobileconsents_privacy_preferences_msg_error_fetch)
+    .setTitle(title)
+    .setMessage(message)
     .setPositiveButton(R.string.mobileconsents_privacy_preferences_btn_retry) { _, _ -> onRetry() }
-    .setNegativeButton(android.R.string.cancel) { _, _ -> onDismiss() }
+    .setNegativeButton(R.string.mobileconsents_privacy_preferences_btn_cancel) { _, _ -> onDismiss() }
     .create()
 
 /**
