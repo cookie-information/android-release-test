@@ -1,0 +1,28 @@
+buildscript {
+  ext.kotlin_version = '1.7.20'
+  ext.detekt_version = '1.22.0-RC2'
+  repositories {
+    mavenCentral()
+    google()
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:7.3.1'
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detekt_version"
+  }
+}
+
+allprojects {
+  repositories {
+    mavenCentral()
+    google()
+  }
+}
+
+task clean(type: Delete) {
+  delete rootProject.buildDir
+}
+

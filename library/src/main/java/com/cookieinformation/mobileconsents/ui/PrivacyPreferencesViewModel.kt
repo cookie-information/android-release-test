@@ -10,7 +10,7 @@ internal class PrivacyPreferencesViewModel(binder: ConsentSolutionBinder) :
 
   class Factory(private val binder: ConsentSolutionBinder) : androidx.lifecycle.ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
       @Suppress("UNCHECKED_CAST")
       return PrivacyPreferencesViewModel(binder) as T
     }

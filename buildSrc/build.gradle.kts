@@ -2,6 +2,7 @@ repositories {
   gradlePluginPortal()
 }
 
+/*
 plugins {
   `kotlin-dsl`
 }
@@ -9,3 +10,4 @@ plugins {
 kotlinDslPluginOptions {
   experimentalWarning.set(false)
 }
+*/
