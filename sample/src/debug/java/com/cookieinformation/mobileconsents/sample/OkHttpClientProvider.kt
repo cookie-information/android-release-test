@@ -2,13 +2,15 @@ package com.cookieinformation.mobileconsents.sample
 
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerCollector
-import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.ChuckerInterceptor.Builder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
-/*
-fun getOkHttpClient(context: Context) = OkHttpClient.Builder().addInterceptor(
+private const val useHttpLoggingInterceptor = false
+
+fun getOkHttpClient(context: Context) = if (useHttpLoggingInterceptor) getHttpLoggingInterceptor() else getChuckerCollectorInterceptor(context)
+
+fun getChuckerCollectorInterceptor(context: Context) = OkHttpClient.Builder().addInterceptor(
   Builder(context)
     .collector(ChuckerCollector(context))
     .maxContentLength(250000L)
@@ -16,11 +18,13 @@ fun getOkHttpClient(context: Context) = OkHttpClient.Builder().addInterceptor(
     .alwaysReadResponseBody(false)
     .build()
 ).build()
-*/
-fun getOkHttpClient(context: Context) = OkHttpClient.Builder().addInterceptor(
+
+fun getHttpLoggingInterceptor() = OkHttpClient.Builder().addInterceptor(
   httpLoggingInterceptor
 ).build()
 
 private val httpLoggingInterceptor : HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
   this.level = HttpLoggingInterceptor.Level.BODY
 }
+
+
