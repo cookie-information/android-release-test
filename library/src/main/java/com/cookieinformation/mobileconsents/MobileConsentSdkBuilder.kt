@@ -6,6 +6,7 @@ import com.cookieinformation.mobileconsents.adapter.moshi
 import com.cookieinformation.mobileconsents.networking.ConsentClient
 import com.cookieinformation.mobileconsents.storage.ConsentStorage
 import com.cookieinformation.mobileconsents.storage.MoshiFileHandler
+import com.cookieinformation.mobileconsents.storage.Preferences
 import com.cookieinformation.mobileconsents.system.getApplicationProperties
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -65,11 +66,13 @@ public class MobileConsentSdkBuilder internal constructor(
     val factory = callFactory ?: OkHttpClient()
 
     val storageFile = File(context.filesDir, storageFileName)
+    val preferences = Preferences(context.applicationContext)
     val consentClient = ConsentClient(
       getUrl = BuildConfig.BASE_URL_CONSENT_SOLUTION.toHttpUrl(),
       postUrl = postUrl,
       callFactory = factory,
-      moshi = moshi
+      moshi = moshi,
+      preferences = preferences
     )
     val consentStorage =
       ConsentStorage(Mutex, storageFile, MoshiFileHandler(moshi), getSaveConsentsMutableFlow(), Dispatchers.IO)

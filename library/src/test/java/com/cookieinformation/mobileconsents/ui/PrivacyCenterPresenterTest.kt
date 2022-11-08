@@ -40,7 +40,7 @@ internal class PrivacyCenterPresenterTest : DescribeSpec({
   val initDefault: PrivacyCenterPresenter.() -> Unit = {
     initialize(sdk, consentSolutionId, localeProvider, listener)
     attachView(view)
-    fetch()
+    fetchConsentSolution()
   }
 
   beforeTest {
@@ -345,7 +345,7 @@ internal class PrivacyCenterPresenterTest : DescribeSpec({
       every { view.showViewData(capture(viewDataSlot)) } returns Unit
 
       presenter.initDefault()
-      presenter.send()
+      presenter.sendConsent()
 
       saveConsentsFlow.emit(mapOf(sampleOptionalConsentItem.consentItemId to true))
 

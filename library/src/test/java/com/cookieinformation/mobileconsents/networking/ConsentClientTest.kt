@@ -33,7 +33,7 @@ internal class ConsentClientTest : DescribeSpec({
 
     baseUrl = server.url("/api/test")
 
-    consentClient = ConsentClient(baseUrl, baseUrl, okHttpClient, moshi)
+    consentClient = ConsentClient(baseUrl, baseUrl, okHttpClient, moshi, "")
   }
 
   afterTest {

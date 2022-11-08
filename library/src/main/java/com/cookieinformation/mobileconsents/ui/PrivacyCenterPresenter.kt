@@ -127,7 +127,7 @@ internal class PrivacyCenterPresenter(
     @Suppress("UNCHECKED_CAST")
     viewState as? ViewState.Fetched<PrivacyCenterViewData> ?: return
     require(areAllRequiredAccepted(preferencesItem.items))
-    send()
+    sendConsent()
   }
 
   override fun onPrivacyCenterDismissRequest() {

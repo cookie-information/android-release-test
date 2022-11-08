@@ -116,7 +116,7 @@ internal class PrivacyPreferencesPresenter(
       )
       viewState = newViewState
       if (areAllRequiredAccepted(items)) {
-        send()
+        sendConsent()
       }
     }
   }
@@ -136,7 +136,7 @@ internal class PrivacyPreferencesPresenter(
         )
       )
       viewState = newViewState
-      send()
+      sendConsent()
     }
   }
 
@@ -145,7 +145,7 @@ internal class PrivacyPreferencesPresenter(
     val currentViewState = viewState as? ViewState.Fetched<PrivacyPreferencesViewData> ?: return
     require(areAllRequiredAccepted(currentViewState.data.items))
 
-    send()
+    sendConsent()
   }
 
   private fun areAllRequiredAccepted(items: List<PrivacyPreferencesItem>): Boolean =

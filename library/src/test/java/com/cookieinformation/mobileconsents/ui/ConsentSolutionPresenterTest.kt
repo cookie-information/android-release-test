@@ -66,7 +66,7 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
   val initDefault: TestConsentSolutionPresenter.() -> Unit = {
     initialize(sdk, consentSolutionId, localeProvider, listener)
     attachView(view)
-    fetch()
+    fetchConsentSolution()
   }
 
   beforeTest {
@@ -102,7 +102,7 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
         sampleConsentSolution
       }
       presenter.initialize(sdk, consentSolutionId, localeProvider, listener)
-      presenter.fetch()
+      presenter.fetchConsentSolution()
       presenter.dispose()
     }
   }
@@ -177,7 +177,7 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
       coEvery { sdk.fetchConsentSolution(consentSolutionId) } returns sampleConsentSolution
 
       presenter.initialize(sdk, consentSolutionId, localeProvider, listener)
-      presenter.fetch()
+      presenter.fetchConsentSolution()
       presenter.attachView(view)
 
       coVerify(exactly = 1) { sdk.getSavedConsents() }
@@ -207,9 +207,9 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
       coEvery { sdk.postConsent(any()) } returns Unit
 
       presenter.initialize(sdk, consentSolutionId, localeProvider, listener)
-      presenter.fetch()
+      presenter.fetchConsentSolution()
       presenter.attachView(view)
-      presenter.send()
+      presenter.sendConsent()
 
       verify(exactly = 1) { view.showProgressBar() }
       verify(exactly = 0) { view.hideViewData() }
@@ -231,9 +231,9 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
       coEvery { sdk.postConsent(any()) } throws IOException()
 
       presenter.initialize(sdk, consentSolutionId, localeProvider, listener)
-      presenter.fetch()
+      presenter.fetchConsentSolution()
       presenter.attachView(view)
-      presenter.send()
+      presenter.sendConsent()
 
       verify(exactly = 1) { view.showProgressBar() }
       verify(exactly = 0) { view.hideViewData() }
@@ -276,7 +276,7 @@ internal class ConsentSolutionPresenterTest : DescribeSpec({
       coEvery { sdk.postConsent(any()) } throws IOException()
 
       presenter.initDefault()
-      presenter.send()
+      presenter.sendConsent()
 
       saveConsentsFlow.emit(mapOf(sampleRequiredConsentItem.consentItemId to true))
 

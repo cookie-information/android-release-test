@@ -6,6 +6,7 @@ import com.cookieinformation.mobileconsents.adapter.extension.parseToRequestBody
 import com.cookieinformation.mobileconsents.networking.request.ConsentRequestJsonAdapter
 import com.cookieinformation.mobileconsents.networking.request.TokenRequest
 import com.cookieinformation.mobileconsents.networking.request.TokenRequestJsonAdapter
+import com.cookieinformation.mobileconsents.storage.Preferences
 import com.cookieinformation.mobileconsents.system.ApplicationProperties
 import com.cookieinformation.mobileconsents.toRequest
 import com.cookieinformation.mobileconsents.util.getUtcDate
@@ -25,7 +26,8 @@ internal class ConsentClient(
   private val getUrl: HttpUrl,
   private val postUrl: HttpUrl,
   private val callFactory: Call.Factory,
-  private val moshi: Moshi
+  private val moshi: Moshi,
+  private val preferences: Preferences
 ) {
 
   /**
@@ -71,13 +73,11 @@ internal class ConsentClient(
   ): Call {
     val adapter = ConsentRequestJsonAdapter(moshi)
     val requestBody = adapter.parseToRequestBody(consent.toRequest(userId, date, applicationProperties))
-
-    val url = postUrl.newBuilder()
-      .addPathSegment("consents")
-      .build()
-
+    val accessToken = preferences.getAccessToken()
     val request = Request.Builder()
-      .url(url)
+      .url(postUrl)
+      .addHeader("Authorization", "Bearer " + accessToken.toString())
+      .addHeader("Content-Type", "application/json; charset=utf-8")
       .post(requestBody)
       .build()
 

@@ -124,7 +124,7 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     hideProgressBar()
     hideViewData()
     showRetryDialog(
-      onRetry = ::fetch,
+      onRetry = ::fetchConsentSolution,
       onDismiss = { listener?.onDismissed() },
       applicationContext.getString(R.string.mobileconsents_privacy_preferences_title_error_fetch),
       applicationContext.getString(R.string.mobileconsents_privacy_preferences_msg_error_fetch)
@@ -232,7 +232,7 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
 
     preferences.getAccessToken()?.let {
       // We have a valid access token
-      fetch()
+      fetchConsentSolution()
     } ?: fetchToken()
   }
 
@@ -247,7 +247,7 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
         preferences.setTokenResponse(tokenResponse)
         ViewState.Authenticated
         // We have a valid access token
-        fetch()
+        fetchConsentSolution()
       } catch (_: IOException) {
         viewState = ViewState.AuthenticateError
       }
@@ -257,7 +257,7 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
   /**
    * Fetches the consent solution from server, reads saved choices and shows data if there is an attached view.
    */
-  fun fetch() {
+  fun fetchConsentSolution() {
     scope.launch {
       try {
         viewState = ViewState.Fetching
@@ -272,7 +272,7 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
   /**
    * Sends the user choice to server and saves it locally.
    */
-  fun send() {
+  fun sendConsent() {
     scope.launch {
       try {
         @Suppress("UNCHECKED_CAST")

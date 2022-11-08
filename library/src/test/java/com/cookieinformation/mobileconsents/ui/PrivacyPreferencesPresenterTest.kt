@@ -42,7 +42,7 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
   val initDefault: PrivacyPreferencesPresenter.() -> Unit = {
     initialize(sdk, consentSolutionId, localeProvider, listener)
     attachView(view)
-    fetch()
+    fetchConsentSolution()
   }
 
   beforeTest {
@@ -326,7 +326,7 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
       coEvery { sdk.postConsent(capture(consentsSlot)) } returns Unit
 
       presenter.initDefault()
-      presenter.send()
+      presenter.sendConsent()
 
       consentsSlot.captured shouldBe sampleConsent(requiredChosen = true, optionalChosen = false)
     }
@@ -369,7 +369,7 @@ internal class PrivacyPreferencesPresenterTest : DescribeSpec({
       every { view.showViewData(capture(viewDataSlot)) } returns Unit
 
       presenter.initDefault()
-      presenter.send()
+      presenter.sendConsent()
 
       saveConsentsFlow.emit(mapOf(sampleRequiredConsentItem.consentItemId to true))
 

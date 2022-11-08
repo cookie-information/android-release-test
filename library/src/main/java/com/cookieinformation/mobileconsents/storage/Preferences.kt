@@ -15,7 +15,7 @@ internal class Preferences(private val applicationContext: Context) {
     sharedPreferences().edit(commit = true) {
       tokenResponse.let {
         putString(KEY__ACCESS_TOKEN, it.accessToken)
-        val expiresIn = if (BuildConfig.DEBUG) 60000L else  (it.expiresIn * 1000)
+        val expiresIn = if (BuildConfig.DEBUG) DEBUG_EXPIRES_IN else (it.expiresIn * 1000)
         putLong(KEY__ACCESS_TOKEN_EXPIRES_IN, System.currentTimeMillis() + expiresIn.toLong())
       }
     }
@@ -38,5 +38,6 @@ internal class Preferences(private val applicationContext: Context) {
     private const val SHARED_PREFERENCES_NAME = "mobile_consents"
     private const val KEY__ACCESS_TOKEN = "keyAccessToken"
     private const val KEY__ACCESS_TOKEN_EXPIRES_IN = "keyAccessTokenExpiresIn"
+    private const val DEBUG_EXPIRES_IN = 600000L
   }
 }
