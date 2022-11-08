@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.sync.Mutex
 import okhttp3.Call
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import java.io.File
@@ -22,36 +21,14 @@ import java.util.UUID
 private const val storageFileName = "mobileconsents_storage.txt"
 
 /**
- * Builder for SDK instances. The builder is implementation of Fluent Builder Patternt,
+ * Builder for SDK instances. The builder is implementation of Fluent Builder Pattern,
  * thus all parameters must be provided in a valid order. You can get instance of this builder
  * via [MobileConsentSdk.Builder] static function.
  */
 public class MobileConsentSdkBuilder internal constructor(
   private val context: Context
-) : PartnerUrl, CallFactory, SdkBuilder {
-  private lateinit var postUrl: HttpUrl
+) : CallFactory, SdkBuilder {
   private var callFactory: Call.Factory? = null
-
-  /**
-   * Provide URL of partner server, where all consent choices should be sent.
-   * Example [url]: `https://consents-gathering.com`.
-   */
-  override fun partnerUrl(url: HttpUrl): CallFactory = apply {
-    postUrl = url
-  }
-
-  /**
-   * Provide string representation of url of partner server, where all consent choices should be sent.
-   * @throws [IllegalArgumentException] thrown when invalid [url] is provided.
-   * Example [url]: `https://consents-gathering.com`.
-   */
-  override fun partnerUrl(url: String): CallFactory = apply {
-    postUrl = try {
-      url.toHttpUrl()
-    } catch (e: Exception) {
-      throw IllegalArgumentException("$url is not a valid url", e)
-    }
-  }
 
   /**
    * Provide your own [Call.Factory] for SDK usage. If no call factory is provided, SDK will instantiate it's own OkHttpClient.
@@ -69,7 +46,7 @@ public class MobileConsentSdkBuilder internal constructor(
     val preferences = Preferences(context.applicationContext)
     val consentClient = ConsentClient(
       getUrl = BuildConfig.BASE_URL_CONSENT_SOLUTION.toHttpUrl(),
-      postUrl = postUrl,
+      postUrl = BuildConfig.BASE_URL_CONSENT.toHttpUrl(),
       callFactory = factory,
       moshi = moshi,
       preferences = preferences
@@ -110,14 +87,6 @@ public class MobileConsentSdkBuilder internal constructor(
      */
     private var SaveConsentsMutableFlowReference = WeakReference<MutableSharedFlow<Map<UUID, Boolean>>>(null)
   }
-}
-
-/**
- * Fluent Builder [MobileConsentSdkBuilder] interface.
- */
-public interface PartnerUrl {
-  public fun partnerUrl(url: HttpUrl): CallFactory
-  public fun partnerUrl(url: String): CallFactory
 }
 
 /**

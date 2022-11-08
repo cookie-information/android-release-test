@@ -99,6 +99,6 @@ public class MobileConsentSdk internal constructor(
      */
     @Suppress("FunctionNaming")
     @JvmStatic
-    public fun Builder(context: Context): PartnerUrl = MobileConsentSdkBuilder(context)
+    public fun Builder(context: Context): CallFactory = MobileConsentSdkBuilder(context)
   }
 }
