@@ -2,6 +2,7 @@ package com.cookieinformation.mobileconsents
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.widget.Toast
 import com.cookieinformation.mobileconsents.adapter.moshi
 import com.cookieinformation.mobileconsents.networking.ConsentClient
 import com.cookieinformation.mobileconsents.storage.ConsentStorage
@@ -44,13 +45,20 @@ public class MobileConsentSdkBuilder internal constructor(
 
     val storageFile = File(context.filesDir, storageFileName)
     val preferences = Preferences(context.applicationContext)
-    val consentClient = ConsentClient(
-      getUrl = BuildConfig.BASE_URL_CONSENT_SOLUTION.toHttpUrl(),
-      postUrl = BuildConfig.BASE_URL_CONSENT.toHttpUrl(),
-      callFactory = factory,
-      moshi = moshi,
-      preferences = preferences
-    )
+    lateinit var consentClient: ConsentClient
+    try {
+      val uuid = UUID.fromString(BuildConfig.SOLUTION_ID)
+      consentClient = ConsentClient(
+        uuid,
+        getUrl = BuildConfig.BASE_URL_CONSENT_SOLUTION.toHttpUrl(),
+        postUrl = BuildConfig.BASE_URL_CONSENT.toHttpUrl(),
+        callFactory = factory,
+        moshi = moshi,
+        preferences = preferences
+      )
+    } catch (e: IllegalArgumentException) {
+      Toast.makeText(context.applicationContext, e.message.toString(), Toast.LENGTH_SHORT).show()
+    }
     val consentStorage =
       ConsentStorage(Mutex, storageFile, MoshiFileHandler(moshi), getSaveConsentsMutableFlow(), Dispatchers.IO)
     return MobileConsentSdk(

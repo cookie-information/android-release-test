@@ -46,7 +46,6 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/defaultPadding"
     android:layout_marginEnd="@dimen/defaultPadding"
-    android:enabled="false"
     android:text="@string/button_fetch_send"
     app:layout_constraintBottom_toTopOf="@id/buttonStorage" />
 
@@ -68,7 +67,6 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/defaultPadding"
     android:layout_marginEnd="@dimen/defaultPadding"
-    android:enabled="false"
     android:text="@string/button_privacy_preferences"
     android:textAppearance="@style/BaseTextAppearance"
     app:layout_constraintBottom_toTopOf="@id/buttonPrivacyCenter" />
@@ -81,7 +79,6 @@
     android:layout_marginStart="@dimen/defaultPadding"
     android:layout_marginEnd="@dimen/defaultPadding"
     android:layout_marginBottom="@dimen/defaultPadding"
-    android:enabled="false"
     android:text="@string/button_privacy_center"
     android:textAppearance="@style/BaseTextAppearance"
     app:layout_constraintBottom_toBottomOf="parent" />

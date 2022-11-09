@@ -51,12 +51,11 @@ public class MobileConsentSdk internal constructor(
 
   /**
    * Obtain [ConsentSolution] from CDN server.
-   * @param consentSolutionId UUID identifier of consent.
    * @returns [ConsentSolution] obtained CDN from server.
    * @throws [IOException] in case of any error.
    */
-  public suspend fun fetchConsentSolution(consentSolutionId: UUID): ConsentSolution = withContext(dispatcher) {
-    val call = consentClient.getConsentSolution(consentSolutionId)
+  public suspend fun fetchConsentSolution(): ConsentSolution = withContext(dispatcher) {
+    val call = consentClient.getConsentSolution()
     val responseBody = call.enqueueSuspending()
     val adapter = ConsentSolutionResponseJsonAdapter(moshi)
     adapter.parseFromResponseBody(responseBody).toDomain()

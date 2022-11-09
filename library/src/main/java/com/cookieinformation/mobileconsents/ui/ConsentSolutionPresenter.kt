@@ -66,7 +66,6 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
 
   private lateinit var applicationContext: Context
   private lateinit var consentSdk: MobileConsentSdk
-  private lateinit var consentSolutionId: UUID
   private lateinit var localeProvider: LocaleProvider
   private lateinit var preferences: Preferences
   private val locales: List<Locale>
@@ -171,7 +170,6 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
    * Initializes the presenter.
    *
    * @param consentSdk instance of the [MobileConsentSdk].
-   * @param consentSolutionId [UUID] of the consent solution.
    * @param localeProvider implementation of the [LocaleProvider].
    * @param listener implementation of the presenters event handler - [ConsentSolutionListener].
    */
@@ -179,13 +177,11 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
   fun initialize(
     applicationContext: Context,
     consentSdk: MobileConsentSdk,
-    consentSolutionId: UUID,
     localeProvider: LocaleProvider,
     listener: ConsentSolutionListener
   ) {
     this.applicationContext = applicationContext
     this.consentSdk = consentSdk
-    this.consentSolutionId = consentSolutionId
     this.localeProvider = localeProvider
     this.listener = listener
     preferences = Preferences(applicationContext)
@@ -261,7 +257,7 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     scope.launch {
       try {
         viewState = ViewState.Fetching
-        val consentSolution = consentSdk.fetchConsentSolution(consentSolutionId)
+        val consentSolution = consentSdk.fetchConsentSolution()
         viewState = ViewState.Fetched(createViewData(consentSolution, consentSdk.getSavedConsents()), consentSolution)
       } catch (_: IOException) {
         viewState = ViewState.FetchError

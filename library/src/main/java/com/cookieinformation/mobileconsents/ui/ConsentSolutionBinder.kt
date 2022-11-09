@@ -6,13 +6,12 @@ import java.util.UUID
 
 /**
  * The class binds [BasePrivacyCenterFragment] or [BasePrivacyPreferencesDialogFragment] with the instance of
- * [Context] of the application, the [MobileConsentSdk] and [UUID] of the consent solution. Optionally [LocaleProvider]
+ * [Context] of the application and the [MobileConsentSdk]. Optionally [LocaleProvider]
  * can be set up, by default [DefaultLocaleProvider] is used.
  */
 public class ConsentSolutionBinder internal constructor(
   public val applicationContext: Context,
   public val mobileConsentSdk: MobileConsentSdk,
-  public val consentSolutionId: UUID,
   public val localeProvider: LocaleProvider
 ) {
 
@@ -20,14 +19,7 @@ public class ConsentSolutionBinder internal constructor(
     /**
      * Sets the [MobileConsentSdk] instance.
      */
-    public fun setMobileConsentSdk(mobileConsentSdk: MobileConsentSdk): BuilderSetConsentSolutionId
-  }
-
-  public interface BuilderSetConsentSolutionId {
-    /**
-     * Sets the [UUID] of the consent solution.
-     */
-    public fun setConsentSolutionId(consentSolutionId: UUID): BuilderLocaleProvider
+    public fun setMobileConsentSdk(mobileConsentSdk: MobileConsentSdk): BuilderLocaleProvider
   }
 
   public interface BuilderLocaleProvider : BuilderCreate {
@@ -44,20 +36,14 @@ public class ConsentSolutionBinder internal constructor(
     public fun create(): ConsentSolutionBinder
   }
 
-  internal class InternalBuilder(context: Context) : Builder, BuilderSetConsentSolutionId, BuilderLocaleProvider {
+  internal class InternalBuilder(context: Context) : Builder, BuilderLocaleProvider {
 
     private val applicationContext = context.applicationContext
     private lateinit var mobileConsentSdk: MobileConsentSdk
-    private lateinit var consentSolutionId: UUID
     private var localeProvider: LocaleProvider? = null
 
-    override fun setMobileConsentSdk(mobileConsentSdk: MobileConsentSdk): BuilderSetConsentSolutionId {
+    override fun setMobileConsentSdk(mobileConsentSdk: MobileConsentSdk): BuilderLocaleProvider {
       this.mobileConsentSdk = mobileConsentSdk
-      return this
-    }
-
-    override fun setConsentSolutionId(consentSolutionId: UUID): BuilderLocaleProvider {
-      this.consentSolutionId = consentSolutionId
       return this
     }
 
@@ -69,7 +55,6 @@ public class ConsentSolutionBinder internal constructor(
     override fun create(): ConsentSolutionBinder = ConsentSolutionBinder(
       applicationContext = applicationContext,
       mobileConsentSdk = mobileConsentSdk,
-      consentSolutionId = consentSolutionId,
       localeProvider = localeProvider ?: DefaultLocaleProvider(applicationContext)
     )
   }

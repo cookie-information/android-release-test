@@ -23,6 +23,7 @@ private const val consentJsonFileName = "consent-data.json"
  * Client responsible for creating [Call]s to the CDN and partners server.
  */
 internal class ConsentClient(
+  private val consentSolutionId: UUID,
   private val getUrl: HttpUrl,
   private val postUrl: HttpUrl,
   private val callFactory: Call.Factory,
@@ -47,9 +48,8 @@ internal class ConsentClient(
 
   /**
    * Get consent from CDN server.
-   * @param consentSolutionId [UUID] of consent solution.
    */
-  fun getConsentSolution(consentSolutionId: UUID): Call {
+  fun getConsentSolution(): Call {
     val url = getUrl.newBuilder()
       .addPathSegment(consentSolutionId.toString())
       .addPathSegment(consentJsonFileName)

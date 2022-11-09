@@ -36,14 +36,13 @@ public class CallbackMobileConsentSdk internal constructor(
 
   /**
    * Obtain [ConsentSolution] from CDN server.
-   * @param consentSolutionId UUID identifier of consent.
    * @param listener listener for success/failure of operation.
    * @returns [Subscription] an object allowing for call cancellation.
    */
-  public fun fetchConsentSolution(consentSolutionId: UUID, listener: CallListener<ConsentSolution>): Subscription {
+  public fun fetchConsentSolution(listener: CallListener<ConsentSolution>): Subscription {
     val job = scope.launch {
       try {
-        val result = mobileConsentSdk.fetchConsentSolution(consentSolutionId)
+        val result = mobileConsentSdk.fetchConsentSolution()
         listener.onSuccess(result)
       } catch (error: IOException) {
         listener.onFailure(error)

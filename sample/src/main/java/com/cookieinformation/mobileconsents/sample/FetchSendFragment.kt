@@ -19,11 +19,8 @@ import kotlinx.android.synthetic.main.fragment_fetch_send.toolbar
 import java.io.IOException
 import java.util.UUID
 
-private const val mobileConsentSdkSolutionIdKey = "mobileConsentSdkSolutionIdKey"
-
 class FetchSendFragment : Fragment(R.layout.fragment_fetch_send) {
 
-  private lateinit var consentId: UUID
   private lateinit var consentSdk: CallbackMobileConsentSdk
 
   private val consentItemAdapter = ConsentItemAdapter { uuid, choice -> consentItemChoices[uuid] = choice }
@@ -36,7 +33,6 @@ class FetchSendFragment : Fragment(R.layout.fragment_fetch_send) {
 
     val app = requireContext().applicationContext as App
     consentSdk = app.sdk
-    consentId = UUID.fromString(requireArguments().getString(mobileConsentSdkSolutionIdKey))
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,7 +45,7 @@ class FetchSendFragment : Fragment(R.layout.fragment_fetch_send) {
 
   private fun setupForm() {
     buttonFetch.setOnClickListener {
-      fetchConsentSolution(consentId)
+      fetchConsentSolution()
     }
   }
 
@@ -68,10 +64,9 @@ class FetchSendFragment : Fragment(R.layout.fragment_fetch_send) {
     recyclerConsents.adapter = consentItemAdapter
   }
 
-  private fun fetchConsentSolution(consentId: UUID) {
+  private fun fetchConsentSolution() {
     setupData(null)
     consentSdk.fetchConsentSolution(
-      consentSolutionId = consentId,
       listener = object : CallListener<ConsentSolution> {
         override fun onSuccess(result: ConsentSolution) {
           textError.text = ""
@@ -128,10 +123,6 @@ class FetchSendFragment : Fragment(R.layout.fragment_fetch_send) {
   companion object {
 
     @JvmStatic
-    fun newInstance(consentsId: UUID) = FetchSendFragment().apply {
-      arguments = Bundle().apply {
-        putString(mobileConsentSdkSolutionIdKey, consentsId.toString())
-      }
-    }
+    fun newInstance() = FetchSendFragment()
   }
 }

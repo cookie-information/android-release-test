@@ -25,11 +25,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
   private fun setupForm() {
     textUuid.addTextChangedListener { text: CharSequence? ->
-      val valid = !text.isNullOrBlank()
-      layoutUuid.error = if (valid) null else "UUID cannot be empty"
-      buttonFetchSend.isEnabled = valid
-      buttonPrivacyPreferences.isEnabled = valid
-      buttonPrivacyCenter.isEnabled = valid
+      val local = text.isNullOrBlank()
+      layoutUuid.hint = if (local) getString(R.string.text_consent_id) else "Using UUID from this text field"
     }
     buttonUseSampleId.setOnClickListener {
       textUuid.setText(getString(R.string.sample_uuid))
@@ -52,30 +49,15 @@ class MainFragment : Fragment(R.layout.fragment_main) {
   }
 
   private fun showFetchSend() {
-    try {
-      val uuid = UUID.fromString(textUuid.text.toString())
-      requireActivity().showFragment(FetchSendFragment.newInstance(uuid))
-    } catch (e: IllegalArgumentException) {
-      Snackbar.make(buttonFetchSend, e.message.toString(), Snackbar.LENGTH_SHORT).show()
-    }
+    requireActivity().showFragment(FetchSendFragment.newInstance())
   }
 
   private fun showPrivacyPreferences() {
-    try {
-      val uuid = UUID.fromString(textUuid.text.toString())
-      val privacyPreferences = PrivacyPreferencesFragment.newInstance(uuid)
-      privacyPreferences.show(childFragmentManager, PrivacyPreferencesFragment::javaClass.name)
-    } catch (e: IllegalArgumentException) {
-      Snackbar.make(buttonPrivacyPreferences, e.message.toString(), Snackbar.LENGTH_SHORT).show()
-    }
+    val privacyPreferences = PrivacyPreferencesFragment.newInstance()
+    privacyPreferences.show(childFragmentManager, PrivacyPreferencesFragment::javaClass.name)
   }
 
   private fun showPrivacyCenter() {
-    try {
-      val uuid = UUID.fromString(textUuid.text.toString())
-      requireActivity().showFragment(PrivacyCenterFragment.newInstance(uuid))
-    } catch (e: IllegalArgumentException) {
-      Snackbar.make(buttonPrivacyCenter, e.message.toString(), Snackbar.LENGTH_SHORT).show()
-    }
+    requireActivity().showFragment(PrivacyCenterFragment.newInstance())
   }
 }
