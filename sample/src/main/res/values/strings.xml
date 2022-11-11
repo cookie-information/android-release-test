@@ -3,9 +3,6 @@
   <string name="button_fetch">Fetch</string>
   <string name="button_fetch_send">Fetch/Send</string>
   <string name="button_sample_uuid">Use sample ID</string>
-  <string name="text_consent_id">Consent Solution UUID</string>
-  <string name="sample_uuid">19e927e8-5767-4f11-93dd-4dec4d57456e</string>
-  <string name="text_consent_id_label">Consent Item id:</string>
   <string name="text_consent_short_text_label">Consent Item short text:</string>
   <string name="text_consent_long_text_label">Consent Item long text:</string>
   <string name="text_consent_type_label">Consent Item type:</string>

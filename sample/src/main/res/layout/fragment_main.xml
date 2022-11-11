@@ -13,32 +13,7 @@
     app:layout_constraintTop_toTopOf="parent"
     app:title="@string/text_mobile_consents_sample">
 
-    <androidx.appcompat.widget.AppCompatButton
-      android:id="@+id/buttonUseSampleId"
-      style="@style/MobileConsents_ToolbarButton"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:background="@drawable/mobileconsents_toolbar_button"
-      android:text="@string/button_sample_uuid" />
-
   </androidx.appcompat.widget.Toolbar>
-
-  <com.google.android.material.textfield.TextInputLayout
-    android:id="@+id/layoutUuid"
-    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/defaultPadding"
-    android:layout_marginEnd="@dimen/defaultPadding"
-    android:hint="@string/text_consent_id"
-    app:layout_constraintTop_toBottomOf="@+id/toolbar">
-
-    <com.google.android.material.textfield.TextInputEditText
-      android:id="@+id/textUuid"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:textAppearance="@style/BaseTextAppearance" />
-  </com.google.android.material.textfield.TextInputLayout>
 
   <com.google.android.material.button.MaterialButton
     android:id="@+id/buttonFetchSend"
