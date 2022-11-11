@@ -53,8 +53,19 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/defaultPadding"
     android:layout_marginEnd="@dimen/defaultPadding"
-    android:layout_marginBottom="@dimen/defaultPadding"
     android:text="@string/button_privacy_center"
+    android:textAppearance="@style/BaseTextAppearance"
+    app:layout_constraintBottom_toTopOf="@id/buttonPrivacyFragment" />
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/buttonPrivacyFragment"
+    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/defaultPadding"
+    android:layout_marginEnd="@dimen/defaultPadding"
+    android:layout_marginBottom="@dimen/defaultPadding"
+    android:text="@string/button_privacy_fragment"
     android:textAppearance="@style/BaseTextAppearance"
     app:layout_constraintBottom_toBottomOf="parent" />
 
