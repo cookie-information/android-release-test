@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/mobileconsents_privacy_layout"
+  style="@style/MobileConsents_PrivacyCenterLayout"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical">
+
+  <androidx.appcompat.widget.Toolbar
+    android:id="@+id/mobileconsents_privacy_toolbar"
+    style="@style/MobileConsents_PrivacyToolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    app:layout_constraintTop_toTopOf="parent" />
+
+  <TextView
+    android:id="@+id/mobileconsents_privacy_info_title"
+    style="@style/MobileConsents_PrivacyTitle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/mobileconsents_privacy_toolbar" />
+
+  <TextView
+    android:id="@+id/mobileconsents_privacy_info_short_description"
+    style="@style/MobileConsents_PrivacyShortDescription"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/mobileconsents_privacy_info_title" />
+
+  <TextView
+    android:id="@+id/mobileconsents_privacy_info_read_more"
+    style="@style/MobileConsents_PrivacyReadMore"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/mobileconsents_privacy_info_short_description" />
+
+  <androidx.appcompat.widget.AppCompatImageView
+    android:id="@+id/mobileconsents_privacy_info_read_more_arrow"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:baselineAlignBottom="true"
+    android:rotationY="180"
+    android:tint="?colorAccent"
+    app:layout_constraintBaseline_toBaselineOf="@id/mobileconsents_privacy_info_read_more"
+    app:layout_constraintStart_toEndOf="@id/mobileconsents_privacy_info_read_more"
+    app:srcCompat="@drawable/mobileconsents_ic_expand" />
+
+  <androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/mobileconsents_privacy_list"
+    style="@style/MobileConsents_PrivacyList"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:paddingTop="@dimen/mobileconsents_privacy_padding"
+    android:paddingBottom="@dimen/mobileconsents_privacy_padding"
+    android:scrollbars="vertical"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+    app:layout_constrainedHeight="true"
+    app:layout_constraintBottom_toTopOf="@id/mobileconsents_privacy_footer"
+    app:layout_constraintTop_toBottomOf="@id/mobileconsents_privacy_info_read_more" />
+
+  <View
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="@color/mobileconsents_color_divider"
+    app:layout_constraintBottom_toTopOf="@id/mobileconsents_privacy_footer"
+    app:layout_constraintTop_toBottomOf="@id/mobileconsents_privacy_list" />
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/mobileconsents_privacy_footer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/mobileconsents_privacy_padding"
+    app:layout_constraintBottom_toBottomOf="parent">
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/accept_selected_button"
+      style="@style/MobileConsents_PrivacyButtons"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toTopOf="@id/powered_by_label"
+      app:layout_constraintHorizontal_bias="0.5"
+      android:layout_marginEnd="@dimen/mobileconsents_privacy_padding_half"
+      app:layout_constraintEnd_toStartOf="@id/accept_all_button"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/accept_all_button"
+      style="@style/MobileConsents_PrivacyButtons"
+      android:layout_width="0dp"
+      android:layout_marginStart="@dimen/mobileconsents_privacy_padding_half"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toTopOf="@id/powered_by_label"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toEndOf="@id/accept_selected_button"
+      app:layout_constraintHorizontal_bias="0.5"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+      android:id="@+id/powered_by_label"
+      style="@style/MobileConsents_PoweredByDescription"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:paddingTop="@dimen/mobileconsents_privacy_padding"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/accept_all_button" />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

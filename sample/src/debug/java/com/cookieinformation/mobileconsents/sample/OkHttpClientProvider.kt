@@ -6,7 +6,7 @@ import com.chuckerteam.chucker.api.ChuckerInterceptor.Builder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
-private const val useHttpLoggingInterceptor = false
+private const val useHttpLoggingInterceptor = true
 
 fun getOkHttpClient(context: Context) = if (useHttpLoggingInterceptor) getHttpLoggingInterceptor() else getChuckerCollectorInterceptor(context)
 

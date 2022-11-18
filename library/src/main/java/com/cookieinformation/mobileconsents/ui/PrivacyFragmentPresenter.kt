@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import java.util.UUID
 
 /**
- * The presenter for the [PrivacyCenterView] view.
+ * The presenter for the [PrivacyFragmentView] view.
  */
 internal class PrivacyFragmentPresenter(
   dispatcher: CoroutineDispatcher = Dispatchers.Main
@@ -26,6 +26,7 @@ internal class PrivacyFragmentPresenter(
   private val preferencesInitiallyExpanded = true
 
   private lateinit var preferencesItem: PrivacyFragmentPreferencesItem
+  private lateinit var infoItem: PrivacyInfoItem
 
   override fun getViewIntentListener(): IntentListener2 = this
 
@@ -34,6 +35,7 @@ internal class PrivacyFragmentPresenter(
     savedConsents: Map<UUID, Boolean>
   ): PrivacyFragmentViewData {
     preferencesItem = createPreferencesItem(consentSolution, savedConsents)
+    infoItem = createInfoItem(consentSolution)
     return createPrivacyFragmentViewData(consentSolution.consentItems, consentSolution.uiTexts)
   }
 
@@ -103,7 +105,7 @@ internal class PrivacyFragmentPresenter(
 
     return viewData.copy(
       items = newItems,
-      acceptButtonEnabled = areAllRequiredAccepted(preferenceItems)
+      acceptSelectedButtonEnabled = areAllRequiredAccepted(preferenceItems)
     )
   }
 
@@ -168,6 +170,18 @@ internal class PrivacyFragmentPresenter(
     )
   }
 
+  private fun createInfoItem(
+    consentSolution: ConsentSolution
+  ): PrivacyInfoItem {
+    val item = consentSolution.consentItems.first { it.type == Info }.toPrivacyInfoItem()
+
+    return PrivacyInfoItem(
+      text = item.text,
+      details = item.details,
+      language = item.language
+    )
+  }
+
   private fun createPrivacyFragmentViewData(
     consentItems: List<ConsentItem>,
     uiTexts: UiTexts
@@ -183,10 +197,15 @@ internal class PrivacyFragmentPresenter(
     }
 
     return PrivacyFragmentViewData(
-      title = uiTexts.privacyCenterTitle.translate().text,
-      items = items,
-      acceptButtonText = uiTexts.savePreferencesButton.translate().text,
-      acceptButtonEnabled = areAllRequiredAccepted(preferencesItem.items),
+      privacyTitleText = uiTexts.privacyCenterTitle.translate().text,
+      privacyDescriptionShortText = infoItem.text,
+      privacyDescriptionLongText = infoItem.details,
+      privacyReadMoreText = uiTexts.privacyCenterButton.translate().text,
+      acceptSelectedButtonText = uiTexts.acceptSelectedButton.translate().text,
+      acceptSelectedButtonEnabled = areAllRequiredAccepted(preferencesItem.items),
+      acceptAllButtonText = uiTexts.acceptAllButton.translate().text,
+      poweredByLabelText = uiTexts.poweredByLabel.translate().text,
+      items = items
     )
   }
 

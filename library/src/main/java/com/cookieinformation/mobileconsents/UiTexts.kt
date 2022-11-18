@@ -2,14 +2,15 @@ package com.cookieinformation.mobileconsents
 
 /**
  * Strings for UI fetched from CDN server.
+ * @param privacyPreferencesTitle list of "Privacy Preferences" title translations
+ * @param privacyPreferencesDescription list of "Privacy Preferences" description translations
+ * @param privacyPreferencesTabLabel list of "Privacy Preferences" tab label translations
  * @param privacyCenterButton list of "Read More" Button's label translations
- * @param privacyPreferencesTitle list of Privacy Preferences' title translations
- * @param privacyPreferencesDescription list of Privacy Preferences' description translations
  * @param acceptAllButton list of "Accept All" Button's label translations
  * @param rejectAllButton list of "Reject All" Button's label translations
  * @param acceptSelectedButton list of "Accept Selected" Button's label translations
- * @param savePreferencesButton list of "Save Preferences" Button's label translations
- * @param privacyCenterTitle list of Privacy Center's title translations
+ * @param savePreferencesButton list of "Accept" Button's label translations
+ * @param privacyCenterTitle list of "Privacy" Center's title translations
  * @param poweredByLabel list of "Powered by Cookie Information" label translations
  * @param consentPreferencesLabel list of "Consent Preferences" label translations
  */

@@ -11,8 +11,8 @@ internal data class ConsentSolutionResponse(
   @Json(name = "universalConsentItems") val consentItems: List<ItemResponse>,
   @Json(name = "universalConsentSolutionId") val consentSolutionId: UUID,
   @Json(name = "universalConsentSolutionVersionId") val consentSolutionVersionId: UUID,
-  @Json(name = "title") val title: List<TextTranslationResponse>,
-  @Json(name = "description") val description: List<TextTranslationResponse>,
+  @Json(name = "title") val title: List<TextTranslationResponse>, // Is empty in response
+  @Json(name = "description") val description: List<TextTranslationResponse>, // Is empty in response
   @Json(name = "templateTexts") val templateTexts: TemplateTextsResponse,
 )
 

@@ -2,19 +2,21 @@ package com.cookieinformation.mobileconsents.ui
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.annotation.MainThread
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.cookieinformation.mobileconsents.R
 import com.cookieinformation.mobileconsents.ui.PrivacyFragmentView.IntentListener2
+import com.google.android.material.button.MaterialButton
 import java.util.UUID
 
 /**
- * The Privacy Center view implementation. The view is used in [BasePrivacyCenterFragment] and should not be used directly
+ * The Privacy view implementation. The view is used in [BasePrivacyFragment] and should not be used directly
  * (except for ex. capturing events for analytics by [PrivacyFragmentView.IntentListener2]).
  */
 public class PrivacyFragmentView @JvmOverloads constructor(
@@ -64,27 +66,33 @@ public class PrivacyFragmentView @JvmOverloads constructor(
   private val progressBar: View
 
   init {
-    inflate(context, R.layout.mobileconsents_privacy_center, this)
-    contentView = findViewById(R.id.mobileconsents_privacy_center_layout)
+    inflate(context, R.layout.mobileconsents_privacy, this)
+    contentView = findViewById(R.id.mobileconsents_privacy_layout)
     contentView.visibility = View.GONE
 
     inflate(context, R.layout.mobileconsents_progressbar, this)
     progressBar = findViewById(R.id.mobileconsents_progressbar_layout)
     progressBar.visibility = View.VISIBLE
 
-    contentView.findViewById<RecyclerView>(R.id.mobileconsents_privacy_center_list).apply {
+    contentView.findViewById<RecyclerView>(R.id.mobileconsents_privacy_list).apply {
       setHasFixedSize(true)
       (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
       adapter = consentListAdapter
     }
 
-    contentView.findViewById<Toolbar>(R.id.mobileconsents_privacy_center_toolbar).apply {
+    contentView.findViewById<Toolbar>(R.id.mobileconsents_privacy_toolbar).apply {
       setNavigationOnClickListener {
         onDismissRequest()
       }
     }
 
-    findViewById<Button>(R.id.mobileconsents_privacy_center_btn_accept).setOnClickListener { onAcceptClicked() }
+    findViewById<TextView>(R.id.mobileconsents_privacy_info_read_more).setOnClickListener { onReadMoreClicked() }
+
+    //findViewById<Button>(R.id.mobileconsents_privacy_btn_accept).setOnClickListener { onAcceptClicked() }
+  }
+
+  private fun onReadMoreClicked() {
+    Log.d("Mobile consent: ","onReadMoreClicked()")
   }
 
   private fun onAcceptClicked() {
@@ -130,15 +138,26 @@ public class PrivacyFragmentView @JvmOverloads constructor(
   }
 
   override fun showViewData(data: PrivacyFragmentViewData) {
-    findViewById<Toolbar>(R.id.mobileconsents_privacy_center_toolbar).apply {
-      title = data.title
+    findViewById<TextView>(R.id.mobileconsents_privacy_info_title).apply {
+      text = data.privacyTitleText
     }
-    findViewById<Button>(R.id.mobileconsents_privacy_center_btn_accept).apply {
-      text = data.acceptButtonText
-      isEnabled = data.acceptButtonEnabled
+    findViewById<TextView>(R.id.mobileconsents_privacy_info_short_description).apply {
+      text = data.privacyDescriptionShortText
+    }
+    findViewById<TextView>(R.id.mobileconsents_privacy_info_read_more).apply {
+      text = data.privacyReadMoreText
+    }
+    findViewById<MaterialButton>(R.id.accept_selected_button).apply {
+      text = data.acceptSelectedButtonText
+      isEnabled = data.acceptSelectedButtonEnabled
+    }
+    findViewById<MaterialButton>(R.id.accept_all_button).apply {
+      text = data.acceptAllButtonText
+    }
+    findViewById<TextView>(R.id.powered_by_label).apply {
+      text = data.poweredByLabelText
     }
     consentListAdapter.submitList(data.items)
-
     contentView.visibility = View.VISIBLE
   }
 

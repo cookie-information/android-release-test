@@ -326,6 +326,16 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     )
   }
 
+  protected fun ConsentItem.toPrivacyInfoItem(): PrivacyInfoItem {
+    val textTranslation = shortText.translate()
+
+    return PrivacyInfoItem(
+      text = textTranslation.text,
+      details = longText.translate().text,
+      language = textTranslation.languageCode
+    )
+  }
+
   protected fun List<TextTranslation>.translate(): TextTranslation =
     TextTranslation.getTranslationFor(this, locales)
 
