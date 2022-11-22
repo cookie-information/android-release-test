@@ -56,8 +56,6 @@
     style="@style/MobileConsents_PrivacyList"
     android:layout_width="match_parent"
     android:layout_height="0dp"
-    android:paddingTop="@dimen/mobileconsents_privacy_padding"
-    android:paddingBottom="@dimen/mobileconsents_privacy_padding"
     android:scrollbars="vertical"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     app:layout_constrainedHeight="true"
