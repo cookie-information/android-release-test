@@ -143,6 +143,40 @@
     <item name="android:textColor">@color/mobileconsents_color_text</item>
   </style>
 
+  <style name="MobileConsents_PrivacyPreferences" />
+
+  <style name="MobileConsents_PrivacyPreferencesListNew" >
+    <item name="android:paddingBottom">@dimen/mobileconsents_privacy_padding_half</item>
+  </style>
+
+<!--
+  <style name="MobileConsents_PrivacyPreferencesTitleNew" parent="MobileConsents_Text">
+    <item name="android:textStyle">bold</item>
+    <item name="android:textColor">@color/mobileconsents_color_text_strong</item>
+    <item name="android:paddingTop">@dimen/mobileconsents_privacy_padding</item>
+    <item name="android:paddingBottom">@dimen/mobileconsents_privacy_padding_half</item>
+  </style>
+-->
+
+  <style name="MobileConsents_PrivacyPreferencesItemTextNew" parent="MobileConsents_Text">
+    <item name="android:paddingStart">@dimen/mobileconsents_privacy_padding</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:textColor">@color/mobileconsents_color_text_strong</item>
+    <item name="android:paddingTop">@dimen/mobileconsents_privacy_padding</item>
+    <item name="android:paddingBottom">@dimen/mobileconsents_privacy_padding_half</item>
+  </style>
+
+  <style name="MobileConsents_PrivacyPreferencesItemDetails" parent="MobileConsents_Text" >
+    <item name="android:paddingStart">@dimen/mobileconsents_privacy_padding</item>
+    <item name="android:paddingBottom">@dimen/mobileconsents_privacy_padding</item>
+  </style>
+
+  <style name="MobileConsents_PrivacyPreferencesItemSwitch">
+    <item name="android:layout_marginTop">@dimen/mobileconsents_privacy_padding</item>
+    <item name="android:layout_marginBottom">@dimen/mobileconsents_privacy_padding_half</item>
+    <item name="android:layout_marginEnd">@dimen/mobileconsents_privacy_padding</item>
+  </style>
+
   <style name="MobileConsents_PrivacyCenterList" >
     <item name="android:fadingEdge">vertical</item>
     <item name="android:fadingEdgeLength">@dimen/mobileconsents_list_fading_edge_size</item>

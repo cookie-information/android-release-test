@@ -50,7 +50,7 @@ internal class PrivacyFragmentListAdapter(
       )
       itemTypePreferences -> PreferencesItemViewHolder(
         LayoutInflater.from(parent.context)
-          .inflate(R.layout.mobileconsents_privacy_center_item_preferences, parent, false),
+          .inflate(R.layout.mobileconsents_privacy_item_preferences, parent, false),
         onConsentItemChoiceToggle,
       )
       else -> error("Unknown viewType: $viewType")
@@ -91,26 +91,28 @@ internal class PrivacyFragmentListAdapter(
   class PreferencesItemViewHolder(itemView: View, onConsentItemChoiceToggle: (UUID, Boolean) -> Unit) :
     ItemViewHolder(itemView) {
 
-    private val title = itemView.findViewById<TextView>(R.id.mobileconsents_privacy_center_preferences_title)
+//    private val title = itemView.findViewById<TextView>(R.id.mobileconsents_privacy_preferences_title)
 
+/*
     private val subTitle =
       itemView.findViewById<TextView>(R.id.mobileconsents_privacy_center_preferences_sub_title)
+*/
 
     private val preferencesAdapter = PrivacyPreferencesListAdapter(
-      R.layout.mobileconsents_privacy_center_item_preferences_item,
+      R.layout.mobileconsents_privacy_item_preferences_item,
       onConsentItemChoiceToggle
     )
 
     init {
-      itemView.findViewById<RecyclerView>(R.id.mobileconsents_privacy_center_preferences_list).apply {
+      itemView.findViewById<RecyclerView>(R.id.mobileconsents_privacy_preferences_list).apply {
         adapter = preferencesAdapter
       }
     }
 
     override fun bind(item: PrivacyFragmentItem) {
       val preferencesItem = item as PrivacyFragmentPreferencesItem
-      title.text = preferencesItem.title
-      subTitle.setTextFromHtml(preferencesItem.subTitle, boldLinks = false, underline = true)
+      //title.text = preferencesItem.title
+      //subTitle.setTextFromHtml(preferencesItem.subTitle, boldLinks = false, underline = true)
       preferencesAdapter.submitList(preferencesItem.items)
     }
   }
