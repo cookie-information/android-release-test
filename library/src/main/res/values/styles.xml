@@ -136,6 +136,7 @@
 
   <style name="MobileConsents_PrivacyButtons" parent="@style/Widget.MaterialComponents.Button.TextButton">
     <item name="android:backgroundTint">?colorAccent</item>
+    <item name="android:textColor">@color/mobileconsents_button_text_color</item>
   </style>
 
   <style name="MobileConsents_PoweredByDescription" parent="MobileConsents_Text">
