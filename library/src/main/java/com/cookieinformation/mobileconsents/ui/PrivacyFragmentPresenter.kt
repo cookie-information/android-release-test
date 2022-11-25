@@ -135,7 +135,7 @@ internal class PrivacyFragmentPresenter(
   }
 */
 
-  override fun onPrivacyCenterAcceptClicked() {
+  override fun onPrivacyAcceptSelectedClicked() {
     @Suppress("UNCHECKED_CAST")
     viewState as? ViewState.Fetched<PrivacyFragmentViewData> ?: return
     require(areAllRequiredAccepted(preferencesItem.items))

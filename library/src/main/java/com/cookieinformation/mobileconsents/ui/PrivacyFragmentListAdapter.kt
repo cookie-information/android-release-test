@@ -126,7 +126,8 @@ internal class PrivacyFragmentListAdapter(
       //val preferencesItem = item as PrivacyFragmentPreferencesItem
       //title.text = preferencesItem.title
       //subTitle.setTextFromHtml(preferencesItem.subTitle, boldLinks = false, underline = true)
-      preferencesAdapter.submitList(item.items)
+      val sort = item.items.sortedBy { !it.required }
+      preferencesAdapter.submitList(sort)
     }
   }
 

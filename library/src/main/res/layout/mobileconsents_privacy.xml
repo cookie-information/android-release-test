@@ -78,7 +78,7 @@
     app:layout_constraintBottom_toBottomOf="parent">
 
     <com.google.android.material.button.MaterialButton
-      android:id="@+id/accept_selected_button"
+      android:id="@+id/mobileconsents_privacy_accept_selected_button"
       style="@style/MobileConsents_PrivacyButtons"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
       android:layout_height="wrap_content"
       app:layout_constraintBottom_toTopOf="@id/powered_by_label"
       app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toEndOf="@id/accept_selected_button"
+      app:layout_constraintStart_toEndOf="@id/mobileconsents_privacy_accept_selected_button"
       app:layout_constraintHorizontal_bias="0.5"
       app:layout_constraintTop_toTopOf="parent" />
 
