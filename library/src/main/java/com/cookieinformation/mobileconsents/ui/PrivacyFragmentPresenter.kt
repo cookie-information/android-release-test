@@ -36,7 +36,7 @@ internal class PrivacyFragmentPresenter(
   ): PrivacyFragmentViewData {
     preferencesItem = createPreferencesItem(consentSolution, savedConsents)
     infoItem = createInfoItem(consentSolution)
-    return createPrivacyFragmentViewData(consentSolution.consentItems, consentSolution.uiTexts)
+    return createPrivacyFragmentViewData(/*consentSolution.consentItems,*/ consentSolution.uiTexts)
   }
 
   override fun getGivenConsents(viewData: PrivacyFragmentViewData): GivenConsent =
@@ -194,7 +194,7 @@ internal class PrivacyFragmentPresenter(
   }
 
   private fun createPrivacyFragmentViewData(
-    consentItems: List<ConsentItem>,
+/*    consentItems: List<ConsentItem>,*/
     uiTexts: UiTexts
   ): PrivacyFragmentViewData {
 
@@ -209,10 +209,17 @@ internal class PrivacyFragmentPresenter(
       items.add(preferencesItem)
     }
 */
+    val items = mutableListOf<PrivacyFragmentPreferencesItem>()
+    items.add(preferencesItem)
+
+/*
     val items = consentItems
       .filter { it.type == Setting }
       .map { it.toPrivacyFragmentPreferencesItem() }
       .toMutableList()
+*/
+
+    //preferencesItem = preferencesItem.copy(items = preferencesItem.items)
 /*
     items.removeLast()
     items.removeLast()
@@ -220,7 +227,7 @@ internal class PrivacyFragmentPresenter(
     items.removeLast()
     items.removeLast()
 */
-    items.add(preferencesItem)
+    //items.add(preferencesItem)
 
     return PrivacyFragmentViewData(
       privacyTitleText = uiTexts.privacyCenterTitle.translate().text,
@@ -267,6 +274,7 @@ internal class PrivacyFragmentPresenter(
   }
 */
 
+/*
   private fun ConsentItem.toPrivacyFragmentPreferencesItem(): PrivacyFragmentPreferencesItem {
     val textTranslation = shortText.translate()
     val detailsTranslation = longText.translate()
@@ -278,4 +286,5 @@ internal class PrivacyFragmentPresenter(
       items = preferencesItem.items
     )
   }
+*/
 }
