@@ -54,6 +54,11 @@ public class PrivacyFragmentView @JvmOverloads constructor(
     public fun onPrivacyAcceptSelectedClicked()
 
     /**
+     * Called when the user accepts all consents.
+     */
+    public fun onPrivacyAcceptAllClicked()
+
+    /**
      * Called when the user wants to close the view.
      */
     public fun onPrivacyCenterDismissRequest()
@@ -89,6 +94,8 @@ public class PrivacyFragmentView @JvmOverloads constructor(
     findViewById<TextView>(R.id.mobileconsents_privacy_info_read_more).setOnClickListener { onReadMoreClicked() }
 
     findViewById<MaterialButton>(R.id.mobileconsents_privacy_accept_selected_button).setOnClickListener { onAcceptSelectedClicked() }
+
+    findViewById<MaterialButton>(R.id.mobileconsents_privacy_accept_all_button).setOnClickListener { onAcceptAllClicked() }
   }
 
   private fun onReadMoreClicked() {
@@ -98,6 +105,12 @@ public class PrivacyFragmentView @JvmOverloads constructor(
   private fun onAcceptSelectedClicked() {
     for (listener in intentListeners) {
       listener.onPrivacyAcceptSelectedClicked()
+    }
+  }
+
+  private fun onAcceptAllClicked() {
+    for (listener in intentListeners) {
+      listener.onPrivacyAcceptAllClicked()
     }
   }
 
@@ -153,7 +166,7 @@ public class PrivacyFragmentView @JvmOverloads constructor(
       text = data.acceptSelectedButtonText
       isEnabled = data.acceptSelectedButtonEnabled
     }
-    findViewById<MaterialButton>(R.id.accept_all_button).apply {
+    findViewById<MaterialButton>(R.id.mobileconsents_privacy_accept_all_button).apply {
       text = data.acceptAllButtonText
     }
     findViewById<TextView>(R.id.powered_by_label).apply {

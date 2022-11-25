@@ -85,12 +85,12 @@
       app:layout_constraintBottom_toTopOf="@id/powered_by_label"
       app:layout_constraintHorizontal_bias="0.5"
       android:layout_marginEnd="@dimen/mobileconsents_privacy_padding_half"
-      app:layout_constraintEnd_toStartOf="@id/accept_all_button"
+      app:layout_constraintEnd_toStartOf="@id/mobileconsents_privacy_accept_all_button"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-      android:id="@+id/accept_all_button"
+      android:id="@+id/mobileconsents_privacy_accept_all_button"
       style="@style/MobileConsents_PrivacyButtons"
       android:layout_width="0dp"
       android:layout_marginStart="@dimen/mobileconsents_privacy_padding_half"
@@ -108,7 +108,7 @@
       android:layout_height="wrap_content"
       android:paddingTop="@dimen/mobileconsents_privacy_padding"
       app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/accept_all_button" />
+      app:layout_constraintTop_toBottomOf="@id/mobileconsents_privacy_accept_all_button" />
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 

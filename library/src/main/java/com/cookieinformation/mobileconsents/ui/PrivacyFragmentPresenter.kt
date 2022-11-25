@@ -1,6 +1,5 @@
 package com.cookieinformation.mobileconsents.ui
 
-import com.cookieinformation.mobileconsents.ConsentItem
 import com.cookieinformation.mobileconsents.ConsentItem.Type.Info
 import com.cookieinformation.mobileconsents.ConsentItem.Type.Setting
 import com.cookieinformation.mobileconsents.ConsentSolution
@@ -136,9 +135,16 @@ internal class PrivacyFragmentPresenter(
 */
 
   override fun onPrivacyAcceptSelectedClicked() {
+/*
     @Suppress("UNCHECKED_CAST")
     viewState as? ViewState.Fetched<PrivacyFragmentViewData> ?: return
+*/
     require(areAllRequiredAccepted(preferencesItem.items))
+    sendConsent()
+  }
+
+  override fun onPrivacyAcceptAllClicked() {
+    acceptAll()
     sendConsent()
   }
 
@@ -259,6 +265,12 @@ internal class PrivacyFragmentPresenter(
   private fun areAllRequiredAccepted(items: List<PrivacyPreferencesItem>): Boolean =
     items.firstOrNull { it.required && !it.accepted } == null
 
+  private fun acceptAll() {
+    @Suppress("UNCHECKED_CAST")
+    val currentViewState = viewState as? ViewState.Fetched<PrivacyFragmentViewData> ?: return
+    val preferenceItems = preferencesItem.items.map { it.copy(accepted = true) }
+    viewState = currentViewState.copy(data = newViewData(currentViewState.data, preferenceItems))
+  }
 /*
   private fun ConsentItem.toPrivacyFragmentInfoItem(): PrivacyFragmentItem {
     val textTranslation = shortText.translate()
