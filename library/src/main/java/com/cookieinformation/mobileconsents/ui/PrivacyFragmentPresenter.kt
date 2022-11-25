@@ -5,9 +5,9 @@ import com.cookieinformation.mobileconsents.ConsentItem.Type.Info
 import com.cookieinformation.mobileconsents.ConsentItem.Type.Setting
 import com.cookieinformation.mobileconsents.ConsentSolution
 import com.cookieinformation.mobileconsents.UiTexts
-import com.cookieinformation.mobileconsents.ui.PrivacyFragmentItem.PrivacyFragmentDetailsItem
-import com.cookieinformation.mobileconsents.ui.PrivacyFragmentItem.PrivacyFragmentInfoItem
-import com.cookieinformation.mobileconsents.ui.PrivacyFragmentItem.PrivacyFragmentPreferencesItem
+//import com.cookieinformation.mobileconsents.ui.PrivacyFragmentItem.PrivacyFragmentDetailsItem
+//import com.cookieinformation.mobileconsents.ui.PrivacyFragmentItem.PrivacyFragmentInfoItem
+//import com.cookieinformation.mobileconsents.ui.PrivacyFragmentItem.PrivacyFragmentPreferencesItem
 import com.cookieinformation.mobileconsents.ui.PrivacyFragmentView.IntentListener2
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +23,7 @@ internal class PrivacyFragmentPresenter(
 
   private val preferencesItemId = UUID(0, 0)
 
-  private val preferencesInitiallyExpanded = true
+  //private val preferencesInitiallyExpanded = true
 
   private lateinit var preferencesItem: PrivacyFragmentPreferencesItem
   private lateinit var infoItem: PrivacyInfoItem
@@ -83,7 +83,7 @@ internal class PrivacyFragmentPresenter(
       if (it.accepted != accepted) it.copy(accepted = accepted) else it
     }
 
-  override fun onPrivacyCenterChoiceChanged(id: UUID, accepted: Boolean) {
+  override fun onPrivacyChoiceChanged(id: UUID, accepted: Boolean) {
     @Suppress("UNCHECKED_CAST")
     val currentViewState = viewState as? ViewState.Fetched<PrivacyFragmentViewData> ?: return
     require(currentViewState.data.items.last() is PrivacyFragmentPreferencesItem)
@@ -97,7 +97,14 @@ internal class PrivacyFragmentPresenter(
     preferenceItems: List<PrivacyPreferencesItem>
   ): PrivacyFragmentViewData {
     preferencesItem = preferencesItem.copy(items = preferenceItems)
+    /*
     val newItems = mutableListOf<PrivacyFragmentItem>().apply {
+      addAll(viewData.items)
+      removeLast()
+      add(preferencesItem)
+    }
+    */
+    val newItems = mutableListOf<PrivacyFragmentPreferencesItem>().apply {
       addAll(viewData.items)
       removeLast()
       add(preferencesItem)
@@ -109,6 +116,7 @@ internal class PrivacyFragmentPresenter(
     )
   }
 
+/*
   override fun onPrivacyCenterDetailsToggle(id: UUID) {
     @Suppress("UNCHECKED_CAST")
     val currentViewState = viewState as? ViewState.Fetched<PrivacyFragmentViewData> ?: return
@@ -125,6 +133,7 @@ internal class PrivacyFragmentPresenter(
 
     viewState = currentViewState.copy(data = currentViewState.data.copy(items = newItems))
   }
+*/
 
   override fun onPrivacyCenterAcceptClicked() {
     @Suppress("UNCHECKED_CAST")
@@ -137,6 +146,7 @@ internal class PrivacyFragmentPresenter(
     listener?.onDismissed()
   }
 
+/*
   private fun PrivacyFragmentInfoItem.setExpanded(expanded: Boolean): Pair<PrivacyFragmentInfoItem, PrivacyFragmentItem?> {
     val infoItem = copy(expanded = expanded)
     val detailsItem = if (expanded) {
@@ -150,6 +160,7 @@ internal class PrivacyFragmentPresenter(
   }
 
   private fun PrivacyFragmentInfoItem.createDetailsItem() = PrivacyFragmentDetailsItem(id = id, details = details)
+*/
 
   private fun createPreferencesItem(
     consentSolution: ConsentSolution,
@@ -186,6 +197,8 @@ internal class PrivacyFragmentPresenter(
     consentItems: List<ConsentItem>,
     uiTexts: UiTexts
   ): PrivacyFragmentViewData {
+
+/*
     val items = consentItems
       .filter { it.type == Info }
       .map { it.toPrivacyFragmentInfoItem() }
@@ -195,6 +208,19 @@ internal class PrivacyFragmentPresenter(
     if (preferencesInitiallyExpanded) {
       items.add(preferencesItem)
     }
+*/
+    val items = consentItems
+      .filter { it.type == Setting }
+      .map { it.toPrivacyFragmentPreferencesItem() }
+      .toMutableList()
+/*
+    items.removeLast()
+    items.removeLast()
+    items.removeLast()
+    items.removeLast()
+    items.removeLast()
+*/
+    items.add(preferencesItem)
 
     return PrivacyFragmentViewData(
       privacyTitleText = uiTexts.privacyCenterTitle.translate().text,
@@ -209,6 +235,7 @@ internal class PrivacyFragmentPresenter(
     )
   }
 
+/*
   private fun createPrivacyPreferencesItem(uiTexts: UiTexts): PrivacyFragmentInfoItem {
     val textTranslation = uiTexts.privacyPreferencesTabLabel.translate()
 
@@ -220,10 +247,12 @@ internal class PrivacyFragmentPresenter(
       expanded = preferencesInitiallyExpanded
     )
   }
+*/
 
   private fun areAllRequiredAccepted(items: List<PrivacyPreferencesItem>): Boolean =
     items.firstOrNull { it.required && !it.accepted } == null
 
+/*
   private fun ConsentItem.toPrivacyFragmentInfoItem(): PrivacyFragmentItem {
     val textTranslation = shortText.translate()
     val detailsTranslation = longText.translate()
@@ -234,6 +263,19 @@ internal class PrivacyFragmentPresenter(
       details = detailsTranslation.text,
       language = textTranslation.languageCode,
       expanded = false
+    )
+  }
+*/
+
+  private fun ConsentItem.toPrivacyFragmentPreferencesItem(): PrivacyFragmentPreferencesItem {
+    val textTranslation = shortText.translate()
+    val detailsTranslation = longText.translate()
+
+    return PrivacyFragmentPreferencesItem(
+      id = consentItemId,
+      title = textTranslation.text,
+      subTitle = detailsTranslation.text,
+      items = preferencesItem.items
     )
   }
 }

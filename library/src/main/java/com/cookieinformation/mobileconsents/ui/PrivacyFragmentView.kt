@@ -39,14 +39,14 @@ public class PrivacyFragmentView @JvmOverloads constructor(
      * @param id [UUID] of the consents.
      * @param accepted user's choice.
      */
-    public fun onPrivacyCenterChoiceChanged(id: UUID, accepted: Boolean)
+    public fun onPrivacyChoiceChanged(id: UUID, accepted: Boolean)
 
     /**
      * Called when the user wants toggle visibility of the details information.
      *
      * @param id [UUID] of the information.
      */
-    public fun onPrivacyCenterDetailsToggle(id: UUID)
+    //public fun onPrivacyCenterDetailsToggle(id: UUID)
 
     /**
      * Called when the user accepts selected consents. It is called only if all required consents are chosen by the user.
@@ -60,7 +60,7 @@ public class PrivacyFragmentView @JvmOverloads constructor(
   }
 
   private val intentListeners = mutableSetOf<IntentListener2>()
-  private val consentListAdapter = PrivacyFragmentListAdapter(::onDetailsToggle, ::onChoiceChanged)
+  private val consentListAdapter = PrivacyFragmentListAdapter(/*::onDetailsToggle, */::onChoiceChanged)
 
   private val contentView: View
   private val progressBar: View
@@ -103,15 +103,17 @@ public class PrivacyFragmentView @JvmOverloads constructor(
 
   private fun onChoiceChanged(id: UUID, accepted: Boolean) {
     for (listener in intentListeners) {
-      listener.onPrivacyCenterChoiceChanged(id, accepted)
+      listener.onPrivacyChoiceChanged(id, accepted)
     }
   }
 
+/*
   private fun onDetailsToggle(id: UUID) {
     for (listener in intentListeners) {
       listener.onPrivacyCenterDetailsToggle(id)
     }
   }
+*/
 
   private fun onDismissRequest() {
     for (listener in intentListeners) {

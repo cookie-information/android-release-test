@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.cookieinformation.mobileconsents.R
-import com.cookieinformation.mobileconsents.ui.PrivacyFragmentItem.PrivacyFragmentDetailsItem
+//import com.cookieinformation.mobileconsents.ui.PrivacyFragmentItem.PrivacyFragmentDetailsItem
 import com.cookieinformation.mobileconsents.ui.PrivacyFragmentItem.PrivacyFragmentInfoItem
-import com.cookieinformation.mobileconsents.ui.PrivacyFragmentItem.PrivacyFragmentPreferencesItem
+//import com.cookieinformation.mobileconsents.ui.PrivacyFragmentItem.PrivacyFragmentPreferencesItem // Should be removed
 import com.cookieinformation.mobileconsents.util.setOnClickListenerButDoNotInvokeWhenSpanClicked
 import com.cookieinformation.mobileconsents.util.setTextFromHtml
 import java.util.UUID
@@ -22,22 +22,31 @@ private const val itemTypeDetails = 2
 private const val itemTypePreferences = 3
 
 /**
- * RecyclerView's adapter for [PrivacyCenterItem] item model.
+ * RecyclerView's adapter for [PrivacyFragmentPreferencesItem] item model.
  */
 internal class PrivacyFragmentListAdapter(
-  private val onConsentInfoExpandToggle: (UUID) -> Unit,
+  //private val onConsentInfoExpandToggle: (UUID) -> Unit,
   private val onConsentItemChoiceToggle: (UUID, Boolean) -> Unit
-) : ListAdapter<PrivacyFragmentItem, PrivacyFragmentListAdapter.ItemViewHolder>(AdapterConsentItemDiffCallback()) {
+) : ListAdapter<PrivacyFragmentPreferencesItem, PrivacyFragmentListAdapter.ItemViewHolder>(AdapterConsentItemDiffCallback()) {
 
+/*
   override fun getItemViewType(position: Int): Int =
     when (getItem(position)) {
       is PrivacyFragmentInfoItem -> itemTypeInfo
       is PrivacyFragmentDetailsItem -> itemTypeDetails
       is PrivacyFragmentPreferencesItem -> itemTypePreferences
     }
+*/
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+    PreferencesItemViewHolder(
+      LayoutInflater.from(parent.context)
+        .inflate(R.layout.mobileconsents_privacy_item_preferences, parent, false),
+      onConsentItemChoiceToggle,
+    )
+/*
     when (viewType) {
+
       itemTypeInfo -> TextItemViewHolder(
         LayoutInflater.from(parent.context)
           .inflate(R.layout.mobileconsents_privacy_center_item_info, parent, false),
@@ -48,6 +57,7 @@ internal class PrivacyFragmentListAdapter(
           .inflate(R.layout.mobileconsents_privacy_center_item_details, parent, false),
         onConsentInfoExpandToggle,
       )
+
       itemTypePreferences -> PreferencesItemViewHolder(
         LayoutInflater.from(parent.context)
           .inflate(R.layout.mobileconsents_privacy_item_preferences, parent, false),
@@ -55,13 +65,15 @@ internal class PrivacyFragmentListAdapter(
       )
       else -> error("Unknown viewType: $viewType")
     }
+*/
 
   override fun onBindViewHolder(holder: ItemViewHolder, position: Int) = holder.bind(getItem(position))
 
   abstract class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    abstract fun bind(item: PrivacyFragmentItem)
+    abstract fun bind(item: PrivacyFragmentPreferencesItem)
   }
 
+/*
   class TextItemViewHolder(itemView: View, val onConsentInfoExpandToggle: (UUID) -> Unit) : ItemViewHolder(itemView) {
 
     private val consentText = itemView.findViewById<TextView>(R.id.mobileconsents_privacy_center_item_text).apply {
@@ -87,6 +99,7 @@ internal class PrivacyFragmentListAdapter(
       setCompoundDrawablesWithIntrinsicBounds(0, 0, indicatorResId, 0)
     }
   }
+*/
 
   class PreferencesItemViewHolder(itemView: View, onConsentItemChoiceToggle: (UUID, Boolean) -> Unit) :
     ItemViewHolder(itemView) {
@@ -109,25 +122,28 @@ internal class PrivacyFragmentListAdapter(
       }
     }
 
-    override fun bind(item: PrivacyFragmentItem) {
-      val preferencesItem = item as PrivacyFragmentPreferencesItem
+    override fun bind(item: PrivacyFragmentPreferencesItem) {
+      //val preferencesItem = item as PrivacyFragmentPreferencesItem
       //title.text = preferencesItem.title
       //subTitle.setTextFromHtml(preferencesItem.subTitle, boldLinks = false, underline = true)
-      preferencesAdapter.submitList(preferencesItem.items)
+      preferencesAdapter.submitList(item.items)
     }
   }
 
-  class AdapterConsentItemDiffCallback : DiffUtil.ItemCallback<PrivacyFragmentItem>() {
+  class AdapterConsentItemDiffCallback : DiffUtil.ItemCallback<PrivacyFragmentPreferencesItem>() {
 
-    override fun areItemsTheSame(oldItem: PrivacyFragmentItem, newItem: PrivacyFragmentItem) =
+    override fun areItemsTheSame(oldItem: PrivacyFragmentPreferencesItem, newItem: PrivacyFragmentPreferencesItem) =
+      oldItem.id == newItem.id
+/*
       when (oldItem) {
         is PrivacyFragmentInfoItem -> if (newItem is PrivacyFragmentInfoItem) oldItem.id == newItem.id else false
         is PrivacyFragmentDetailsItem -> if (newItem is PrivacyFragmentDetailsItem) oldItem.id == newItem.id else false
         is PrivacyFragmentPreferencesItem ->
           if (newItem is PrivacyFragmentPreferencesItem) oldItem.id == newItem.id else false
       }
+*/
 
-    override fun areContentsTheSame(oldItem: PrivacyFragmentItem, newItem: PrivacyFragmentItem) =
+    override fun areContentsTheSame(oldItem: PrivacyFragmentPreferencesItem, newItem: PrivacyFragmentPreferencesItem) =
       oldItem == newItem
   }
 }
