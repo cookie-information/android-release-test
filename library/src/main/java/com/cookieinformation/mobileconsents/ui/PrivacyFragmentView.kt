@@ -1,6 +1,8 @@
 package com.cookieinformation.mobileconsents.ui
 
 import android.content.Context
+import android.os.Build
+import android.text.Html
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -68,12 +70,17 @@ public class PrivacyFragmentView @JvmOverloads constructor(
   private val consentListAdapter = PrivacyFragmentListAdapter(/*::onDetailsToggle, */::onChoiceChanged)
 
   private val contentView: View
+  private val infoView: View
   private val progressBar: View
 
   init {
     inflate(context, R.layout.mobileconsents_privacy, this)
     contentView = findViewById(R.id.mobileconsents_privacy_layout)
     contentView.visibility = View.GONE
+
+    inflate(context, R.layout.mobileconsents_privacy_info, this)
+    infoView = findViewById(R.id.mobileconsents_privacy_info_layout)
+    infoView.visibility = View.GONE
 
     inflate(context, R.layout.mobileconsents_progressbar, this)
     progressBar = findViewById(R.id.mobileconsents_progressbar_layout)
@@ -91,6 +98,12 @@ public class PrivacyFragmentView @JvmOverloads constructor(
       }
     }
 
+    infoView.findViewById<Toolbar>(R.id.mobileconsents_privacy_toolbar).apply {
+      setNavigationOnClickListener {
+        showContentViewData()
+      }
+    }
+
     findViewById<TextView>(R.id.mobileconsents_privacy_info_read_more).setOnClickListener { onReadMoreClicked() }
 
     findViewById<MaterialButton>(R.id.mobileconsents_privacy_accept_selected_button).setOnClickListener { onAcceptSelectedClicked() }
@@ -99,7 +112,7 @@ public class PrivacyFragmentView @JvmOverloads constructor(
   }
 
   private fun onReadMoreClicked() {
-    Log.d("Mobile consent: ","onReadMoreClicked()")
+    showInfoViewData()
   }
 
   private fun onAcceptSelectedClicked() {
@@ -162,6 +175,13 @@ public class PrivacyFragmentView @JvmOverloads constructor(
     findViewById<TextView>(R.id.mobileconsents_privacy_info_read_more).apply {
       text = data.privacyReadMoreText
     }
+    findViewById<TextView>(R.id.mobileconsents_privacy_info_long_description).apply {
+      text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        Html.fromHtml(data.privacyDescriptionLongText, Html.FROM_HTML_MODE_COMPACT)
+      } else {
+        Html.fromHtml(data.privacyDescriptionLongText)
+      }
+    }
     findViewById<MaterialButton>(R.id.mobileconsents_privacy_accept_selected_button).apply {
       text = data.acceptSelectedButtonText
       isEnabled = data.acceptSelectedButtonEnabled
@@ -169,15 +189,29 @@ public class PrivacyFragmentView @JvmOverloads constructor(
     findViewById<MaterialButton>(R.id.mobileconsents_privacy_accept_all_button).apply {
       text = data.acceptAllButtonText
     }
-    findViewById<TextView>(R.id.powered_by_label).apply {
+    contentView.findViewById<TextView>(R.id.powered_by_label).apply {
+      text = data.poweredByLabelText
+    }
+    infoView.findViewById<TextView>(R.id.powered_by_label).apply {
       text = data.poweredByLabelText
     }
     consentListAdapter.submitList(data.items)
-    contentView.visibility = View.VISIBLE
+    showContentViewData()
   }
 
   override fun hideViewData() {
     contentView.visibility = View.GONE
+    infoView.visibility = View.GONE
+  }
+
+  private fun showContentViewData() {
+    contentView.visibility = View.VISIBLE
+    infoView.visibility = View.GONE
+  }
+
+  private fun showInfoViewData() {
+    contentView.visibility = View.GONE
+    infoView.visibility = View.VISIBLE
   }
 
   override fun showRetryDialog(onRetry: () -> Unit, onDismiss: () -> Unit, title: String, message: String) {

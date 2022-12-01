@@ -134,6 +134,11 @@
     <item name="android:paddingBottom">@dimen/mobileconsents_privacy_padding_half</item>
   </style>
 
+  <style name="MobileConsents_PrivacyLongDescription" parent="MobileConsents_Text">
+    <item name="android:textSize">12sp</item>
+    <item name="android:textColor">@color/mobileconsents_color_text_strong</item>
+  </style>
+
   <style name="MobileConsents_PrivacyButtons" parent="@style/Widget.MaterialComponents.Button.TextButton">
     <item name="android:backgroundTint">?colorAccent</item>
     <item name="android:textColor">@color/mobileconsents_button_text_color</item>
