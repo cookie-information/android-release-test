@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.cookieinformation.mobileconsents.R
 import com.cookieinformation.mobileconsents.ui.PrivacyFragmentView.IntentListener2
+import com.cookieinformation.mobileconsents.util.setTextFromHtml
 import com.google.android.material.button.MaterialButton
 import java.util.UUID
 
@@ -190,10 +191,10 @@ public class PrivacyFragmentView @JvmOverloads constructor(
       text = data.acceptAllButtonText
     }
     contentView.findViewById<TextView>(R.id.powered_by_label).apply {
-      text = data.poweredByLabelText
+      setTextFromHtml(data.poweredByLabelText, boldLinks = false, underline = true)
     }
     infoView.findViewById<TextView>(R.id.powered_by_label).apply {
-      text = data.poweredByLabelText
+      setTextFromHtml(data.poweredByLabelText, boldLinks = false, underline = true)
     }
     consentListAdapter.submitList(data.items)
     showContentViewData()

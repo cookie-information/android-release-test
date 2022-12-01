@@ -235,6 +235,8 @@ internal class PrivacyFragmentPresenter(
 */
     //items.add(preferencesItem)
 
+    val poweredByLabelTranslation = uiTexts.poweredByLabel.translate()
+
     return PrivacyFragmentViewData(
       privacyTitleText = uiTexts.privacyCenterTitle.translate().text,
       privacyDescriptionShortText = infoItem.text,
@@ -243,7 +245,7 @@ internal class PrivacyFragmentPresenter(
       acceptSelectedButtonText = uiTexts.acceptSelectedButton.translate().text,
       acceptSelectedButtonEnabled = areAllRequiredAccepted(preferencesItem.items),
       acceptAllButtonText = uiTexts.acceptAllButton.translate().text,
-      poweredByLabelText = uiTexts.poweredByLabel.translate().text,
+      poweredByLabelText = "<a href=\"$cookieInformationUrl\">${poweredByLabelTranslation.text}</a>",
       items = items
     )
   }
