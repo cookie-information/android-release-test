@@ -4,7 +4,7 @@ import com.cookieinformation.mobileconsents.ConsentItem.Type.Info
 import com.cookieinformation.mobileconsents.ConsentItem.Type.Setting
 import com.cookieinformation.mobileconsents.ConsentSolution
 import com.cookieinformation.mobileconsents.UiTexts
-import com.cookieinformation.mobileconsents.ui.PrivacyFragmentView.IntentListener2
+import com.cookieinformation.mobileconsents.ui.PrivacyFragmentView.IntentListener
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import java.util.UUID
@@ -14,15 +14,15 @@ import java.util.UUID
  */
 internal class PrivacyFragmentPresenter(
   dispatcher: CoroutineDispatcher = Dispatchers.Main
-) : ConsentSolutionPresenter<PrivacyFragmentView, PrivacyFragmentViewData, IntentListener2>(dispatcher),
-  IntentListener2 {
+) : ConsentSolutionPresenter<PrivacyFragmentView, PrivacyFragmentViewData, IntentListener>(dispatcher),
+  IntentListener {
 
   private val preferencesItemId = UUID(0, 0)
 
   private lateinit var preferencesItem: PrivacyFragmentPreferencesItem
   private lateinit var infoItem: PrivacyInfoItem
 
-  override fun getViewIntentListener(): IntentListener2 = this
+  override fun getViewIntentListener(): IntentListener = this
 
   override fun createViewData(
     consentSolution: ConsentSolution,

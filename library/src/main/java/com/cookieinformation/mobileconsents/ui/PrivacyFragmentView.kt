@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.text.Html
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -13,14 +12,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.cookieinformation.mobileconsents.R
-import com.cookieinformation.mobileconsents.ui.PrivacyFragmentView.IntentListener2
+import com.cookieinformation.mobileconsents.ui.PrivacyFragmentView.IntentListener
 import com.cookieinformation.mobileconsents.util.setTextFromHtml
 import com.google.android.material.button.MaterialButton
 import java.util.UUID
 
 /**
  * The Privacy view implementation. The view is used in [BasePrivacyFragment] and should not be used directly
- * (except for ex. capturing events for analytics by [PrivacyFragmentView.IntentListener2]).
+ * (except for ex. capturing events for analytics by [PrivacyFragmentView.IntentListener]).
  */
 public class PrivacyFragmentView @JvmOverloads constructor(
   context: Context,
@@ -28,13 +27,13 @@ public class PrivacyFragmentView @JvmOverloads constructor(
   defStyleAttr: Int = 0,
   defStyleRes: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes),
-  ConsentSolutionView<PrivacyFragmentViewData, IntentListener2> {
+  ConsentSolutionView<PrivacyFragmentViewData, IntentListener> {
 
   /**
    * A listener for events that can be triggered by the user.
    */
   @MainThread
-  public interface IntentListener2 {
+  public interface IntentListener {
 
     /**
      * Called when the user wants to change the choice for the consent.
@@ -60,7 +59,7 @@ public class PrivacyFragmentView @JvmOverloads constructor(
     public fun onPrivacyCenterDismissRequest()
   }
 
-  private val intentListeners = mutableSetOf<IntentListener2>()
+  private val intentListeners = mutableSetOf<IntentListener>()
   private val consentListAdapter = PrivacyFragmentListAdapter(::onChoiceChanged)
 
   private val contentView: View
@@ -133,12 +132,12 @@ public class PrivacyFragmentView @JvmOverloads constructor(
     }
   }
 
-  public override fun addIntentListener(listener: IntentListener2) {
+  public override fun addIntentListener(listener: IntentListener) {
     require(!intentListeners.contains(listener))
     intentListeners.add(listener)
   }
 
-  public override fun removeIntentListener(listener: IntentListener2) {
+  public override fun removeIntentListener(listener: IntentListener) {
     require(intentListeners.contains(listener))
     intentListeners.remove(listener)
   }
