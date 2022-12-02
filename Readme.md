@@ -32,6 +32,19 @@ SDK exposes [OkHttp](https://square.github.io/okhttp/) in its API.
   
 ### Using the SDK:
 
+#### Setup
+
+Join our partner program for free at [Cookie Information](https://cookieinformation.com/)
+
+Add the below credentials in your app projects `local.properties` file in Android Studio after joining
+
+#### Credentials
+```
+CLIENT_ID = "xxx"
+CLIENT_SECRET= "xxx"
+SOLUTION_ID = "xxx"
+```
+
 #### Initializing
 
 To instantiate SDK use `Builder` static method of `MobileConsentSdk` class:
@@ -40,7 +53,6 @@ To instantiate SDK use `Builder` static method of `MobileConsentSdk` class:
 ```java
 CallbackMobileConsentSdk sdk = CallbackMobileConsentSdk.from(
   MobileConsentSdk.Builder(context)
-      .partnerUrl("https://example.com")
       .callFactory(new OkHttpClient())
       .build()
 );
@@ -48,13 +60,13 @@ CallbackMobileConsentSdk sdk = CallbackMobileConsentSdk.from(
 
 #### Kotlin:
 ```kotlin
-val sdk = MobileConsentSdk.Builder(context)
-   .partnerUrl("https://example.com")
-   .callFactory(OkHttpClient())
-   .build()
+val sdk = CallbackMobileConsentSdk.from(
+  MobileConsentSdk.Builder(context)
+    .callFactory(OkHttpClient())
+    .build()
+    )
 ```
-Note that you have to pass `Context` of your Application/Activity to the builder.
-The `partnerUrl` parameter defines server where all consents choices will be sent. `callFactory` method is optional - if OkHttp's [Call.Factory](https://square.github.io/okhttp/4.x/okhttp/okhttp3/-call/-factory/) isn't provided, SDK will instantiate it's own.
+Note that you have to pass `Context` of your Application/Activity to the builder. `callFactory` method is optional - if OkHttp's [Call.Factory](https://square.github.io/okhttp/4.x/okhttp/okhttp3/-call/-factory/) isn't provided, SDK will instantiate it's own.
 
 #### Getting consent solution
 
@@ -88,7 +100,6 @@ public data class TextTranslation(
 #### Java:
 ```java
 sdk.fetchConsentSolution(
-  consenSolutiontId, // UUID of consent solution
   new CallListener<ConsentSolution>() {
     @Override public void onSuccess(ConsentSolution result) {
       // do something with result
@@ -105,9 +116,7 @@ sdk.fetchConsentSolution(
 ```kotlin
  yourCoroutineScope.launch {
   try {
-    val consentSolution = sdk.fetchConsentSolution(
-      consentSolutionId = consentSolutionId, // UUID of consent solution
-    )
+    val consentSolution = sdk.fetchConsentSolution()
     // do something with result
   } catch (e: IOException) {
     // do something with error
@@ -296,7 +305,82 @@ public data class UiTexts(
 ##### Text translations
 There is static helper method `TextTranslation.getTranslationFor(...)` which returns the best matching translation for given locales list.
 
-#### Predefined plug&play UI components
+#### Predefined plug&play UI component
+There is a predefined, easy to integrate, user interface component:
+
+- `BasePrivacyFragment`: this view allows the user to read information about the consents and accept selected consents.
+
+
+![privacy_fragment.png](images/privacy_fragment.png)
+
+##### Integration of the `BasePrivacyFragment`
+The integration is very easy. The fragment that extends `BasePrivacyFragment` should be created and all abstract methods
+should be implemented. Then the fragment can be used as any other fragment (with navigation component, in XML layout, etc..).
+
+#### Java:
+```java
+public class PrivacyFragment extends BasePrivacyFragment {
+
+  @NotNull
+  @Override
+  protected ConsentSolutionBinder bindConsentSolution(@NotNull ConsentSolutionBinder.Builder builder) {
+    // This method binds the SDK instance
+    MobileConsentSdk mobileConsentSdk = ... // your SDK instance (keep in mind that the same instance should be used after configuration has changed)
+    return builder
+        .setMobileConsentSdk(mobileConsentSdk)
+        .create();
+  }
+
+  @Override
+  public void onConsentsChosen(
+      @NotNull ConsentSolution consentSolution,
+      @NotNull Map<UUID, Boolean> consents,
+      boolean external
+  ) {
+    // Handle given consents, you may skip this step if the consents has been saved externally.
+    // Navigate back
+  }
+
+  @Override
+  public void onDismissed() {
+    // Navigate back
+  }
+
+  @Override
+  public void onReadMore() {
+    // This callback in not called for "BasePrivacyFragment" (Should be removed)
+  }
+}
+```
+
+#### Kotlin:
+```kotlin
+class PrivacyFragment : BasePrivacyFragment() {
+
+  override fun bindConsentSolution(builder: ConsentSolutionBinder.Builder): ConsentSolutionBinder {
+    // This method binds the SDK instance
+    val mobileConsentSdk = ... // your SDK instance (keep in mind that the same instance should be used after configuration has changed)
+    return builder
+      .setMobileConsentSdk(mobileConsentSdk)
+      .create()
+  }
+
+  override fun onConsentsChosen(consentSolution: ConsentSolution, consents: Map<UUID, Boolean>, external: Boolean) {
+    // Handle given consents, you may skip this step if the consents has been saved externally.
+    // Navigate back
+  }
+
+  override fun onDismissed() {
+    // Navigate back
+  }
+
+  override fun onReadMore() {
+    // This callback in not called for "BasePrivacyFragment" (Should be removed)
+  }
+}
+```
+
+#### Predefined plug&play UI components (Below two component and integration description should be DELETED, but kept here until the source code is deleted)
 There are two predefined, easy to integrate, user interface components:
 
 - `BasePrivacyCenterFragment`: this view allows the user to read information about the consents and accept selected consents.
@@ -382,7 +466,7 @@ class PrivacyCenterFragment : BasePrivacyCenterFragment() /* or BasePrivacyPrefe
 }
 ```
 
-##### Styling UI components
+##### Styling UI components (Description needs and update)
 The UI elements inherits the style from the application theme, however there is possibility to change appearance of predefined views.
 
 The text colors are imported from attributes `android:textColorSecondary` and`android:textColorSecondary`.
