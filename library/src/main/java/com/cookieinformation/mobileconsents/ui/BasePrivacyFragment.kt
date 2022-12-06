@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 /**
- * The base fragment for "Privacy Center" view.
+ * The base fragment for "Privacy Fragment" view.
  */
 public abstract class BasePrivacyFragment : Fragment(), ConsentSolutionListener {
 

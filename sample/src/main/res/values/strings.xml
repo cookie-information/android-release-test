@@ -8,13 +8,11 @@
   <string name="text_consent_long_text_label">Consent Item long text:</string>
   <string name="text_consent_type_label">Consent Item type:</string>
   <string name="text_consent_required_label">Consent Item required:</string>
-  <string name="sample_partner_url">https://consents-gathering-app-staging.app.cookieinformation.com</string>
   <string name="button_send_consent">Send</string>
   <string name="text_mobile_consents_sample">Mobile Consents Sample</string>
   <string name="hint_preferred_language">Preferred Language</string>
   <string name="button_show_main_page">Show Main Page</string>
   <string name="button_show_storage">Show Storage</string>
-  <string name="button_privacy_preferences">Privacy Preferences</string>
   <string name="button_privacy_center">Privacy Center</string>
   <string name="button_privacy_fragment">Privacy Fragment</string>
   <string name="text_value_label">Consent given:</string>

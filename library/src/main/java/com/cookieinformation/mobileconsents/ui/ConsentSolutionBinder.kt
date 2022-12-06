@@ -5,7 +5,7 @@ import com.cookieinformation.mobileconsents.MobileConsentSdk
 import java.util.UUID
 
 /**
- * The class binds [BasePrivacyCenterFragment] or [BasePrivacyPreferencesDialogFragment] with the instance of
+ * The class binds [BasePrivacyCenterFragment] or [BasePrivacyFragment] with the instance of
  * [Context] of the application and the [MobileConsentSdk]. Optionally [LocaleProvider]
  * can be set up, by default [DefaultLocaleProvider] is used.
  */

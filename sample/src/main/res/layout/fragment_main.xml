@@ -33,17 +33,6 @@
     android:layout_marginEnd="@dimen/defaultPadding"
     android:text="@string/button_show_storage"
     android:textAppearance="@style/BaseTextAppearance"
-    app:layout_constraintBottom_toTopOf="@id/buttonPrivacyPreferences" />
-
-  <com.google.android.material.button.MaterialButton
-    android:id="@+id/buttonPrivacyPreferences"
-    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/defaultPadding"
-    android:layout_marginEnd="@dimen/defaultPadding"
-    android:text="@string/button_privacy_preferences"
-    android:textAppearance="@style/BaseTextAppearance"
     app:layout_constraintBottom_toTopOf="@id/buttonPrivacyCenter" />
 
   <com.google.android.material.button.MaterialButton
