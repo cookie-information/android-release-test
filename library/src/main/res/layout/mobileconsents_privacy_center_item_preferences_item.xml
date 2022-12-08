@@ -3,14 +3,14 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:id="@+id/mobileconsents_privacy_preferences_item_layout"
-  style="@style/MobileConsents_PrivacyCenterPreferences"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:orientation="horizontal">
 
+<!--  style="@style/MobileConsents_PrivacyCenterPreferences"-->
+
   <TextView
     android:id="@+id/mobileconsents_privacy_preferences_item_text"
-    style="@style/MobileConsents_PrivacyCenterPreferencesItemText"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:clickable="true"
@@ -20,9 +20,10 @@
     app:layout_constraintStart_toStartOf="parent"
     tools:text="@tools:sample/lorem" />
 
+<!--  style="@style/MobileConsents_PrivacyCenterPreferencesItemText"-->
+
   <TextView
     android:id="@+id/mobileconsents_privacy_preferences_item_details"
-    style="@style/MobileConsents_PrivacyCenterPreferencesItemDetails"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     app:layout_constraintEnd_toEndOf="@id/mobileconsents_privacy_preferences_item_text"
@@ -30,13 +31,16 @@
     app:layout_constraintTop_toBottomOf="@id/mobileconsents_privacy_preferences_item_text"
     tools:text="@tools:sample/lorem/random" />
 
+<!--  style="@style/MobileConsents_PrivacyCenterPreferencesItemDetails"-->
+
   <Switch
     android:id="@+id/mobileconsents_privacy_preferences_item_checkbox"
-    style="@style/MobileConsents_PrivacyCenterPreferencesItemSwitch"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+<!--  style="@style/MobileConsents_PrivacyCenterPreferencesItemSwitch"-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,33 +7,9 @@
   android:layout_height="wrap_content"
   android:orientation="vertical">
 
-<!--  android:id="@+id/mobileconsents_privacy_center_info_item_layout"-->
-
-<!--  <include layout="@layout/mobileconsents_privacy_center_divider" />-->
-
-<!--
-  <TextView
-    android:id="@+id/mobileconsents_privacy_center_preferences_sub_title"
-    style="@style/MobileConsents_PrivacyCenterPreferencesSubTitle"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:text="@tools:sample/lorem" />
--->
-
-<!--  <include layout="@layout/mobileconsents_privacy_center_divider" />-->
-
-<!--
-  <TextView
-    android:id="@+id/mobileconsents_privacy_preferences_title"
-    style="@style/MobileConsents_PrivacyCenterPreferencesTitle"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:text="@tools:sample/lorem" />
--->
-
   <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/mobileconsents_privacy_preferences_list"
-    style="@style/MobileConsents_PrivacyPreferencesListNew"
+    style="@style/MobileConsents_PrivacyPreferencesList"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:nestedScrollingEnabled="false"

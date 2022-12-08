@@ -5,13 +5,14 @@
   android:layout_height="wrap_content"
   android:orientation="vertical">
 
-  <include layout="@layout/mobileconsents_privacy_center_divider" />
+<!--  <include layout="@layout/mobileconsents_privacy_center_divider" />-->
 
   <TextView
     android:id="@+id/mobileconsents_privacy_center_item_text"
-    style="@style/MobileConsents_PrivacyCenterDetailsItemText"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:text="@tools:sample/lorem" />
+
+<!--  style="@style/MobileConsents_PrivacyCenterDetailsItemText"-->
 
 </LinearLayout>

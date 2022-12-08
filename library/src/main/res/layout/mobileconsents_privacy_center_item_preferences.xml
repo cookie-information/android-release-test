@@ -3,36 +3,40 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:id="@+id/mobileconsents_privacy_center_info_item_layout"
-  style="@style/MobileConsents_PrivacyCenterPreferences"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:orientation="vertical">
 
-  <include layout="@layout/mobileconsents_privacy_center_divider" />
+<!--  style="@style/MobileConsents_PrivacyCenterPreferences"-->
+
+<!--  <include layout="@layout/mobileconsents_privacy_center_divider" />-->
 
   <TextView
     android:id="@+id/mobileconsents_privacy_center_preferences_sub_title"
-    style="@style/MobileConsents_PrivacyCenterPreferencesSubTitle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:text="@tools:sample/lorem" />
 
-  <include layout="@layout/mobileconsents_privacy_center_divider" />
+<!--  style="@style/MobileConsents_PrivacyCenterPreferencesSubTitle"-->
+
+<!--  <include layout="@layout/mobileconsents_privacy_center_divider" />-->
 
   <TextView
     android:id="@+id/mobileconsents_privacy_center_preferences_title"
-    style="@style/MobileConsents_PrivacyCenterPreferencesTitle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:text="@tools:sample/lorem" />
 
+<!--  style="@style/MobileConsents_PrivacyCenterPreferencesTitle"-->
+
   <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/mobileconsents_privacy_center_preferences_list"
-    style="@style/MobileConsents_PrivacyCenterPreferencesList"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:nestedScrollingEnabled="false"
     android:overScrollMode="never"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+<!--  style="@style/MobileConsents_PrivacyCenterPreferencesList"-->
 
 </LinearLayout>
