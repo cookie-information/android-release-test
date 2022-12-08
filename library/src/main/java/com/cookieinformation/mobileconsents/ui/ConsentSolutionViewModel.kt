@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 /**
- * The generic view moder for [BasePrivacyFragment] and [BasePrivacyCenterFragment].
+ * The generic view moder for [BasePrivacyFragment].
  */
 internal open class ConsentSolutionViewModel<ViewType, PresenterType>(
   private val presenter: PresenterType,
