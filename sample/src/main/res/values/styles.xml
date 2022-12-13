@@ -25,5 +25,8 @@
     <item name="android:textAppearance">@style/BaseTextAppearance</item>
   </style>
 
-  <style name="MobileConsents_BaseTextAppearance" parent="BaseTextAppearance" />
+  <style name="MobileConsents_BaseTextAppearance">
+    <!-- Change font family in predefined views -->
+<!--    <item name="android:fontFamily">sans-serif-condensed</item>-->
+  </style>
 </resources>

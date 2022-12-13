@@ -30,7 +30,7 @@
   </style>
 
   <style name="MobileConsents_PrivacyTitle" parent="MobileConsents_Text">
-    <item name="android:textSize">24sp</item>
+    <item name="android:textSize">@dimen/mobileconsents_privacy_title_text_size</item>
     <item name="android:textStyle">bold</item>
     <item name="android:textColor">@color/mobileconsents_color_text_strong</item>
     <item name="android:paddingTop">@dimen/mobileconsents_privacy_padding</item>
@@ -40,7 +40,6 @@
   </style>
 
   <style name="MobileConsents_PrivacyShortDescription" parent="MobileConsents_Text">
-    <item name="android:textSize">12sp</item>
     <item name="android:textStyle">bold</item>
     <item name="android:textColor">@color/mobileconsents_color_text_strong</item>
     <item name="android:paddingTop">@dimen/mobileconsents_privacy_padding_half</item>
@@ -58,7 +57,6 @@
   </style>
 
   <style name="MobileConsents_PrivacyLongDescription" parent="MobileConsents_Text">
-    <item name="android:textSize">12sp</item>
   </style>
 
   <style name="MobileConsents_PrivacyButtons" parent="@style/Widget.MaterialComponents.Button.TextButton">
@@ -78,8 +76,9 @@
   </style>
 
   <style name="MobileConsents_PrivacyPreferencesItemText" parent="MobileConsents_Text">
-    <item name="android:paddingStart">@dimen/mobileconsents_privacy_padding</item>
     <item name="android:textStyle">bold</item>
+    <item name="android:textSize">@dimen/mobileconsents_preference_item_text_size</item>
+    <item name="android:paddingStart">@dimen/mobileconsents_privacy_padding</item>
     <item name="android:paddingTop">@dimen/mobileconsents_privacy_padding</item>
     <item name="android:paddingBottom">@dimen/mobileconsents_privacy_padding_half</item>
   </style>
