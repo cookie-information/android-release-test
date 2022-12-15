@@ -44,12 +44,12 @@
     android:id="@+id/mobileconsents_privacy_info_read_more_arrow"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:baselineAlignBottom="true"
-    android:rotationY="180"
+    android:paddingTop="@dimen/mobileconsents_privacy_padding_half"
+    android:paddingBottom="@dimen/mobileconsents_privacy_padding_half"
     android:tint="?colorAccent"
-    app:layout_constraintBaseline_toBaselineOf="@id/mobileconsents_privacy_info_read_more"
     app:layout_constraintStart_toEndOf="@id/mobileconsents_privacy_info_read_more"
-    app:srcCompat="@drawable/mobileconsents_ic_expand" />
+    app:layout_constraintTop_toBottomOf="@id/mobileconsents_privacy_info_short_description"
+    app:srcCompat="@drawable/mobileconsents_ic_chevron_right" />
 
   <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/mobileconsents_privacy_list"

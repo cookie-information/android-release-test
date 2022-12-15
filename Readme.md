@@ -345,11 +345,6 @@ public class PrivacyFragment extends BasePrivacyFragment {
   public void onDismissed() {
     // Navigate back
   }
-
-  @Override
-  public void onReadMore() {
-    // This callback in not called for "BasePrivacyFragment" (Should be removed)
-  }
 }
 ```
 
@@ -373,14 +368,10 @@ class PrivacyFragment : BasePrivacyFragment() {
   override fun onDismissed() {
     // Navigate back
   }
-
-  override fun onReadMore() {
-    // This callback in not called for "BasePrivacyFragment" (Should be removed)
-  }
 }
 ```
 
-##### Styling UI components (Description needs and update)
+##### Styling UI components
 The UI elements inherits the style from the application theme, however there is possibility to change appearance of predefined views.
 
 The text colors are imported from attributes `android:textColorPrimary` and`android:textColorSecondary`.
