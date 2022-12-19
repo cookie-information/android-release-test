@@ -100,7 +100,6 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
 
   private fun handleAuthenticateError(view: ViewType) = with(view) {
     hideProgressBar()
-    hideViewData()
     showRetryDialog(
       onRetry = ::fetchToken,
       onDismiss = { listener?.onDismissed() },
@@ -110,7 +109,6 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
   }
 
   private fun handleLoading(view: ViewType) = with(view) {
-    hideViewData()
     showProgressBar()
   }
 
@@ -121,7 +119,6 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
 
   private fun handleFetchError(view: ViewType) = with(view) {
     hideProgressBar()
-    hideViewData()
     showRetryDialog(
       onRetry = ::fetchConsentSolution,
       onDismiss = { listener?.onDismissed() },

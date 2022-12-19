@@ -29,7 +29,7 @@ internal open class ConsentSolutionViewModel<ViewType, PresenterType>(
       val external: Boolean
     ) : Event()
 
-    object ReadMore : Event()
+    class ReadMore(val info: String, val poweredBy: String) : Event()
 
     object Dismiss : Event()
   }
@@ -82,7 +82,7 @@ internal open class ConsentSolutionViewModel<ViewType, PresenterType>(
    * If method is overridden, the super must be called.
    */
   @CallSuper
-  override fun onReadMore() = emitEvent(Event.ReadMore)
+  override fun onReadMore(info: String, poweredBy: String) = emitEvent(Event.ReadMore(info, poweredBy))
 
   /**
    * If method is overridden, the super must be called.

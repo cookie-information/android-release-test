@@ -41,7 +41,9 @@ public abstract class BasePrivacyFragment : Fragment(), ConsentSolutionListener 
    */
   @CallSuper
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-    PrivacyFragmentView(requireContext())
+    PrivacyFragmentView(requireContext()).also {
+      it.onReadMore = ::onReadMore
+    }
 
   /**
    * If method is overridden, the super must be called.
@@ -74,9 +76,13 @@ public abstract class BasePrivacyFragment : Fragment(), ConsentSolutionListener 
   private fun handleEvent(event: Event) =
     when (event) {
       is Event.ConsentsChosen -> with(event) { onConsentsChosen(consentSolution, consents, external) }
-      Event.ReadMore -> onReadMore()
+      is Event.ReadMore -> onReadMore(event.info, event.poweredBy)
       Event.Dismiss -> onDismissed()
     }
 
   private fun createViewModelFactory(binder: ConsentSolutionBinder) = PrivacyFragmentViewModel.Factory(binder)
+
+  override fun onReadMore(info: String, poweredBy: String) {
+    ReadMoreBottomSheet.newInstance(info, poweredBy).show(parentFragmentManager, "tag")
+  }
 }

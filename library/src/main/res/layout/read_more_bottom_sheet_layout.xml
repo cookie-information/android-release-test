@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:id="@+id/mobileconsents_privacy_info_layout"
-  style="@style/MobileConsents_PrivacyLayout"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/mobileconsents_privacy_layout"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:orientation="vertical">
@@ -17,23 +17,25 @@
   <ScrollView
     android:layout_width="match_parent"
     android:layout_height="0dp"
-    app:layout_constraintBottom_toTopOf="@id/divider"
+    android:padding="16dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/mobileconsents_privacy_toolbar">
 
     <TextView
-      android:id="@+id/mobileconsents_privacy_info_long_description"
+      android:id="@+id/mobileconsents_privacy_info_read_more"
       style="@style/MobileConsents_PrivacyLongDescription"
-      android:layout_width="match_parent"
-      android:layout_height="0dp"
-      android:padding="@dimen/mobileconsents_privacy_padding" />
-  </ScrollView>
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:textColor="@color/mobileconsents_color_black"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/mobileconsents_privacy_toolbar"
+      tools:text="Content" />
 
-  <View
-    android:id="@+id/divider"
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:background="@color/mobileconsents_color_divider"
-    app:layout_constraintBottom_toTopOf="@id/powered_by_label" />
+  </ScrollView>
 
   <TextView
     android:id="@+id/powered_by_label"
