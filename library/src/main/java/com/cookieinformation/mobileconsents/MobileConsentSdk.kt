@@ -37,6 +37,10 @@ public class MobileConsentSdk internal constructor(
   public val saveConsentsFlow: SharedFlow<Map<UUID, Boolean>>
 ) {
 
+  public fun getClientId(): String = consentClient.clientId
+  public fun getSecretId(): String = consentClient.clientSecret
+  public fun getConsentSolutionId(): String = consentClient.consentSolutionId.toString()
+
   /**
    * Obtain [TokenResponse] from authentication server.
    * @returns [TokenResponse] obtained access token from authentication.

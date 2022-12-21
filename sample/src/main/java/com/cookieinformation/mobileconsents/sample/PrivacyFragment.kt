@@ -24,10 +24,6 @@ class PrivacyFragment : BasePrivacyFragment() {
     requireActivity().onBackPressed()
   }
 
-  override fun onReadMore() {
-    // Should be NOT called for Privacy Center
-  }
-
   companion object {
 
     @JvmStatic

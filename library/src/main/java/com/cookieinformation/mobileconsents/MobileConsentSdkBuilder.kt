@@ -30,6 +30,9 @@ public class MobileConsentSdkBuilder internal constructor(
   private val context: Context
 ) : CallFactory, SdkBuilder {
   private var callFactory: Call.Factory? = null
+  private var clientId: String? = null
+  private var solutionId: String? = null
+  private var clientSecret: String? = null
 
   /**
    * Provide your own [Call.Factory] for SDK usage. If no call factory is provided, SDK will instantiate it's own OkHttpClient.
@@ -40,16 +43,42 @@ public class MobileConsentSdkBuilder internal constructor(
     callFactory = factory
   }
 
+  override fun setClientId(id: String): SdkBuilder {
+    clientId = id
+    return  this
+  }
+
+  override fun setClientSecret(id: String): SdkBuilder {
+    clientSecret = id
+    return  this
+  }
+
+  override fun setSolutionId(id: String): SdkBuilder {
+    solutionId = id
+    return  this
+  }
+
   override fun build(): MobileConsentSdk {
+    if(clientId == null || clientId.orEmpty().isEmpty()){
+      Throwable("Please set a client id")
+    }
+    if(solutionId == null || solutionId.orEmpty().isEmpty()){
+      Throwable("Please set a solution id")
+    }
+    if(clientSecret == null || clientSecret.orEmpty().isEmpty()){
+      Throwable("Please set a client secret id")
+    }
     val factory = callFactory ?: OkHttpClient()
 
     val storageFile = File(context.filesDir, storageFileName)
     val preferences = Preferences(context.applicationContext)
     lateinit var consentClient: ConsentClient
     try {
-      val uuid = UUID.fromString(BuildConfig.SOLUTION_ID)
+      val uuid = UUID.fromString(solutionId)
       consentClient = ConsentClient(
         uuid,
+        clientId = clientId.orEmpty(),
+        clientSecret = clientSecret.orEmpty(),
         getUrl = BuildConfig.BASE_URL_CONSENT_SOLUTION.toHttpUrl(),
         postUrl = BuildConfig.BASE_URL_CONSENT.toHttpUrl(),
         callFactory = factory,
@@ -109,5 +138,8 @@ public interface CallFactory {
  * Fluent Builder [MobileConsentSdkBuilder] interface.
  */
 public interface SdkBuilder {
+  public fun setClientId(id: String): SdkBuilder
+  public fun setClientSecret(id: String): SdkBuilder
+  public fun setSolutionId(id: String): SdkBuilder
   public fun build(): MobileConsentSdk
 }

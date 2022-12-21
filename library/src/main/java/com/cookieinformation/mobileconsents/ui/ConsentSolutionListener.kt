@@ -28,5 +28,5 @@ public interface ConsentSolutionListener {
    * The method is called when a user wants to read more about the consents.
    * In most cases it should lead to "Privacy Center" view.
    */
-  public fun onReadMore()
+  public fun onReadMore(info: String, poweredBy: String)
 }

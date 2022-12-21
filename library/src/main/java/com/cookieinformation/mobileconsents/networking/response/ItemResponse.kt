@@ -7,7 +7,7 @@ import com.squareup.moshi.JsonClass
 import java.util.UUID
 
 private const val typeSetting = "setting"
-private const val typeInfo = "info"
+private const val typeInfo = "Privacy policy"
 
 @JsonClass(generateAdapter = true)
 internal data class ItemResponse(

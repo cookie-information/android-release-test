@@ -19,11 +19,6 @@ public interface ConsentSolutionView<ViewDataType, ViewIntentListenerType> {
   public fun hideProgressBar()
 
   /**
-   * Hides the view data.
-   */
-  public fun hideViewData()
-
-  /**
    * Shows the view data.
    *
    * @param data the data to show

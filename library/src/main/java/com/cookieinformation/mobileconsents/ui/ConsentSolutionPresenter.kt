@@ -100,7 +100,6 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
 
   private fun handleAuthenticateError(view: ViewType) = with(view) {
     hideProgressBar()
-    hideViewData()
     showRetryDialog(
       onRetry = ::fetchToken,
       onDismiss = { listener?.onDismissed() },
@@ -110,7 +109,6 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
   }
 
   private fun handleLoading(view: ViewType) = with(view) {
-    hideViewData()
     showProgressBar()
   }
 
@@ -121,7 +119,6 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
 
   private fun handleFetchError(view: ViewType) = with(view) {
     hideProgressBar()
-    hideViewData()
     showRetryDialog(
       onRetry = ::fetchConsentSolution,
       onDismiss = { listener?.onDismissed() },
@@ -222,7 +219,7 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
    */
   fun authenticate() {
     // First check that client id, secret key and solution id are present
-    if (BuildConfig.CLIENT_ID.isBlank() || BuildConfig.CLIENT_SECRET.isBlank() || BuildConfig.SOLUTION_ID.isBlank()) {
+    if (consentSdk.getClientId().isBlank() || consentSdk.getSecretId().isBlank() || consentSdk.getConsentSolutionId().isBlank()) {
       throw RuntimeException("\nlocal.properties is missing client id and/or client secret and/or solution id. Please add:\nCLIENT_ID = \"XXX\"\nCLIENT_SECRET = \"XXX\"\nSOLUTION_ID = \"XXX\"")
     }
 
