@@ -23,7 +23,9 @@ private const val consentJsonFileName = "consent-data.json"
  * Client responsible for creating [Call]s to the CDN and partners server.
  */
 internal class ConsentClient(
-  private val consentSolutionId: UUID,
+  val consentSolutionId: UUID,
+  val clientId: String,
+  val clientSecret: String,
   private val getUrl: HttpUrl,
   private val postUrl: HttpUrl,
   private val callFactory: Call.Factory,
@@ -37,7 +39,7 @@ internal class ConsentClient(
   fun getToken(): Call {
     val adapter = TokenRequestJsonAdapter(moshi)
     val requestBody =
-      adapter.parseToRequestBody(TokenRequest(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET, "client_credentials"))
+      adapter.parseToRequestBody(TokenRequest(clientId, clientSecret, "client_credentials"))
     val url = BuildConfig.BASE_URL_TOKEN.toHttpUrl().newBuilder().build()
     val request = Request.Builder()
       .url(url)
