@@ -74,9 +74,9 @@ allprojects {
         targetSdkVersion(Build.TargetSdk)
         versionCode = Build.VersionCode
         versionName = "0.0.1"
-        buildConfigField("String", "CLIENT_ID", localProperties.getProperty("CLIENT_ID", """"""""))
-        buildConfigField("String", "CLIENT_SECRET", localProperties.getProperty("CLIENT_SECRET", """"""""))
-        buildConfigField("String", "SOLUTION_ID", localProperties.getProperty("SOLUTION_ID", """"""""))
+//        buildConfigField("String", "CLIENT_ID", localProperties.getProperty("CLIENT_ID", """"""""))
+//        buildConfigField("String", "CLIENT_SECRET", localProperties.getProperty("CLIENT_SECRET", """"""""))
+//        buildConfigField("String", "SOLUTION_ID", localProperties.getProperty("SOLUTION_ID", """"""""))
       }
       buildTypes {
         named("release") {

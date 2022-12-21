@@ -1,7 +1,7 @@
 package com.cookieinformation.mobileconsents.sdk
 
 import com.cookieinformation.mobileconsents.CallListener
-import com.cookieinformation.mobileconsents.CallbackMobileConsentSdk
+import com.cookieinformation.mobileconsents.MobileConsents
 import com.cookieinformation.mobileconsents.Consent
 import com.cookieinformation.mobileconsents.ConsentSolution
 import com.cookieinformation.mobileconsents.MobileConsentSdk
@@ -57,7 +57,7 @@ internal class MobileConsentSdkTest : DescribeSpec({
   lateinit var baseUrl: HttpUrl
   lateinit var consentClient: ConsentClient
   lateinit var storage: ConsentStorage
-  lateinit var consentSdk: CallbackMobileConsentSdk
+  lateinit var consentSdk: MobileConsents
   lateinit var consentSolution: ConsentSolution
   lateinit var saveConsentsFlow: MutableSharedFlow<Map<UUID, Boolean>>
 
@@ -76,7 +76,7 @@ internal class MobileConsentSdkTest : DescribeSpec({
       Dispatchers.Unconfined
     )
     consentSolution = ConsentSolutionResponseJsonAdapter(moshi).fromJson(consentString)!!.toDomain()
-    consentSdk = CallbackMobileConsentSdk(
+    consentSdk = MobileConsents(
       MobileConsentSdk(
         consentClient = consentClient,
         consentStorage = storage,
@@ -188,7 +188,7 @@ private const val malformedJson =
 
 internal fun Class<*>.getResourceAsString(path: String) = getResourceAsStream(path)!!.readBytes().decodeToString()
 
-internal suspend fun CallbackMobileConsentSdk.getConsentSuspending(consentId: UUID): ConsentSolution =
+internal suspend fun MobileConsents.getConsentSuspending(consentId: UUID): ConsentSolution =
   suspendCoroutine { continuation ->
     fetchConsentSolution(
       consentSolutionId = consentId,
@@ -204,7 +204,7 @@ internal suspend fun CallbackMobileConsentSdk.getConsentSuspending(consentId: UU
     )
   }
 
-internal suspend fun CallbackMobileConsentSdk.postConsentSuspending(consent: Consent) =
+internal suspend fun MobileConsents.postConsentSuspending(consent: Consent) =
   suspendCoroutine<Unit> { continuation ->
     postConsent(
       consent = consent,
@@ -220,7 +220,7 @@ internal suspend fun CallbackMobileConsentSdk.postConsentSuspending(consent: Con
     )
   }
 
-internal suspend fun CallbackMobileConsentSdk.getConsentChoicesSuspending() =
+internal suspend fun MobileConsents.getConsentChoicesSuspending() =
   suspendCoroutine<Map<UUID, Boolean>> { continuation ->
     getSavedConsents(
       listener = object : CallListener<Map<UUID, Boolean>> {
@@ -235,7 +235,7 @@ internal suspend fun CallbackMobileConsentSdk.getConsentChoicesSuspending() =
     )
   }
 
-internal suspend fun CallbackMobileConsentSdk.getConsentChoiceSuspending(consentId: UUID) =
+internal suspend fun MobileConsents.getConsentChoiceSuspending(consentId: UUID) =
   suspendCoroutine<Boolean> { continuation ->
     getSavedConsent(
       consentItemId = consentId,

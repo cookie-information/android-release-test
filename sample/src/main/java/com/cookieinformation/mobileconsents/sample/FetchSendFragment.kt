@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.cookieinformation.mobileconsents.CallListener
-import com.cookieinformation.mobileconsents.CallbackMobileConsentSdk
+import com.cookieinformation.mobileconsents.MobileConsents
 import com.cookieinformation.mobileconsents.Consent
 import com.cookieinformation.mobileconsents.ConsentItem
 import com.cookieinformation.mobileconsents.ConsentSolution
@@ -21,7 +21,7 @@ import java.util.UUID
 
 class FetchSendFragment : Fragment(R.layout.fragment_fetch_send) {
 
-  private lateinit var consentSdk: CallbackMobileConsentSdk
+  private lateinit var consentSdk: MobileConsents
 
   private val consentItemAdapter = ConsentItemAdapter { uuid, choice -> consentItemChoices[uuid] = choice }
   private var consentSolution: ConsentSolution? = null

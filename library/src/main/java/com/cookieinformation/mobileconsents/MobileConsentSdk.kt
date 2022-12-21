@@ -1,8 +1,10 @@
 package com.cookieinformation.mobileconsents
 
 import android.content.Context
+import android.util.Log
 import com.cookieinformation.mobileconsents.adapter.extension.parseFromResponseBody
 import com.cookieinformation.mobileconsents.adapter.moshi
+import com.cookieinformation.mobileconsents.interfaces.CallFactory
 import com.cookieinformation.mobileconsents.networking.ConsentClient
 import com.cookieinformation.mobileconsents.networking.extension.closeQuietly
 import com.cookieinformation.mobileconsents.networking.extension.enqueueSuspending
@@ -74,13 +76,17 @@ public class MobileConsentSdk internal constructor(
     val userId = consentStorage.getUserId()
     val call = consentClient.postConsent(consent, userId, applicationProperties)
     call.enqueueSuspending().closeQuietly()
+    Log.d("TAG", "postConsent: displayConsents "+consent.consentSolutionId)
+    consent.processingPurposes.forEach {
+      Log.d("TAG", "postConsent: displayConsents100000: "+it.consentItemId +":::"+it.consentGiven)
+    }
     consentStorage.storeConsentChoices(consent.processingPurposes)
   }
 
   /**
    * Obtain past consent choices stored on device memory.
    * @return returns Map of ConsentItem id and choice in a form of Boolean
-   * @throws [IOException] in case of any error.
+   * @throws [IOExcepti\on] in case of any error.
    */
   public suspend fun getSavedConsents(): Map<UUID, Boolean> = withContext(dispatcher) {
     consentStorage.getAllConsentChoices()

@@ -1,5 +1,6 @@
 package com.cookieinformation.mobileconsents.storage
 
+import android.util.Log
 import com.cookieinformation.mobileconsents.ProcessingPurpose
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -84,7 +85,9 @@ internal class ConsentStorage(
    */
   private fun Map<String, String>.toConsents(): Map<UUID, Boolean> =
     filterKeys { it != userIdKey }
-      .entries.associate { UUID.fromString(it.key) to it.value.toBoolean() }
+      .entries.associate {
+        UUID.fromString(it.key) to it.value.toBoolean()
+      }
 
   /**
    * Write new values to storage. Old data is copied from storage file to scratch file, along with new data.

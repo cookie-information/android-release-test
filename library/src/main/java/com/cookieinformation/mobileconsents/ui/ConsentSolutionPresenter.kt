@@ -1,6 +1,7 @@
 package com.cookieinformation.mobileconsents.ui
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.MainThread
 import com.cookieinformation.mobileconsents.BuildConfig
 import com.cookieinformation.mobileconsents.Consent
@@ -255,6 +256,10 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
       try {
         viewState = ViewState.Fetching
         val consentSolution = consentSdk.fetchConsentSolution()
+        Log.d("TAG", "displayConsents  fetchConsentSolution: "+consentSolution.consentItems.size)
+        Log.d("TAG", "displayConsents  fetchConsentSolution123: "+consentSdk.getSavedConsents().filter {
+//          Log.d("TAG", "displayConsents fetchConsentSolution234: "+it.value)
+          it.value == true }.size)
         viewState = ViewState.Fetched(createViewData(consentSolution, consentSdk.getSavedConsents()), consentSolution)
       } catch (_: IOException) {
         viewState = ViewState.FetchError
@@ -306,7 +311,7 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
 
   private fun ConsentItem.toProcessingPurpose(givenConsent: Pair<Boolean, String>?) = ProcessingPurpose(
     consentItemId = consentItemId,
-    consentGiven = givenConsent?.first ?: true,
+    consentGiven = givenConsent?.first ?: false,
     language = givenConsent?.second ?: TextTranslation.getTranslationFor(shortText, locales).languageCode
   )
 

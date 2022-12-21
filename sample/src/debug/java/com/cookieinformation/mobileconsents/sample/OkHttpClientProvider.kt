@@ -3,12 +3,13 @@ package com.cookieinformation.mobileconsents.sample
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor.Builder
+import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
 private const val useHttpLoggingInterceptor = true
 
-fun getOkHttpClient(context: Context) = if (useHttpLoggingInterceptor) getHttpLoggingInterceptor() else getChuckerCollectorInterceptor(context)
+fun getOkHttpClient(context: Context): Call.Factory = if (useHttpLoggingInterceptor) getHttpLoggingInterceptor() else getChuckerCollectorInterceptor(context)
 
 fun getChuckerCollectorInterceptor(context: Context) = OkHttpClient.Builder().addInterceptor(
   Builder(context)
@@ -19,7 +20,7 @@ fun getChuckerCollectorInterceptor(context: Context) = OkHttpClient.Builder().ad
     .build()
 ).build()
 
-fun getHttpLoggingInterceptor() = OkHttpClient.Builder().addInterceptor(
+fun  getHttpLoggingInterceptor() = OkHttpClient.Builder().addInterceptor(
   httpLoggingInterceptor
 ).build()
 

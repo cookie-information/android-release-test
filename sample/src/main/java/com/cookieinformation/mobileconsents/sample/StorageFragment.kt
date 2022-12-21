@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.cookieinformation.mobileconsents.CallListener
-import com.cookieinformation.mobileconsents.CallbackMobileConsentSdk
+import com.cookieinformation.mobileconsents.MobileConsents
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_storage.recyclerStorage
 import kotlinx.android.synthetic.main.fragment_storage.toolbar
@@ -13,7 +13,7 @@ import java.util.UUID
 
 class StorageFragment : Fragment(R.layout.fragment_storage) {
 
-  private lateinit var sdk: CallbackMobileConsentSdk
+  private lateinit var sdk: MobileConsents
   private val storageAdapter = StorageAdapter()
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

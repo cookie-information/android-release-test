@@ -1,5 +1,11 @@
 package com.cookieinformation.mobileconsents
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.util.Log
+import android.widget.Toast
+import com.cookieinformation.mobileconsents.ui.PrivacyActivity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,12 +22,12 @@ import java.util.concurrent.CopyOnWriteArraySet
  * @param mobileConsentSdk instance of coroutine version of the SDK
  * @param dispatcher used for all async operations.
  *
- * For SDK instantiating use [CallbackMobileConsentSdk.from] static function.
+ * For SDK instantiating use [MobileConsents.from] static function.
  */
-public class CallbackMobileConsentSdk internal constructor(
+public class MobileConsents constructor(
   private val mobileConsentSdk: MobileConsentSdk,
-  dispatcher: CoroutineDispatcher
-) {
+  dispatcher: CoroutineDispatcher = Dispatchers.Main
+){
 
   private val scope = CoroutineScope(dispatcher)
   private val saveConsentsObservers = CopyOnWriteArraySet<SaveConsentsObserver>()
@@ -134,14 +140,15 @@ public class CallbackMobileConsentSdk internal constructor(
     }
   }
 
-  public companion object {
-    /**
-     * Use to instantiate SDK with all necessary parameters.
-     * @return SDK builder instance.
-     */
-    @JvmStatic
-    public fun from(mobileConsentSdk: MobileConsentSdk): CallbackMobileConsentSdk =
-      CallbackMobileConsentSdk(mobileConsentSdk, Dispatchers.Main)
+  public fun  displayConsents(activityContext: Context, callback: (value: Int)-> Unit){
+    scope.launch {
+      val consents = mobileConsentSdk.getSavedConsents().filter { it.value == true }
+      consents.forEach {
+        Log.d("TAG", "displayConsents: ${it.key}")
+      }
+      Toast.makeText(activityContext, "${consents.size}", Toast.LENGTH_SHORT).show()
+    }
+    (activityContext as Activity).startActivityForResult(Intent(activityContext, PrivacyActivity::class.java), 123)
   }
 }
 

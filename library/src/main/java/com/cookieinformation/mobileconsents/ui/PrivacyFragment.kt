@@ -1,14 +1,13 @@
-package com.cookieinformation.mobileconsents.sample
+package com.cookieinformation.mobileconsents.ui
 
 import com.cookieinformation.mobileconsents.ConsentSolution
-import com.cookieinformation.mobileconsents.ui.BasePrivacyFragment
-import com.cookieinformation.mobileconsents.ui.ConsentSolutionBinder
+import com.cookieinformation.mobileconsents.Consentable
 import java.util.UUID
 
-class PrivacyFragment : BasePrivacyFragment() {
+internal class PrivacyFragment : BasePrivacyFragment() {
 
   override fun bindConsentSolution(builder: ConsentSolutionBinder.Builder): ConsentSolutionBinder {
-    val app = requireContext().applicationContext as App
+    val app = requireContext().applicationContext as Consentable
     val mobileConsentSdk = app.sdk
 
     return builder
