@@ -3,7 +3,6 @@ package com.cookieinformation.mobileconsents.ui
 import android.content.Context
 import android.util.Log
 import androidx.annotation.MainThread
-import com.cookieinformation.mobileconsents.BuildConfig
 import com.cookieinformation.mobileconsents.Consent
 import com.cookieinformation.mobileconsents.ConsentItem
 import com.cookieinformation.mobileconsents.ConsentSolution
@@ -221,7 +220,7 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
   fun authenticate() {
     // First check that client id, secret key and solution id are present
     if (consentSdk.getClientId().isBlank() || consentSdk.getSecretId().isBlank() || consentSdk.getConsentSolutionId().isBlank()) {
-      throw RuntimeException("\nlocal.properties is missing client id and/or client secret and/or solution id. Please add:\nCLIENT_ID = \"XXX\"\nCLIENT_SECRET = \"XXX\"\nSOLUTION_ID = \"XXX\"")
+      throw RuntimeException("\nMobileConsentSdk.Builder is missing client id and/or client secret and/or solution id. Please add:\nsetClientId(XXX)\nsetClientSecret(XXX)\nsetSolutionId(XXX)")
     }
 
     preferences.getAccessToken()?.let {
