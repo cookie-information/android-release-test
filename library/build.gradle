@@ -8,18 +8,11 @@ android {
   namespace 'com.cookieinformation.mobileconsents'
   compileSdk 33
 
-  Properties localProperties = new Properties()
-  localProperties.load(project.rootProject.file("local.properties").newDataInputStream())
-
   defaultConfig {
     minSdk 21
     targetSdk 33
     versionCode 1
     versionName "0.0.1"
-
-    buildConfigField("String", "CLIENT_ID", localProperties.getProperty("CLIENT_ID", ""))
-    buildConfigField("String", "CLIENT_SECRET", localProperties.getProperty("CLIENT_SECRET", ""))
-    buildConfigField("String", "SOLUTION_ID", localProperties.getProperty("SOLUTION_ID", ""))
   }
 
   buildTypes {
@@ -87,9 +80,4 @@ dependencies {
   kapt "com.squareup.moshi:moshi-kotlin-codegen:1.14.0"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
   implementation 'com.google.android.material:material:1.7.0'
-
-  //  testImplementation("com.squareup.okhttp3:mockwebserver")
-//  testImplementation "io.kotest:kotest-assertions-core-jvm:4.2.6"
-//  testImplementation "io.kotest:kotest-runner-junit5-jvm:4.2.6"
-//  testImplementation "io.mockk:mockk:1.10.6"
 }
