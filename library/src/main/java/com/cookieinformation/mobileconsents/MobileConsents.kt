@@ -139,13 +139,13 @@ public class MobileConsents constructor(
   }
 
   public fun displayConsents(
-    listener: ActivityResultLauncher<Bundle>,
+    listener: ActivityResultLauncher<Bundle?>,
   ) {
-    listener.launch(bundleOf())
+    listener.launch(null)//nothing to pass the intent
   }
 
   public fun displayConsentsIfNeeded(
-    listener: ActivityResultLauncher<Bundle>,
+    listener: ActivityResultLauncher<Bundle?>,
   ) {
     scope.launch {
       if (shouldDisplayConsents()) {

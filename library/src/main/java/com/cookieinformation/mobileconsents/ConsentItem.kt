@@ -33,7 +33,7 @@ public data class ConsentItem(
           TypeMarketing.name -> TypeMarketing
           TypeStatistical.name -> TypeStatistical
           TypeFunctional.name -> TypeFunctional
-          else -> Setting
+          else -> Setting(value)
         }
       }
     }
@@ -41,7 +41,7 @@ public data class ConsentItem(
       override val isSetting: Boolean = false
     }
 
-    public object Setting : Type("") {
+    public class Setting(public val customValue: String) : Type(customValue) {
       override val isSetting: Boolean = true
     }
 

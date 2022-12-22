@@ -3,13 +3,12 @@ package com.example.sample2
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.cookieinformation.mobileconsents.GetConsents
 
 class MainActivity : AppCompatActivity() {
 
   private val listener = registerForActivityResult(
-    GetConsents(this, lifecycleScope),
+    GetConsents(this),
   ) {
 
   }

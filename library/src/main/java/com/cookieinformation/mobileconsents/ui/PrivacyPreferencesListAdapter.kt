@@ -40,23 +40,10 @@ internal class PrivacyPreferencesListAdapter(
       itemView.findViewById<CompoundButton>(R.id.mobileconsents_privacy_preferences_item_checkbox)
 
     private val consentText =
-      itemView.findViewById<TextView>(R.id.mobileconsents_privacy_preferences_item_text).apply {
-        setOnClickListenerButDoNotInvokeWhenSpanClicked { toggleSwitch() }
-      }
+      itemView.findViewById<TextView>(R.id.mobileconsents_privacy_preferences_item_text)
 
     private val consentDetails =
-      itemView.findViewById<TextView?>(R.id.mobileconsents_privacy_preferences_item_details)?.apply {
-        setOnClickListenerButDoNotInvokeWhenSpanClicked { toggleSwitch() }
-      }
-
-    private fun toggleSwitch() {
-      consentSwitch.apply {
-        // Pretend user action
-        isPressed = true
-        toggle()
-        isPressed = false
-      }
-    }
+      itemView.findViewById<TextView?>(R.id.mobileconsents_privacy_preferences_item_details)
 
     fun bind(
       consentItem: PrivacyPreferencesItem,
@@ -66,7 +53,11 @@ internal class PrivacyPreferencesListAdapter(
         setTextFromHtml(if (consentItem.required) "${consentItem.text}$requireIndicator" else consentItem.text)
       }
       consentSwitch.apply {
-        isChecked = consentItem.accepted
+        isChecked = consentItem.accepted || consentItem.required
+        if (consentItem.required) {
+          onConsentItemChanged.invoke(consentItem.type, isChecked)
+        }
+        isClickable = !consentItem.required
         setOnCheckedChangeListener { buttonView, isChecked ->
           if (buttonView.isPressed) {
             // Detect only user action

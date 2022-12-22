@@ -45,5 +45,5 @@ private fun String.toDomainItemType(): ConsentItem.Type =
     TypeStatistical.name -> TypeStatistical
     TypeFunctional.name -> TypeFunctional
     Info.name -> Info
-    else -> Setting // TODO Ensure if default value should be "SETTING"
+    else -> Setting(this) // TODO Ensure if default value should be "SETTING"
   }
