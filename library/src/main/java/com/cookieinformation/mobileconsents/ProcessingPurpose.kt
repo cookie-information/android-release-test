@@ -12,7 +12,8 @@ import java.util.UUID
 public data class ProcessingPurpose(
   val consentItemId: UUID,
   val consentGiven: Boolean,
-  val language: String
+  val language: String,
+  val type: ConsentItem.Type
 )
 
 internal fun ProcessingPurpose.toRequest() = ProcessingPurposeRequest(

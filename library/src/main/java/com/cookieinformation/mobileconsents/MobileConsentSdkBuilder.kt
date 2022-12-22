@@ -3,6 +3,7 @@ package com.cookieinformation.mobileconsents
 import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
+import com.cookieinformation.mobileconsents.ConsentItem.Type
 import com.cookieinformation.mobileconsents.adapter.moshi
 import com.cookieinformation.mobileconsents.interfaces.CallFactory
 import com.cookieinformation.mobileconsents.interfaces.SdkBuilder
@@ -80,7 +81,7 @@ internal class MobileConsentSdkBuilder constructor(
       Toast.makeText(context.applicationContext, e.message.toString(), Toast.LENGTH_SHORT).show()
     }
     val consentStorage =
-      ConsentStorage(Mutex, storageFile, MoshiFileHandler(moshi), getSaveConsentsMutableFlow(), Dispatchers.IO)
+      ConsentStorage(context.applicationContext, Mutex, storageFile, MoshiFileHandler(moshi), getSaveConsentsMutableFlow(), Dispatchers.IO)
     return MobileConsentSdk(
       consentClient = consentClient,
       consentStorage = consentStorage,
@@ -100,7 +101,7 @@ internal class MobileConsentSdkBuilder constructor(
      * Returns global flow for observing end emitting "save consents" events.
      */
     @SuppressLint("SyntheticAccessor")
-    fun getSaveConsentsMutableFlow(): MutableSharedFlow<Map<UUID, Boolean>> = synchronized(this) {
+    fun getSaveConsentsMutableFlow(): MutableSharedFlow<Map<Type, Boolean>> = synchronized(this) {
       var eventsEmitter = SaveConsentsMutableFlowReference.get()
       if (eventsEmitter == null) {
         eventsEmitter = MutableSharedFlow()
@@ -113,6 +114,6 @@ internal class MobileConsentSdkBuilder constructor(
      * Reference to global flow for observing end emitting "save consents" events, shared across all SDK instances.
      * Warning: Do not use this field directly. Use [getSaveConsentsMutableFlow].
      */
-    private var SaveConsentsMutableFlowReference = WeakReference<MutableSharedFlow<Map<UUID, Boolean>>>(null)
+    private var SaveConsentsMutableFlowReference = WeakReference<MutableSharedFlow<Map<Type, Boolean>>>(null)
   }
 }

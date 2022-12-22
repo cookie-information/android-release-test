@@ -1,5 +1,6 @@
 package com.cookieinformation.mobileconsents.ui
 
+import com.cookieinformation.mobileconsents.ConsentItem.Type
 import com.cookieinformation.mobileconsents.ConsentItem.Type.Info
 import com.cookieinformation.mobileconsents.ConsentItem.Type.Setting
 import com.cookieinformation.mobileconsents.ConsentSolution
@@ -26,7 +27,7 @@ internal class PrivacyFragmentPresenter(
 
   override fun createViewData(
     consentSolution: ConsentSolution,
-    savedConsents: Map<UUID, Boolean>
+    savedConsents: Map<Type, Boolean>
   ): PrivacyFragmentViewData {
     preferencesItem = createPreferencesItem(consentSolution, savedConsents)
     infoItem = createInfoItem(consentSolution)
@@ -36,7 +37,7 @@ internal class PrivacyFragmentPresenter(
   override fun getGivenConsents(viewData: PrivacyFragmentViewData): GivenConsent =
     preferencesItem.items.map { it.id to Pair(it.accepted, it.language) }.toMap()
 
-  override fun onConsentsChangedWhileFetched(consents: Map<UUID, Boolean>) {
+  override fun onConsentsChangedWhileFetched(consents: Map<Type, Boolean>) {
     @Suppress("UNCHECKED_CAST")
     val currentViewState = viewState as ViewState.Fetched<PrivacyFragmentViewData>
 
@@ -52,7 +53,7 @@ internal class PrivacyFragmentPresenter(
     }
   }
 
-  override fun onConsentsChangedWhileSendError(consents: Map<UUID, Boolean>) {
+  override fun onConsentsChangedWhileSendError(consents: Map<Type, Boolean>) {
     @Suppress("UNCHECKED_CAST")
     val currentViewState = viewState as ViewState.SendError<PrivacyFragmentViewData>
 
@@ -70,19 +71,19 @@ internal class PrivacyFragmentPresenter(
 
   private fun newPreferencesItems(
     items: List<PrivacyPreferencesItem>,
-    consents: Map<UUID, Boolean>
+    consents: Map<Type, Boolean>
   ): List<PrivacyPreferencesItem> =
     items.map {
-      val accepted = consents[it.id] ?: false
+      val accepted = consents[it.type] ?: false
       if (it.accepted != accepted) it.copy(accepted = accepted) else it
     }
 
-  override fun onPrivacyChoiceChanged(id: UUID, accepted: Boolean) {
+  override fun onPrivacyChoiceChanged(id: Type, accepted: Boolean) {
     @Suppress("UNCHECKED_CAST")
     val currentViewState = viewState as? ViewState.Fetched<PrivacyFragmentViewData> ?: return
     require(currentViewState.data.items.last() is PrivacyFragmentPreferencesItem)
 
-    val preferenceItems = preferencesItem.items.map { if (it.id == id) it.copy(accepted = accepted) else it }
+    val preferenceItems = preferencesItem.items.map { if (it.type == id) it.copy(accepted = accepted) else it }
     viewState = currentViewState.copy(data = newViewData(currentViewState.data, preferenceItems))
   }
 
@@ -119,10 +120,10 @@ internal class PrivacyFragmentPresenter(
 
   private fun createPreferencesItem(
     consentSolution: ConsentSolution,
-    savedConsents: Map<UUID, Boolean>
+    savedConsents: Map<Type, Boolean>
   ): PrivacyFragmentPreferencesItem {
     val items = consentSolution.consentItems
-      .filter { it.type == Setting }
+      .filter { it.type.isSetting }
       .map { it.toPrivacyPreferencesItem(savedConsents) }
 
     val titleTranslation = consentSolution.uiTexts.consentPreferencesLabel.translate()
@@ -144,7 +145,8 @@ internal class PrivacyFragmentPresenter(
     return PrivacyInfoItem(
       text = item.text,
       details = item.details,
-      language = item.language
+      language = item.language,
+      type = item.type
     )
   }
 

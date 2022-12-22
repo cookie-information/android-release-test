@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.cookieinformation.mobileconsents.ConsentItem.Type
 import com.cookieinformation.mobileconsents.R
 import java.util.UUID
 
@@ -13,7 +14,7 @@ import java.util.UUID
  * RecyclerView's adapter for [PrivacyFragmentPreferencesItem] item model.
  */
 internal class PrivacyFragmentListAdapter(
-  private val onConsentItemChoiceToggle: (UUID, Boolean) -> Unit
+  private val onConsentItemChoiceToggle: (Type, Boolean) -> Unit
 ) :
   ListAdapter<PrivacyFragmentPreferencesItem, PrivacyFragmentListAdapter.ItemViewHolder>(AdapterConsentItemDiffCallback()) {
 
@@ -30,7 +31,7 @@ internal class PrivacyFragmentListAdapter(
     abstract fun bind(item: PrivacyFragmentPreferencesItem)
   }
 
-  class PreferencesItemViewHolder(itemView: View, onConsentItemChoiceToggle: (UUID, Boolean) -> Unit) :
+  class PreferencesItemViewHolder(itemView: View, onConsentItemChoiceToggle: (Type, Boolean) -> Unit) :
     ItemViewHolder(itemView) {
 
     private val preferencesAdapter = PrivacyPreferencesListAdapter(

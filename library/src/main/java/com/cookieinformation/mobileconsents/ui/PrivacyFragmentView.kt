@@ -9,6 +9,7 @@ import androidx.annotation.MainThread
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.cookieinformation.mobileconsents.ConsentItem.Type
 import com.cookieinformation.mobileconsents.R
 import com.cookieinformation.mobileconsents.ui.PrivacyFragmentView.IntentListener
 import com.cookieinformation.mobileconsents.util.setTextFromHtml
@@ -39,7 +40,7 @@ public class PrivacyFragmentView @JvmOverloads constructor(
      * @param id [UUID] of the consents.
      * @param accepted user's choice.
      */
-    public fun onPrivacyChoiceChanged(id: UUID, accepted: Boolean)
+    public fun onPrivacyChoiceChanged(id: Type, accepted: Boolean)
 
     /**
      * Called when the user accepts selected consents. It is called only if all required consents are chosen by the user.
@@ -113,7 +114,7 @@ public class PrivacyFragmentView @JvmOverloads constructor(
     }
   }
 
-  private fun onChoiceChanged(id: UUID, accepted: Boolean) {
+  private fun onChoiceChanged(id: Type, accepted: Boolean) {
     for (listener in intentListeners) {
       listener.onPrivacyChoiceChanged(id, accepted)
     }

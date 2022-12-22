@@ -1,13 +1,18 @@
 package com.cookieinformation.mobileconsents.networking.response
 
 import com.cookieinformation.mobileconsents.ConsentItem
+import com.cookieinformation.mobileconsents.ConsentItem.Type.Info
+import com.cookieinformation.mobileconsents.ConsentItem.Type.Setting
+import com.cookieinformation.mobileconsents.ConsentItem.Type.TypeFunctional
+import com.cookieinformation.mobileconsents.ConsentItem.Type.TypeMarketing
+import com.cookieinformation.mobileconsents.ConsentItem.Type.TypeNecessary
+import com.cookieinformation.mobileconsents.ConsentItem.Type.TypeStatistical
 import com.cookieinformation.mobileconsents.TextTranslation
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import java.util.Locale
 import java.util.UUID
 
-private const val typeSetting = "setting"
-private const val typeInfo = "Privacy policy"
 
 @JsonClass(generateAdapter = true)
 internal data class ItemResponse(
@@ -34,8 +39,11 @@ internal fun ItemResponse.toDomain(): ConsentItem {
 }
 
 private fun String.toDomainItemType(): ConsentItem.Type =
-  when (this) {
-    typeSetting -> ConsentItem.Type.Setting
-    typeInfo -> ConsentItem.Type.Info
-    else -> ConsentItem.Type.Setting // TODO Ensure if default value should be "SETTING"
+  when (lowercase(Locale.getDefault())) {
+    TypeNecessary.name-> TypeNecessary
+    TypeMarketing.name -> TypeMarketing
+    TypeStatistical.name -> TypeStatistical
+    TypeFunctional.name -> TypeFunctional
+    Info.name -> Info
+    else -> Setting // TODO Ensure if default value should be "SETTING"
   }

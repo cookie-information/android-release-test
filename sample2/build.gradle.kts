@@ -42,4 +42,9 @@ dependencies {
   androidTestImplementation("androidx.test.ext:junit:1.1.4")
   androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
   implementation(project(":library"))
+
+  val livedata_version = "2.2.0-alpha02"
+  implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$livedata_version")
+  implementation ("androidx.lifecycle:lifecycle-runtime-ktx:$livedata_version")
+  implementation ("androidx.lifecycle:lifecycle-livedata-ktx:$livedata_version")
 }

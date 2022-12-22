@@ -1,6 +1,7 @@
 package com.example.sample2
 
 import android.app.Application
+import com.cookieinformation.mobileconsents.ConsentItem.Type
 import com.cookieinformation.mobileconsents.Consentable
 import com.cookieinformation.mobileconsents.MobileConsents
 import com.cookieinformation.mobileconsents.MobileConsentSdk
@@ -19,5 +20,9 @@ class App : Application(), Consentable {
       solutionId = "4113ab88-4980-4429-b2d1-3454cc81197b",
       clientSecret = "68cbf024407a20b8df4aecc3d9937f43c6e83169dafcb38b8d18296b515cc0d5f8bca8165d615caa4d12e236192851e9c5852a07319428562af8f920293bc1db"
     )
+  }
+
+  override suspend fun getSavedConsents(): Map<Type, Boolean> {
+    return sdk.getMobileConsentSdk().getSavedConsents()
   }
 }

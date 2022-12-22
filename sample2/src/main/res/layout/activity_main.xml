@@ -7,13 +7,24 @@
   tools:context=".MainActivity">
 
   <Button
-    android:id="@+id/btn"
+    android:id="@+id/display_always"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Hello World!"
+    android:text="Always!"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent" />
+
+  <Button
+    android:id="@+id/display_if_needed"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="If Needed!"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/display_always" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

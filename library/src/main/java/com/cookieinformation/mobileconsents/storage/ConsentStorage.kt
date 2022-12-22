@@ -1,6 +1,7 @@
 package com.cookieinformation.mobileconsents.storage
 
-import android.util.Log
+import android.content.Context
+import com.cookieinformation.mobileconsents.ConsentItem.Type
 import com.cookieinformation.mobileconsents.ProcessingPurpose
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,12 +30,15 @@ private const val scratchFileSuffix = ".tmp"
  */
 @Suppress("LongParameterList")
 internal class ConsentStorage(
+  private val applicationContext: Context,
   private val mutex: Mutex,
   private val file: File,
   private val fileHandler: MoshiFileHandler,
-  private val saveConsentsMutableFlow: MutableSharedFlow<Map<UUID, Boolean>>,
+  private val saveConsentsMutableFlow: MutableSharedFlow<Map<Type, Boolean>>,
   private val dispatcher: CoroutineDispatcher
 ) {
+
+  val consentPreferences = ConsentPreferences(applicationContext)
 
   /**
    * SharedFlow for observing "save consents" events.
@@ -49,8 +53,11 @@ internal class ConsentStorage(
    * Store list of consent choices ([ProcessingPurpose]) as Map of UUIDs and Booleans.
    */
   suspend fun storeConsentChoices(purposes: List<ProcessingPurpose>) {
-    val writtenValues = writeValues(purposes.associate { it.consentItemId.toString() to it.consentGiven.toString() })
+    val writtenValues = writeValues(purposes.associate { it.type.name to it.consentGiven.toString() })
     saveConsentsMutableFlow.emit(writtenValues.toConsents())
+    writtenValues.toConsents().toMap().forEach {
+      consentPreferences.sharedPreferences().edit().putBoolean(it.key.name, it.value).commit()
+    }
   }
 
   /**
@@ -77,16 +84,15 @@ internal class ConsentStorage(
   /**
    * Get all of stored consent choices. User id is filtered out.
    */
-  suspend fun getAllConsentChoices(): Map<UUID, Boolean> =
-    readAll().toConsents()
+  fun getAllConsentChoices(): Map<Type, Boolean> = consentPreferences.getAllConsentChoices()
 
   /**
    * Maps key and value read from file to consents map
    */
-  private fun Map<String, String>.toConsents(): Map<UUID, Boolean> =
+  private fun Map<String, String>.toConsents(): Map<Type, Boolean> =
     filterKeys { it != userIdKey }
       .entries.associate {
-        UUID.fromString(it.key) to it.value.toBoolean()
+        Type.findTypeByValue(it.key) to it.value.toBoolean()
       }
 
   /**

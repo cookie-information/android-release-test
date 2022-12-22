@@ -9,6 +9,7 @@ import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.cookieinformation.mobileconsents.ConsentItem.Type
 import com.cookieinformation.mobileconsents.R
 import com.cookieinformation.mobileconsents.util.setOnClickListenerButDoNotInvokeWhenSpanClicked
 import com.cookieinformation.mobileconsents.util.setTextFromHtml
@@ -21,7 +22,7 @@ private const val requireIndicator = "<a href=\"\">*</a>"
  */
 internal class PrivacyPreferencesListAdapter(
   @LayoutRes private val itemLayoutId: Int,
-  private val onConsentItemChoiceChanged: (UUID, Boolean) -> Unit
+  private val onConsentItemChoiceChanged: (Type, Boolean) -> Unit
 ) :
   ListAdapter<PrivacyPreferencesItem, PrivacyPreferencesListAdapter.ItemViewHolder>(AdapterConsentItemDiffCallback()) {
 
@@ -59,7 +60,7 @@ internal class PrivacyPreferencesListAdapter(
 
     fun bind(
       consentItem: PrivacyPreferencesItem,
-      onConsentItemChanged: (UUID, Boolean) -> Unit
+      onConsentItemChanged: (Type, Boolean) -> Unit
     ) {
       consentText.apply {
         setTextFromHtml(if (consentItem.required) "${consentItem.text}$requireIndicator" else consentItem.text)
@@ -69,7 +70,7 @@ internal class PrivacyPreferencesListAdapter(
         setOnCheckedChangeListener { buttonView, isChecked ->
           if (buttonView.isPressed) {
             // Detect only user action
-            onConsentItemChanged.invoke(consentItem.id, isChecked)
+            onConsentItemChanged.invoke(consentItem.type, isChecked)
           }
         }
       }

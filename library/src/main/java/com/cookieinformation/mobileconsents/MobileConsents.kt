@@ -1,11 +1,9 @@
 package com.cookieinformation.mobileconsents
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.util.Log
-import android.widget.Toast
-import com.cookieinformation.mobileconsents.ui.PrivacyActivity
+import android.os.Bundle
+import androidx.activity.result.ActivityResultLauncher
+import androidx.core.os.bundleOf
+import com.cookieinformation.mobileconsents.ConsentItem.Type
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +25,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 public class MobileConsents constructor(
   private val mobileConsentSdk: MobileConsentSdk,
   dispatcher: CoroutineDispatcher = Dispatchers.Main
-){
+) {
 
   private val scope = CoroutineScope(dispatcher)
   private val saveConsentsObservers = CopyOnWriteArraySet<SaveConsentsObserver>()
@@ -82,7 +80,7 @@ public class MobileConsents constructor(
    * @param listener listener for success/failure of operation.
    * @return [Subscription] object allowing for call cancellation.
    */
-  public fun getSavedConsents(listener: CallListener<Map<UUID, Boolean>>): Subscription {
+  public fun getSavedConsents(listener: CallListener<Map<Type, Boolean>>): Subscription {
     val job = scope.launch {
       try {
         listener.onSuccess(mobileConsentSdk.getSavedConsents())
@@ -140,15 +138,24 @@ public class MobileConsents constructor(
     }
   }
 
-  public fun  displayConsents(activityContext: Context, callback: (value: Int)-> Unit){
+  public fun displayConsents(
+    listener: ActivityResultLauncher<Bundle>,
+  ) {
+    listener.launch(bundleOf())
+  }
+
+  public fun displayConsentsIfNeeded(
+    listener: ActivityResultLauncher<Bundle>,
+  ) {
     scope.launch {
-      val consents = mobileConsentSdk.getSavedConsents().filter { it.value == true }
-      consents.forEach {
-        Log.d("TAG", "displayConsents: ${it.key}")
+      if (shouldDisplayConsents()) {
+        displayConsents(listener)
       }
-      Toast.makeText(activityContext, "${consents.size}", Toast.LENGTH_SHORT).show()
     }
-    (activityContext as Activity).startActivityForResult(Intent(activityContext, PrivacyActivity::class.java), 123)
+  }
+
+  private suspend fun shouldDisplayConsents(): Boolean {
+    return !getMobileConsentSdk().getSavedConsents().containsValue(true)
   }
 }
 
@@ -186,5 +193,5 @@ public interface SaveConsentsObserver {
   /**
    * Called every time when consents are saved
    */
-  public fun onConsentsSaved(consents: Map<UUID, Boolean>)
+  public fun onConsentsSaved(consents: Map<Type, Boolean>)
 }

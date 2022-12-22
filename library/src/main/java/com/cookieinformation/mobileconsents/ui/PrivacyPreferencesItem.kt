@@ -1,5 +1,6 @@
 package com.cookieinformation.mobileconsents.ui
 
+import com.cookieinformation.mobileconsents.ConsentItem.Type
 import java.util.UUID
 
 /**
@@ -12,4 +13,5 @@ public data class PrivacyPreferencesItem(
   val text: String,
   val details: String,
   val language: String,
+  val type: Type
 )
