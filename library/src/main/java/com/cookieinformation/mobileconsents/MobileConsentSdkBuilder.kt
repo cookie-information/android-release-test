@@ -2,6 +2,8 @@ package com.cookieinformation.mobileconsents
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Resources
+import android.graphics.Color
 import android.widget.Toast
 import com.cookieinformation.mobileconsents.ConsentItem.Type
 import com.cookieinformation.mobileconsents.adapter.moshi
@@ -17,9 +19,7 @@ import com.cookieinformation.mobileconsents.system.getApplicationProperties
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.sync.Mutex
-import okhttp3.Call
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.OkHttpClient
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -37,6 +37,7 @@ internal class MobileConsentSdkBuilder constructor(
   private var clientId: String? = null
   private var solutionId: String? = null
   private var clientSecret: String? = null
+  private var customColor: MobileConsentCustomUI? = null//MobileConsentCustomUI(Color.parseColor("#FFBB86FC"))
 
   override fun setClientCredentials(credentials: MobileConsentCredentials): CallFactory {
     clientId = credentials.clientId
@@ -46,17 +47,21 @@ internal class MobileConsentSdkBuilder constructor(
   }
 
   override fun setMobileConsentCustomUI(customUI: MobileConsentCustomUI): CallFactory {
+    customColor = customUI
     return this
   }
 
   override fun build(): MobileConsentSdk {
-    if(clientId == null || clientId.orEmpty().isEmpty()){
+    if (customColor == null) {
+      Throwable("Please set a custom client, you may want to set your primary color")
+    }
+    if (clientId == null || clientId.orEmpty().isEmpty()) {
       Throwable("Please set a client id")
     }
-    if(solutionId == null || solutionId.orEmpty().isEmpty()){
+    if (solutionId == null || solutionId.orEmpty().isEmpty()) {
       Throwable("Please set a solution id")
     }
-    if(clientSecret == null || clientSecret.orEmpty().isEmpty()){
+    if (clientSecret == null || clientSecret.orEmpty().isEmpty()) {
       Throwable("Please set a client secret id")
     }
 
@@ -81,13 +86,21 @@ internal class MobileConsentSdkBuilder constructor(
       Toast.makeText(context.applicationContext, e.message.toString(), Toast.LENGTH_SHORT).show()
     }
     val consentStorage =
-      ConsentStorage(context.applicationContext, Mutex, storageFile, MoshiFileHandler(moshi), getSaveConsentsMutableFlow(), Dispatchers.IO)
+      ConsentStorage(
+        context.applicationContext,
+        Mutex,
+        storageFile,
+        MoshiFileHandler(moshi),
+        getSaveConsentsMutableFlow(),
+        Dispatchers.IO
+      )
     return MobileConsentSdk(
       consentClient = consentClient,
       consentStorage = consentStorage,
       applicationProperties = context.getApplicationProperties(),
       dispatcher = Dispatchers.IO,
-      saveConsentsFlow = consentStorage.saveConsentsFlow
+      saveConsentsFlow = consentStorage.saveConsentsFlow,
+      uiComponentColor = customColor
     )
   }
 

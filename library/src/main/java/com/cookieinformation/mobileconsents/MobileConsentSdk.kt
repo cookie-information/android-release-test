@@ -5,6 +5,7 @@ import com.cookieinformation.mobileconsents.ConsentItem.Type
 import com.cookieinformation.mobileconsents.adapter.extension.parseFromResponseBody
 import com.cookieinformation.mobileconsents.adapter.moshi
 import com.cookieinformation.mobileconsents.interfaces.CallFactory
+import com.cookieinformation.mobileconsents.models.MobileConsentCustomUI
 import com.cookieinformation.mobileconsents.networking.ConsentClient
 import com.cookieinformation.mobileconsents.networking.extension.closeQuietly
 import com.cookieinformation.mobileconsents.networking.extension.enqueueSuspending
@@ -36,12 +37,14 @@ public class MobileConsentSdk internal constructor(
   private val consentStorage: ConsentStorage,
   private val applicationProperties: ApplicationProperties,
   private val dispatcher: CoroutineDispatcher,
-  public val saveConsentsFlow: SharedFlow<Map<Type, Boolean>>
+  public val saveConsentsFlow: SharedFlow<Map<Type, Boolean>>,
+  private val uiComponentColor: MobileConsentCustomUI?
 ) {
 
   public fun getClientId(): String = consentClient.clientId
   public fun getSecretId(): String = consentClient.clientSecret
   public fun getConsentSolutionId(): String = consentClient.consentSolutionId.toString()
+  public fun getUiComponentColor(): MobileConsentCustomUI? = uiComponentColor
 
   /**
    * Obtain [TokenResponse] from authentication server.

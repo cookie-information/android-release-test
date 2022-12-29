@@ -1,6 +1,7 @@
 package com.cookieinformation.mobileconsents.ui
 
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -47,12 +48,18 @@ internal class PrivacyFragment : Fragment(), ConsentSolutionListener {
       .create()
   }
 
+  fun getSdkSetColor(): Int? {
+    val app = requireContext().applicationContext as Consentable
+    val mobileConsentSdk = app.sdk
+    return mobileConsentSdk.getMobileConsentSdk().getUiComponentColor()?.primaryColor
+  }
+
   /**
    * If method is overridden, the super must be called.
    */
   @CallSuper
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-    PrivacyFragmentView(requireContext()).also {
+    PrivacyFragmentView(requireContext(), sdkColor =  getSdkSetColor()).also {
       it.onReadMore = ::onReadMore
     }
 
@@ -94,7 +101,7 @@ internal class PrivacyFragment : Fragment(), ConsentSolutionListener {
   private fun createViewModelFactory(binder: ConsentSolutionBinder) = PrivacyFragmentViewModel.Factory(binder)
 
   override fun onReadMore(info: String, poweredBy: String) {
-    ReadMoreBottomSheet.newInstance(info, poweredBy).show(parentFragmentManager, "tag")
+    ReadMoreBottomSheet.newInstance(info, poweredBy, getSdkSetColor()).show(parentFragmentManager, "tag")
   }
 
   override fun onConsentsChosen(consentSolution: ConsentSolution, consents: Map<Type, Boolean>, external: Boolean) {

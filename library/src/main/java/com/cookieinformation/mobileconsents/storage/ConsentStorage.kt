@@ -50,7 +50,7 @@ internal class ConsentStorage(
   }
 
   /**
-   * Store list of consent choices ([ProcessingPurpose]) as Map of UUIDs and Booleans.
+   * Store list of consent choices ([ProcessingPurpose]) as Map of Types and Booleans.
    */
   suspend fun storeConsentChoices(purposes: List<ProcessingPurpose>) {
     val writtenValues = writeValues(purposes.associate { it.type.name to it.consentGiven.toString() })
@@ -79,6 +79,10 @@ internal class ConsentStorage(
     val value = readValue(consentId.toString())
 
     return value.toBoolean()
+  }
+
+  fun getConsentChoice(type: Type): Boolean {
+    return consentPreferences.sharedPreferences().getBoolean(type.name, false)
   }
 
   /**

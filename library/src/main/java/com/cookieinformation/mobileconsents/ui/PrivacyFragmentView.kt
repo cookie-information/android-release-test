@@ -1,9 +1,12 @@
 package com.cookieinformation.mobileconsents.ui
 
 import android.content.Context
+import android.graphics.PorterDuff
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.MainThread
 import androidx.appcompat.widget.Toolbar
@@ -24,7 +27,8 @@ public class PrivacyFragmentView @JvmOverloads constructor(
   context: Context,
   attrs: AttributeSet? = null,
   defStyleAttr: Int = 0,
-  defStyleRes: Int = 0
+  defStyleRes: Int = 0,
+  sdkColor: Int?
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes),
   ConsentSolutionView<PrivacyFragmentViewData, IntentListener> {
 
@@ -59,13 +63,14 @@ public class PrivacyFragmentView @JvmOverloads constructor(
   }
 
   private val intentListeners = mutableSetOf<IntentListener>()
-  private val consentListAdapter = PrivacyFragmentListAdapter(::onChoiceChanged)
-  public var onReadMore: (info: String, poweredBy: String) -> Unit = { _,_ ->
-
+  private val consentListAdapter = PrivacyFragmentListAdapter(::onChoiceChanged, sdkColor)
+  public var onReadMore: (info: String, poweredBy: String) -> Unit = { _, _ ->
   }
 
   private val contentView: View
   private val progressBar: View
+  public var parsedColorToInt: Int? = sdkColor//Color.parseColor("#FFE91E63")// = attrs?.getAttributeResourceValue(0, 0)
+
   private lateinit var data: PrivacyFragmentViewData
 
   init {
@@ -77,6 +82,12 @@ public class PrivacyFragmentView @JvmOverloads constructor(
     progressBar = findViewById(R.id.mobileconsents_progressbar_layout)
     progressBar.visibility = View.VISIBLE
 
+    parsedColorToInt?.let {
+      progressBar.findViewById<ProgressBar>(R.id.mobileconsents_progressbar).indeterminateDrawable.setColorFilter(
+        it, PorterDuff.Mode.SRC_IN
+      )
+    }
+
     contentView.findViewById<RecyclerView>(R.id.mobileconsents_privacy_list).apply {
       setHasFixedSize(true)
       (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
@@ -84,18 +95,41 @@ public class PrivacyFragmentView @JvmOverloads constructor(
     }
 
     contentView.findViewById<Toolbar>(R.id.mobileconsents_privacy_toolbar).apply {
+      parsedColorToInt?.let {
+        setBackgroundColor(it)
+      }
       setNavigationOnClickListener {
         onDismissRequest()
       }
     }
 
-    findViewById<TextView>(R.id.mobileconsents_privacy_info_read_more).setOnClickListener {
-      onReadMoreClicked()
+    findViewById<TextView>(R.id.mobileconsents_privacy_info_read_more).apply {
+      parsedColorToInt?.let {
+        setTextColor(it)
+      }
+      setOnClickListener {
+        onReadMoreClicked()
+      }
+    }
+    findViewById<ImageView>(R.id.mobileconsents_privacy_info_read_more_arrow).apply {
+      parsedColorToInt?.let {
+        setColorFilter(it)
+      }
     }
 
-    findViewById<MaterialButton>(R.id.mobileconsents_privacy_accept_selected_button).setOnClickListener { onAcceptSelectedClicked() }
+    findViewById<MaterialButton>(R.id.mobileconsents_privacy_accept_selected_button).apply {
+      parsedColorToInt?.let {
+        setBackgroundColor(it)
+      }
+      setOnClickListener { onAcceptSelectedClicked() }
+    }
 
-    findViewById<MaterialButton>(R.id.mobileconsents_privacy_accept_all_button).setOnClickListener { onAcceptAllClicked() }
+    findViewById<MaterialButton>(R.id.mobileconsents_privacy_accept_all_button).apply {
+      parsedColorToInt?.let {
+        setBackgroundColor(it)
+      }
+      setOnClickListener { onAcceptAllClicked() }
+    }
   }
 
   private fun onReadMoreClicked() {

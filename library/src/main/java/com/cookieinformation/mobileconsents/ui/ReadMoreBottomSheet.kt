@@ -24,6 +24,9 @@ internal class ReadMoreBottomSheet :
   val poweredBy by lazy {
     requireArguments().getString("poweredBy").orEmpty()
   }
+  val sdkColor: Int? by lazy {
+    requireArguments().getInt("sdkColor")
+  }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val dialog = BottomSheetDialog(requireContext(), theme)
@@ -57,6 +60,9 @@ internal class ReadMoreBottomSheet :
     }
 
     view.findViewById<Toolbar>(R.id.mobileconsents_privacy_toolbar).apply {
+      sdkColor?.let {
+        setBackgroundColor(it)
+      }
       setNavigationOnClickListener {
         dismiss()
       }
@@ -71,9 +77,8 @@ internal class ReadMoreBottomSheet :
   }
 
   companion object {
-
-    fun newInstance(info: String, poweredBy: String) = ReadMoreBottomSheet().apply {
-      arguments = bundleOf("info" to info, "poweredBy" to poweredBy)
+    fun newInstance(info: String, poweredBy: String, sdkColor: Int?) = ReadMoreBottomSheet().apply {
+      arguments = bundleOf("info" to info, "poweredBy" to poweredBy, "sdkColor" to sdkColor)
     }
   }
 }
