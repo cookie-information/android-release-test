@@ -51,18 +51,18 @@ internal class MobileConsentSdkBuilder constructor(
     return this
   }
 
-  override fun build(): MobileConsentSdk {
+  override fun build(): MobileConsentSdk{
     if (customColor == null) {
-      Throwable("Please set a custom client, you may want to set your primary color")
+      throw java.lang.Exception("Please set a custom client, you may want to set your primary color. \nAdd to the builder the following: setMobileConsentCustomUI().")
     }
     if (clientId == null || clientId.orEmpty().isEmpty()) {
-      Throwable("Please set a client id")
+      throw java.lang.Exception("Please set a client id")
     }
     if (solutionId == null || solutionId.orEmpty().isEmpty()) {
-      Throwable("Please set a solution id")
+      throw java.lang.Exception("Please set a solution id")
     }
     if (clientSecret == null || clientSecret.orEmpty().isEmpty()) {
-      Throwable("Please set a client secret id")
+      throw java.lang.Exception("Please set a client secret id")
     }
 
     val factory = getOkHttpClient(context)//OkHttpClient()
