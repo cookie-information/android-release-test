@@ -1,21 +1,3 @@
 <resources>
-  <string name="app_name">Mobile Consents</string>
-  <string name="button_fetch">Fetch</string>
-  <string name="button_fetch_send">Fetch/Send</string>
-  <string name="button_sample_uuid">Use sample ID</string>
-  <string name="text_consent_id_label">Consent Item id:</string>
-  <string name="text_consent_short_text_label">Consent Item short text:</string>
-  <string name="text_consent_long_text_label">Consent Item long text:</string>
-  <string name="text_consent_type_label">Consent Item type:</string>
-  <string name="text_consent_required_label">Consent Item required:</string>
-  <string name="button_send_consent">Send</string>
-  <string name="text_mobile_consents_sample">Mobile Consents Sample</string>
-  <string name="hint_preferred_language">Preferred Language</string>
-  <string name="button_show_main_page">Show Main Page</string>
-  <string name="button_show_storage">Show Storage</string>
-  <string name="button_privacy_center">Privacy Center</string>
-  <string name="button_privacy_fragment">Privacy Fragment</string>
-  <string name="text_value_label">Consent given:</string>
-  <string name="text_key_label">Consent Item ID:</string>
-  <string name="text_consent_storage">Consent Storage</string>
+  <string name="app_name">Sample2</string>
 </resources>

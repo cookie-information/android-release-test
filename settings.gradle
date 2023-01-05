@@ -7,4 +7,4 @@ pluginManagement {
 }
 rootProject.name = "mobileconsents-android"
 include ':library'
-include ':sample2'
+include ':sample'
