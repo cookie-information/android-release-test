@@ -1,9 +1,11 @@
 package com.cookieinformation.mobileconsents.ui
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.MainThread
 import com.cookieinformation.mobileconsents.Consent
 import com.cookieinformation.mobileconsents.ConsentItem
+import com.cookieinformation.mobileconsents.ConsentItem.Type
 import com.cookieinformation.mobileconsents.ConsentSolution
 import com.cookieinformation.mobileconsents.MobileConsentSdk
 import com.cookieinformation.mobileconsents.ProcessingPurpose
@@ -305,20 +307,22 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
 
   private fun ConsentItem.toProcessingPurpose(givenConsent: Pair<Boolean, String>?) = ProcessingPurpose(
     consentItemId = consentItemId,
-    consentGiven = givenConsent?.first ?: true,
-    language = givenConsent?.second ?: TextTranslation.getTranslationFor(shortText, locales).languageCode
+    consentGiven = givenConsent?.first ?: false,
+    language = givenConsent?.second ?: TextTranslation.getTranslationFor(shortText, locales).languageCode,
+    type = this.type
   )
 
-  protected fun ConsentItem.toPrivacyPreferencesItem(savedConsents: Map<UUID, Boolean>): PrivacyPreferencesItem {
+  protected fun ConsentItem.toPrivacyPreferencesItem(savedConsents: Map<Type, Boolean>): PrivacyPreferencesItem {
     val textTranslation = shortText.translate()
 
     return PrivacyPreferencesItem(
       id = consentItemId,
       required = required,
-      accepted = savedConsents[consentItemId] ?: false,
+      accepted = savedConsents[type] ?: false,
       text = textTranslation.text,
       details = longText.translate().text,
-      language = textTranslation.languageCode
+      language = textTranslation.languageCode,
+      type = this.type
     )
   }
 
@@ -328,7 +332,8 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
     return PrivacyInfoItem(
       text = textTranslation.text,
       details = longText.translate().text,
-      language = textTranslation.languageCode
+      language = textTranslation.languageCode,
+      type = type
     )
   }
 
@@ -339,12 +344,12 @@ internal abstract class ConsentSolutionPresenter<ViewType, ViewDataType, ViewInt
 
   protected abstract fun createViewData(
     consentSolution: ConsentSolution,
-    savedConsents: Map<UUID, Boolean>
+    savedConsents: Map<Type, Boolean>
   ): ViewDataType
 
   protected abstract fun getGivenConsents(viewData: ViewDataType): GivenConsent
 
-  protected abstract fun onConsentsChangedWhileFetched(consents: Map<UUID, Boolean>)
+  protected abstract fun onConsentsChangedWhileFetched(consents: Map<Type, Boolean>)
 
-  protected abstract fun onConsentsChangedWhileSendError(consents: Map<UUID, Boolean>)
+  protected abstract fun onConsentsChangedWhileSendError(consents: Map<Type, Boolean>)
 }

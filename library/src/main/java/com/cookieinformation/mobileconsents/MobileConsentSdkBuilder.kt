@@ -2,8 +2,15 @@ package com.cookieinformation.mobileconsents
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Resources
+import android.graphics.Color
 import android.widget.Toast
+import com.cookieinformation.mobileconsents.ConsentItem.Type
 import com.cookieinformation.mobileconsents.adapter.moshi
+import com.cookieinformation.mobileconsents.interfaces.CallFactory
+import com.cookieinformation.mobileconsents.interfaces.SdkBuilder
+import com.cookieinformation.mobileconsents.models.MobileConsentCredentials
+import com.cookieinformation.mobileconsents.models.MobileConsentCustomUI
 import com.cookieinformation.mobileconsents.networking.ConsentClient
 import com.cookieinformation.mobileconsents.storage.ConsentStorage
 import com.cookieinformation.mobileconsents.storage.MoshiFileHandler
@@ -12,9 +19,7 @@ import com.cookieinformation.mobileconsents.system.getApplicationProperties
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.sync.Mutex
-import okhttp3.Call
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.OkHttpClient
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -26,49 +31,41 @@ private const val storageFileName = "mobileconsents_storage.txt"
  * thus all parameters must be provided in a valid order. You can get instance of this builder
  * via [MobileConsentSdk.Builder] static function.
  */
-public class MobileConsentSdkBuilder internal constructor(
+internal class MobileConsentSdkBuilder constructor(
   private val context: Context
 ) : CallFactory, SdkBuilder {
-  private var callFactory: Call.Factory? = null
   private var clientId: String? = null
   private var solutionId: String? = null
   private var clientSecret: String? = null
+  private var customColor: MobileConsentCustomUI? = null//MobileConsentCustomUI(Color.parseColor("#FFBB86FC"))
 
-  /**
-   * Provide your own [Call.Factory] for SDK usage. If no call factory is provided, SDK will instantiate it's own OkHttpClient.
-   * Note that instantiating OkHttpClient can be expensive operation and will be performed on caller's thread,
-   * thus providing your own factory is more optimal.
-   */
-  override fun callFactory(factory: Call.Factory): SdkBuilder = apply {
-    callFactory = factory
+  override fun setClientCredentials(credentials: MobileConsentCredentials): CallFactory {
+    clientId = credentials.clientId
+    clientSecret = credentials.clientSecret
+    solutionId = credentials.solutionId
+    return this
   }
 
-  override fun setClientId(id: String): SdkBuilder {
-    clientId = id
-    return  this
+  override fun setMobileConsentCustomUI(customUI: MobileConsentCustomUI): CallFactory {
+    customColor = customUI
+    return this
   }
 
-  override fun setClientSecret(id: String): SdkBuilder {
-    clientSecret = id
-    return  this
-  }
-
-  override fun setSolutionId(id: String): SdkBuilder {
-    solutionId = id
-    return  this
-  }
-
-  override fun build(): MobileConsentSdk {
-    if(clientId == null || clientId.orEmpty().isEmpty()){
-      Throwable("Please set a client id")
+  override fun build(): MobileConsentSdk{
+    if (customColor == null) {
+      throw java.lang.Exception("Please set a custom client, you may want to set your primary color. \nAdd to the builder the following: setMobileConsentCustomUI().")
     }
-    if(solutionId == null || solutionId.orEmpty().isEmpty()){
-      Throwable("Please set a solution id")
+    if (clientId == null || clientId.orEmpty().isEmpty()) {
+      throw java.lang.Exception("Please set a client id")
     }
-    if(clientSecret == null || clientSecret.orEmpty().isEmpty()){
-      Throwable("Please set a client secret id")
+    if (solutionId == null || solutionId.orEmpty().isEmpty()) {
+      throw java.lang.Exception("Please set a solution id")
     }
-    val factory = callFactory ?: OkHttpClient()
+    if (clientSecret == null || clientSecret.orEmpty().isEmpty()) {
+      throw java.lang.Exception("Please set a client secret id")
+    }
+
+    val factory = getOkHttpClient(context)//OkHttpClient()
 
     val storageFile = File(context.filesDir, storageFileName)
     val preferences = Preferences(context.applicationContext)
@@ -89,13 +86,21 @@ public class MobileConsentSdkBuilder internal constructor(
       Toast.makeText(context.applicationContext, e.message.toString(), Toast.LENGTH_SHORT).show()
     }
     val consentStorage =
-      ConsentStorage(Mutex, storageFile, MoshiFileHandler(moshi), getSaveConsentsMutableFlow(), Dispatchers.IO)
+      ConsentStorage(
+        context.applicationContext,
+        Mutex,
+        storageFile,
+        MoshiFileHandler(moshi),
+        getSaveConsentsMutableFlow(),
+        Dispatchers.IO
+      )
     return MobileConsentSdk(
       consentClient = consentClient,
       consentStorage = consentStorage,
       applicationProperties = context.getApplicationProperties(),
       dispatcher = Dispatchers.IO,
-      saveConsentsFlow = consentStorage.saveConsentsFlow
+      saveConsentsFlow = consentStorage.saveConsentsFlow,
+      uiComponentColor = customColor
     )
   }
 
@@ -109,7 +114,7 @@ public class MobileConsentSdkBuilder internal constructor(
      * Returns global flow for observing end emitting "save consents" events.
      */
     @SuppressLint("SyntheticAccessor")
-    fun getSaveConsentsMutableFlow(): MutableSharedFlow<Map<UUID, Boolean>> = synchronized(this) {
+    fun getSaveConsentsMutableFlow(): MutableSharedFlow<Map<Type, Boolean>> = synchronized(this) {
       var eventsEmitter = SaveConsentsMutableFlowReference.get()
       if (eventsEmitter == null) {
         eventsEmitter = MutableSharedFlow()
@@ -122,24 +127,6 @@ public class MobileConsentSdkBuilder internal constructor(
      * Reference to global flow for observing end emitting "save consents" events, shared across all SDK instances.
      * Warning: Do not use this field directly. Use [getSaveConsentsMutableFlow].
      */
-    private var SaveConsentsMutableFlowReference = WeakReference<MutableSharedFlow<Map<UUID, Boolean>>>(null)
+    private var SaveConsentsMutableFlowReference = WeakReference<MutableSharedFlow<Map<Type, Boolean>>>(null)
   }
-}
-
-/**
- * Fluent Builder [MobileConsentSdkBuilder] interface.
- */
-public interface CallFactory {
-  public fun callFactory(factory: Call.Factory): SdkBuilder
-  public fun build(): MobileConsentSdk
-}
-
-/**
- * Fluent Builder [MobileConsentSdkBuilder] interface.
- */
-public interface SdkBuilder {
-  public fun setClientId(id: String): SdkBuilder
-  public fun setClientSecret(id: String): SdkBuilder
-  public fun setSolutionId(id: String): SdkBuilder
-  public fun build(): MobileConsentSdk
 }

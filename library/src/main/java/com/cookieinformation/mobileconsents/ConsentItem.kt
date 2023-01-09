@@ -21,8 +21,44 @@ public data class ConsentItem(
   val required: Boolean,
   val type: Type,
 ) {
-  public enum class Type {
-    Setting,
-    Info,
+
+  public sealed class Type(public val name: String) {
+    public abstract val isSetting: Boolean
+
+    public companion object{
+      public fun findTypeByValue(value: String): Type {
+        return when (value) {
+          Info.name -> Info
+          TypeNecessary.name -> TypeNecessary
+          TypeMarketing.name -> TypeMarketing
+          TypeStatistical.name -> TypeStatistical
+          TypeFunctional.name -> TypeFunctional
+          else -> Setting(value)
+        }
+      }
+    }
+    public object Info : Type("privacy policy") {
+      override val isSetting: Boolean = false
+    }
+
+    public class Setting(public val customValue: String) : Type(customValue) {
+      override val isSetting: Boolean = true
+    }
+
+    public object TypeNecessary : Type("necessary") {
+      override val isSetting: Boolean = true
+    }
+
+    public object TypeMarketing : Type("marketing") {
+      override val isSetting: Boolean = true
+    }
+
+    public object TypeStatistical : Type("statistical") {
+      override val isSetting: Boolean = true
+    }
+
+    public object TypeFunctional : Type("functional") {
+      override val isSetting: Boolean = true
+    }
   }
 }

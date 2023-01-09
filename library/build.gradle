@@ -25,9 +25,10 @@ android {
     }
     debug {
       debuggable true
-      buildConfigField("String", "BASE_URL_TOKEN", "\"https://consent-api-staging.app.cookieinformation.com/oauth2/token\"")
-      buildConfigField("String", "BASE_URL_CONSENT_SOLUTION", "\"https://cdnapi-staging.azureedge.net/v1/\"")
-      buildConfigField("String", "BASE_URL_CONSENT", "\"https://consent-api-staging.app.cookieinformation.com/v1\"")
+
+      buildConfigField("String", "BASE_URL_TOKEN", "\"https://consent-api.app.cookieinformation.com/oauth2/token\"")
+      buildConfigField("String", "BASE_URL_CONSENT_SOLUTION", "\"https://cdnapi-prod.azureedge.net/v1/\"")
+      buildConfigField("String", "BASE_URL_CONSENT", "\"https://consent-api.app.cookieinformation.com/v1\"")
     }
   }
 
@@ -74,7 +75,7 @@ dependencies {
   implementation("com.squareup.okhttp3:logging-interceptor")
   implementation "androidx.appcompat:appcompat:1.5.1"
   implementation "androidx.constraintlayout:constraintlayout:2.1.4"
-  implementation "androidx.fragment:fragment-ktx:1.5.4"
+  implementation "androidx.fragment:fragment-ktx:1.5.5"
   implementation "androidx.recyclerview:recyclerview:1.2.1"
   implementation "com.squareup.moshi:moshi:1.14.0"
   kapt "com.squareup.moshi:moshi-kotlin-codegen:1.14.0"
