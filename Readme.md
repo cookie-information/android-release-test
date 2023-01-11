@@ -47,26 +47,42 @@ SOLUTION_ID = "xxx"
 
 #### Initializing
 
-To instantiate SDK use `Builder` static method of `MobileConsentSdk` class:
+To instantiate SDK do the following steps:
+-Create an application class. (extend from Application)
+-Implement the Consentable interface
+-You will override the following:
+    --A reference to the sdk: 'sdk'
+    --A method: provideConsentSdk that provides the sdk
+    --A method: provideCredentials that provides an MobileConsentCredentials object.
+
 
 #### Java:
 ```java
-CallbackMobileConsentSdk sdk = CallbackMobileConsentSdk.from(
-  MobileConsentSdk.Builder(context)
-      .callFactory(new OkHttpClient())
-      .build()
-);
+//To be 
 ```
 
 #### Kotlin:
 ```kotlin
-val sdk = CallbackMobileConsentSdk.from(
-  MobileConsentSdk.Builder(context)
-    .callFactory(OkHttpClient())
+class App : Application(), Consentable {
+
+  override val sdk: MobileConsents by lazy { MobileConsents(provideConsentSdk()) }
+
+  override fun provideConsentSdk() = MobileConsentSdk.Builder(this)
+    .setClientCredentials(provideCredentials())
+    .setMobileConsentCustomUI(MobileConsentCustomUI(Color.parseColor("#ff0000")))
     .build()
+
+  override fun provideCredentials(): MobileConsentCredentials {
+    return MobileConsentCredentials(
+      clientId = "40dbe5a7-1c01-463a-bb08-a76970c0efa0",
+      solutionId = "4113ab88-4980-4429-b2d1-3454cc81197b",
+      clientSecret = "68cbf024407a20b8df4aecc3d9937f43c6e83169dafcb38b8d18296b515cc0d5f8bca8165d615caa4d12e236192851e9c5852a07319428562af8f920293bc1db"
     )
+  }
+}
 ```
-Note that you have to pass `Context` of your Application/Activity to the builder. `callFactory` method is optional - if OkHttp's [Call.Factory](https://square.github.io/okhttp/4.x/okhttp/okhttp3/-call/-factory/) isn't provided, SDK will instantiate it's own.
+
+Note that you must provide a MobileConsentCredentials object and MobileConentCustomUI to the consentSdk builder.
 
 #### Getting consent solution
 
@@ -97,21 +113,7 @@ public data class TextTranslation(
 
 ```
 
-#### Java:
-```java
-sdk.fetchConsentSolution(
-  new CallListener<ConsentSolution>() {
-    @Override public void onSuccess(ConsentSolution result) {
-      // do something with result
-    }
-
-    @Override public void onFailure(@NotNull IOException error) {
-      // do something with error
-    }
-  }
-);
-```
-
+Fetching 
 #### Kotlin:
 ```kotlin
  yourCoroutineScope.launch {
@@ -186,21 +188,6 @@ Once a request is successful, all consent choices are stored in SDK's internal s
 To read consent choices from SDK, use following methods:
 
 To retrieve all consent choices, saved on device memory, use `getConsentChoices` method:
-#### Java:
-```java
-sdk.getSavedConsents(
-  new CallListener<Map<UUID, Boolean>>() {
-    @Override public void onSuccess(@NotNull Map<UUID, Boolean> result) {
-      // do something with result
-    }
-
-    @Override public void onFailure(@NotNull IOException error) {
-      // do something with error
-    }
-  }
- );
-```
-
 #### Kotlin:
 ```kotlin
 yourCoroutineScope.launch {
@@ -214,21 +201,6 @@ yourCoroutineScope.launch {
 ```
   
 To retrieve specific consent choice, use `getConsentChoice` method and pass id of `ConsentItem`:
-#### Java:
-```java
-sdk.getSavedConsent(
-  consentItemId, // UUID of consent item 
-  new CallListener<Boolean>() {
-    @Override public void onSuccess(@NotNull Boolean result) {
-      // do something with result
-    }
-
-    @Override public void onFailure(@NotNull IOException error) {
-      // do something with error
-    }
-  }
- );    
-```
 
 #### Kotlin:
 ```kotlin
@@ -247,23 +219,6 @@ yourCoroutineScope.launch {
 #### Async operation cancelling
 
 Use `Subscription` object returned from every SDKs method.
-#### Java:
-```java
-Subscription subscription = sdk.getConsentChoice(
-  consentItemId, // UUID of consent item 
-  new CallListener<Boolean>() {
-    @Override public void onSuccess(@NotNull Boolean result) {
-      // do something with result
-    }
-
-    @Override public void onFailure(@NotNull IOException error) {
-      // do something with error
-    }
-  }
- );   
-
-subscription.cancel(); 
-```
 
 #### Kotlin:
 ```kotlin
@@ -305,91 +260,9 @@ public data class UiTexts(
 ##### Text translations
 There is static helper method `TextTranslation.getTranslationFor(...)` which returns the best matching translation for given locales list.
 
-#### Predefined plug&play UI component
-There is a predefined, easy to integrate, user interface component:
 
-- `BasePrivacyFragment`: this view allows the user to read information about the consents and accept selected consents.
+This sdk comes with a ready created fragment component for displaying the consents, 
+calling (applicationContext as App).sdk.displayConsents(listener)
+where the listener is a registered listener for the GetConsents object on activity results
 
-
-![privacy_fragment.png](images/privacy_fragment.png)
-
-##### Integration of the `BasePrivacyFragment`
-The integration is very easy. The fragment that extends `BasePrivacyFragment` should be created and all abstract methods
-should be implemented. Then the fragment can be used as any other fragment (with navigation component, in XML layout, etc..).
-
-#### Java:
-```java
-public class PrivacyFragment extends BasePrivacyFragment {
-
-  @NotNull
-  @Override
-  protected ConsentSolutionBinder bindConsentSolution(@NotNull ConsentSolutionBinder.Builder builder) {
-    // This method binds the SDK instance
-    MobileConsentSdk mobileConsentSdk = ... // your SDK instance (keep in mind that the same instance should be used after configuration has changed)
-    return builder
-        .setMobileConsentSdk(mobileConsentSdk)
-        .create();
-  }
-
-  @Override
-  public void onConsentsChosen(
-      @NotNull ConsentSolution consentSolution,
-      @NotNull Map<UUID, Boolean> consents,
-      boolean external
-  ) {
-    // Handle given consents, you may skip this step if the consents has been saved externally.
-    // Navigate back
-  }
-
-  @Override
-  public void onDismissed() {
-    // Navigate back
-  }
-}
-```
-
-#### Kotlin:
-```kotlin
-class PrivacyFragment : BasePrivacyFragment() {
-
-  override fun bindConsentSolution(builder: ConsentSolutionBinder.Builder): ConsentSolutionBinder {
-    // This method binds the SDK instance
-    val mobileConsentSdk = ... // your SDK instance (keep in mind that the same instance should be used after configuration has changed)
-    return builder
-      .setMobileConsentSdk(mobileConsentSdk)
-      .create()
-  }
-
-  override fun onConsentsChosen(consentSolution: ConsentSolution, consents: Map<UUID, Boolean>, external: Boolean) {
-    // Handle given consents, you may skip this step if the consents has been saved externally.
-    // Navigate back
-  }
-
-  override fun onDismissed() {
-    // Navigate back
-  }
-}
-```
-
-##### Styling UI components
-The UI elements inherits the style from the application theme, however there is possibility to change appearance of predefined views.
-
-The text colors are imported from attributes `android:textColorPrimary` and`android:textColorSecondary`.
-The first one is used for emphasised texts like title or links, the second one is used as default text color.
-
-The buttons styles uses the application theme. It has custom style based on color `colorAccent`.
-
-Generally it is possible to override style of almost all widgets. If it is necessary, the developer
-must find the corresponding style and override it in their own application.
-Here are few examples:
-
-- Changing the font: the developer needs to override `MobileConsents_BaseTextAppearance` style.
-```
-<style name="MobileConsents_BaseTextAppearance">
-  <item name="android:fontFamily">sans-serif-condensed</item>
-</style>
-```
-
-- Changing default text size: the developer needs to override `mobileconsents_text_size` dimension.
-- Changing default preference item text size: the developer needs to override `mobileconsents_preference_item_text_size` dimension.
-- Changing default privacy title text size: the developer needs to override `mobileconsents_privacy_title_text_size` dimension.
+--sample:
