@@ -2,6 +2,9 @@ plugins {
   id "com.android.library"
   id 'kotlin-android'
   id 'kotlin-kapt'
+  //Add maven-publish and signing plugins
+  id 'maven-publish'
+  id 'signing'
 }
 
 android {
@@ -12,7 +15,7 @@ android {
     minSdk 21
     targetSdk 33
     versionCode 1
-    versionName "0.0.1"
+    versionName "1.0.0"
   }
 
   buildTypes {
