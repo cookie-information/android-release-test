@@ -1,268 +1,88 @@
-[![Maven Central](https://img.shields.io/maven-central/v/com.cookieinformation/mobileconsents.svg?label=latest%20release)](https://search.maven.org/artifact/com.cookieinformation/mobileconsents)
-# Mobile Consents
-### Android SDK for easy user consent management.
-
-## Integration  
-To add SDK to your app add dependency in `build.gradle(.kts)` file:
-
-Groovy DSL
-```groovy
-implementation "com.cookieinformation:mobileconsents:<latest_release>"
-```  
-
-Kotlin DSL
-```kotlin
-implementation("com.cookieinformation:mobileconsents:<latest_release>")
-```
-
-#### Concept
-The `MobileConsentSdk` is designed to use it with Kotlin and Coroutines. For those who doesn't use Coroutines we provide wrapper `CallbackMobileConsentSdk` that uses callbacks.
-
-#### Error Handling
-All exceptions thrown by SDK are wrapped by an `IOException` and thrown by SDK methods or passed to the `onFailure` method of a `CallListener` callback in case of using `CallbackMobileConsentSdk`.
-  
-#### Async operations
-All SDK's public methods are executed asynchronously using Coroutines on a IO thread pool. If you do not want to use Coroutines, you may use `CallbackMobileConsentSdk` where you should rely on callbacks (`CallListener`) to handle
-operation results. The callbacks, by default, are executed on **Main Thread**.  
-You can easily wrap those callbacks with LiveData / RxJava etc, if you use any of them. Every method of the callback version of the SDK returns a `Subscription`
-object, which you can use to cancel the ongoing request (see the `Async operation cancelling` section).
-  
-#### Dependencies: 
-SDK exposes [OkHttp](https://square.github.io/okhttp/) in its API. 
-  
 ### Using the SDK:
 
 #### Setup
 
 Join our partner program for free at [Cookie Information](https://cookieinformation.com/)
+You will then receive credentials, that will need to be provided for initializing the sdk.
+-----------------------------------------
+This library is provided to you, to integrate mobile consents in an easy way.
+Lets get started.
 
-Add the below credentials in your app projects `local.properties` file in Android Studio after joining
+Here are the main objects you should be familiar with:
+-MobileConsentSdk
+-MobileConsentCredentials
+-MobileConsentCustomUI
 
-#### Credentials
-```
-CLIENT_ID = "xxx"
-CLIENT_SECRET= "xxx"
-SOLUTION_ID = "xxx"
-```
+The above objects are required in order to initialize the sdk.
+MobileConsentSdk - is the object that handles all the consents info, and state. This is init using the builder pattern.
+    -it is also dependant on the MobileConsentCredentials and the MobileConsentCustomUI.
 
-#### Initializing
+MobileConsentCredentials - The object that contains all credentials required for fetching the relevant data for your company/application.
 
-To instantiate SDK do the following steps:
--Create an application class. (extend from Application)
--Implement the Consentable interface
--You will override the following:
-    --A reference to the sdk: 'sdk'
-    --A method: provideConsentSdk that provides the sdk
-    --A method: provideCredentials that provides an MobileConsentCredentials object.
+MobileConsentCustomUI - The color theme used for various components that are included in the library.
 
-
-#### Java:
-```java
-//To be 
-```
+Steps to implement:
+-Extend the application class. (Dont forget to add to manifest)
+-Make you Extended Application class 'Consentable' - (This is a defined interface, defined in the library).
+-Implement the required methods.
+Here is a sample:
 
 #### Kotlin:
 ```kotlin
 class App : Application(), Consentable {
 
   override val sdk: MobileConsents by lazy { MobileConsents(provideConsentSdk()) }
-
+  
   override fun provideConsentSdk() = MobileConsentSdk.Builder(this)
     .setClientCredentials(provideCredentials())
-    .setMobileConsentCustomUI(MobileConsentCustomUI(Color.parseColor("#ff0000")))
+    .setMobileConsentCustomUI(MobileConsentCustomUI(Color.parseColor("any hexcode color string")))
     .build()
 
   override fun provideCredentials(): MobileConsentCredentials {
     return MobileConsentCredentials(
-      clientId = "40dbe5a7-1c01-463a-bb08-a76970c0efa0",
-      solutionId = "4113ab88-4980-4429-b2d1-3454cc81197b",
-      clientSecret = "68cbf024407a20b8df4aecc3d9937f43c6e83169dafcb38b8d18296b515cc0d5f8bca8165d615caa4d12e236192851e9c5852a07319428562af8f920293bc1db"
+      clientId = "Client ID provided XXXXX",
+      solutionId = "Solution ID provided XXXXXXX",
+      clientSecret = "Client Secret ID provided XXXXX"
     )
   }
 }
 ```
-
-Note that you must provide a MobileConsentCredentials object and MobileConentCustomUI to the consentSdk builder.
-
-#### Getting consent solution
-
-To fetch `ConsentSolution` from server, use `fetchConsentSolution` method:
-
-ConsentSolution object structure:
+Once this is implemented, your application is ready to handle consents out of the box.
+There are 2 main functions in the sdk, that are responsible for navigating to the mobile consents component
+These methods take an activity listener, so the component calling them can know how to handle the updated consents settings.
 ```kotlin
-// ConsentSolution object structure
-public data class ConsentSolution(
-  val consentItems: List<ConsentItem>,
-  val consentSolutionId: UUID,
-  val consentSolutionVersionId: UUID,
-  val uiTexts: UiTexts
-)
-
-public data class ConsentItem(
-  val consentItemId: UUID,
-  val shortText: List<TextTranslation>,
-  val longText: List<TextTranslation>,
-  val required: Boolean,
-  val type: Type, // Setting, Info
-)
-
-public data class TextTranslation(
-  val languageCode: String,
-  val text: String
-)
-
+-displayConsents(listener)
+-displayConsentsIfNeeded(listener)
 ```
 
-Fetching 
-#### Kotlin:
+Here is a sample:
 ```kotlin
- yourCoroutineScope.launch {
-  try {
-    val consentSolution = sdk.fetchConsentSolution()
-    // do something with result
-  } catch (e: IOException) {
-    // do something with error
+class MainActivity : AppCompatActivity() {
+
+  private val listener: ActivityResultLauncher<Bundle?> = registerForActivityResult(
+    GetConsents(this),
+  ) {
+    //observes and returns a map of the consent and the values.
   }
-}
-```
-After downloading a solution, you can show all consent items to the user and obtain their choices.
 
-#### Sending consent to a server
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
 
-SDK requires you to gather all consent choices in one `Consent` object. : 
-```kotlin
-public data class Consent(
-  val consentSolutionId: UUID,
-  val consentSolutionVersionId: UUID,
-  val processingPurposes: List<ProcessingPurpose>,
-  val customData: Map<String, String>,
-)
-```
-
-Inside, you can pass a list of `ProcessingPurpose` - user consents:
-```kotlin
-public data class ProcessingPurpose(
-  val consentItemId: UUID,
-  val consentGiven: Boolean,
-  val language: String
-)
-```
-
-A `Consent` object can also store any additional info you want - in a form of a `Map<String, String>` map as a `customData` field.
-
-To post `Consent` to a server, use `postConsent` method:
-
-#### Java:
-```java
-sdk.postConsent(
-  consent, // Consent object
-  new CallListener<Unit>() {
-    @Override public void onSuccess(Unit result) {
-      // consent sent successfully
+    findViewById<Button>(R.id.display_always).setOnClickListener {
+      (applicationContext as App).sdk.displayConsents(listener)
     }
 
-    @Override public void onFailure(@NotNull IOException error) {
-      // do something with error
+    findViewById<Button>(R.id.display_if_needed).setOnClickListener {
+      (applicationContext as App).sdk.displayConsentsIfNeeded(listener)
     }
   }
-); 
-```
-
-#### Kotlin:
-```kotlin
-yourCoroutineScope.launch {
-  try {
-    postConsent(
-      consent = consent, // Consent object
-    )
-    // consent sent successfully
-  } catch (e: IOException) {
-    // do something with error
-  }
-}
-```
-Once a request is successful, all consent choices are stored in SDK's internal storage, as a map of consent item IDs and booleans representing user choices.
-
-#### Getting locally saved consent data
-
-To read consent choices from SDK, use following methods:
-
-To retrieve all consent choices, saved on device memory, use `getConsentChoices` method:
-#### Kotlin:
-```kotlin
-yourCoroutineScope.launch {
-  try {
-    val result = getSavedConsents()
-    // do something with result
-  } catch (e: IOException) {
-    // do something with error
-  }
-}
-```
-  
-To retrieve specific consent choice, use `getConsentChoice` method and pass id of `ConsentItem`:
-
-#### Kotlin:
-```kotlin
-yourCoroutineScope.launch {
-  try {
-    val result = getSavedConsent(
-      consentItemId = consentItemId, // UUID of consent item 
-    )
-    // do something with result
-  } catch (e: IOException) {
-    // do something with error
-  }
 }
 ```
 
-#### Async operation cancelling
-
-Use `Subscription` object returned from every SDKs method.
-
-#### Kotlin:
-```kotlin
-// Note that, all jobs are canceled when you CoroutineScope is canceled.
-// However you can cancel the job manually.
-val job = youCoroutineScope.launch {
-  sdk.getConsentChoices(
-    consentItemId = consentItemId // UUID of consent item 
-  )
-}
-job.cancel()
-```
-
-#### UI template texts
-The response from the server `ConsentSolution` also includes suggested texts to be used in the user interface.
-There are two screens considered:
- - **PrivacyPreferences**: The screen where the user accepts consents when using the application for the first time or registering an account.
- - **PrivacyCenter**: The screen where the user can change his consents, usually displayed in the application preferences.
-
-```kotlin
-public data class UiTexts(
-  val privacyPreferencesTitle: List<TextTranslation>,
-  val privacyPreferencesDescription: List<TextTranslation>,
-  val privacyPreferencesTabLabel: List<TextTranslation>,
-
-  val privacyCenterButton: List<TextTranslation>,
-  val acceptAllButton: List<TextTranslation>,
-  val rejectAllButton: List<TextTranslation>,
-  val acceptSelectedButton: List<TextTranslation>,
-  val savePreferencesButton: List<TextTranslation>,
-
-  val privacyCenterTitle: List<TextTranslation>,
-
-  val poweredByLabel: List<TextTranslation>,
-  val consentPreferencesLabel: List<TextTranslation>
-)
-```
-
-##### Text translations
-There is static helper method `TextTranslation.getTranslationFor(...)` which returns the best matching translation for given locales list.
+This is all required to get this to work!
+Good luck:)
 
 
-This sdk comes with a ready created fragment component for displaying the consents, 
-calling (applicationContext as App).sdk.displayConsents(listener)
-where the listener is a registered listener for the GetConsents object on activity results
 
---sample:
+
