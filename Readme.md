@@ -1,4 +1,8 @@
+[![Maven Central](https://img.shields.io/maven-central/v/com.cookieinformation/mobileconsents.svg?label=latest%20release)](https://search.maven.org/artifact/com.cookieinformation/mobileconsents)
 ### Using the SDK:
+### Integration: 
+To add SDK to your app add dependency in build.gradle(.kts) file:
+implementation 'com.cookieinformation:mobileconsents:<latest_release>'
 
 #### Setup
 
