@@ -12,10 +12,12 @@ You will then receive credentials, that will need to be provided for initializin
 This library is provided to you, to integrate mobile consents in an easy way.
 Lets get started.
 
-Here are the main objects you should be familiar with:
--MobileConsentSdk
--MobileConsentCredentials
--MobileConsentCustomUI
+#Here are the main objects you should be familiar with:
+```kotlin
+class MobileConsentSdk
+class MobileConsentCredentials
+class MobileConsentCustomUI
+```
 
 The above objects are required in order to initialize the sdk.
 MobileConsentSdk - is the object that handles all the consents info, and state. This is init using the builder pattern.
@@ -55,8 +57,8 @@ Once this is implemented, your application is ready to handle consents out of th
 There are 2 main functions in the sdk, that are responsible for navigating to the mobile consents component
 These methods take an activity listener, so the component calling them can know how to handle the updated consents settings.
 ```kotlin
--displayConsents(listener)
--displayConsentsIfNeeded(listener)
+fun displayConsents(listener)
+fun displayConsentsIfNeeded(listener)
 ```
 
 Here is a sample:
